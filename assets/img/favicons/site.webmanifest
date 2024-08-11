@@ -1,0 +1,23 @@
+
+
+{
+  "name": "Mustafa Alotbah's Blog",
+  "short_name": "Mustafa Alotbah's Blog",
+  "description": "Welcome to a space dedicated to exploring computer science and data science.  Here, you'll find insights on machine learning, simulation projects, and embedded systems.  Whether you're a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.",
+  "icons": [
+    {
+      "src": "/assets/img/favicons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/img/favicons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }],
+  "start_url": "/index.html",
+  "theme_color": "#2a1e6b",
+  "background_color": "#ffffff",
+  "display": "fullscreen"
+}
+
