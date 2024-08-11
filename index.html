@@ -230,6 +230,48 @@
 
   <!-- A placeholder to allow defining custom metadata -->
 
+
+
+
+
+<!-- Link to the GitHub Dark theme stylesheet -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+<!-- <link rel="stylesheet" href="path/to/your/custom-styles.css"> -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+<!-- Include the Line Numbers Plugin JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+
+
+<!-- Initialize Highlight.js -->
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+    hljs.initLineNumbersOnLoad();
+  });
+</script>
+
+<!-- Override background color with inline styles -->
+<style>
+  .hljs {
+    background: #151515 !important; /* Replace with your desired background color */
+    border: 1px solid #444; /* Gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Optional: Add some padding for better readability */
+  }
+
+  .hljs-ln-numbers {
+    text-align: right !important;
+    padding-right: 5px !important;
+    user-select: none !important;
+    opacity: 0.5 !important;
+}
+
+.hljs-ln-code {
+    padding-left: 5px !important;
+}
+</style>
+
 </head>
 
 
@@ -545,17 +587,17 @@
 <div id="post-list" class="flex-grow-1 px-xl-1">
   
     <article class="card-wrapper card">
-      <a href="/posts/welcome-to-jekyll/" class="post-preview row g-0 flex-md-row-reverse">
+      <a href="/posts/CMake-Adding-Libraries/" class="post-preview row g-0 flex-md-row-reverse">
         
 
         
 
         <div class="col-md-12">
           <div class="card-body d-flex flex-column">
-            <h1 class="card-title my-2 mt-md-0">Welcome to Jekyll!</h1>
+            <h1 class="card-title my-2 mt-md-0">CMake - Adding Libraries</h1>
 
             <div class="card-text content mt-0 mb-3">
-              <p>You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run je...</p>
+              <p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, ...</p>
             </div>
 
             <div class="post-meta flex-grow-1 d-flex align-items-end">
@@ -572,11 +614,11 @@
 
 <time
   
-  data-ts="1723320723"
+  data-ts="1700064480"
   data-df="ll"
   
 >
-  Aug 10, 2024
+  Nov 15, 2023
 </time>
 
 
@@ -585,8 +627,254 @@
                   <i class="far fa-folder-open fa-fw me-1"></i>
                   <span class="categories">
                     
-                      jekyll,
-                      update
+                      software,
+                      C++,
+                      cmake
+                  </span>
+                
+              </div>
+
+              
+            </div>
+            <!-- .post-meta -->
+          </div>
+          <!-- .card-body -->
+        </div>
+      </a>
+    </article>
+  
+    <article class="card-wrapper card">
+      <a href="/posts/CMake-On-Windows/" class="post-preview row g-0 flex-md-row-reverse">
+        
+
+        
+
+        <div class="col-md-12">
+          <div class="card-body d-flex flex-column">
+            <h1 class="card-title my-2 mt-md-0">CMake On Windows</h1>
+
+            <div class="card-text content mt-0 mb-3">
+              <p>Here is a quick way to get started into development with CMake on Windows x64.
+
+1. Getting Started
+
+1.1 Downloads
+
+
+  Download MinGW64 (posix, seh, msvcrt) from here.
+  Download CMake (Windows x64)...</p>
+            </div>
+
+            <div class="post-meta flex-grow-1 d-flex align-items-end">
+              <div class="me-auto">
+                <!-- posted date -->
+                <i class="far fa-calendar fa-fw me-1"></i>
+                <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1695133080"
+  data-df="ll"
+  
+>
+  Sep 19, 2023
+</time>
+
+
+                <!-- categories -->
+                
+                  <i class="far fa-folder-open fa-fw me-1"></i>
+                  <span class="categories">
+                    
+                      software,
+                      C++,
+                      cmake
+                  </span>
+                
+              </div>
+
+              
+            </div>
+            <!-- .post-meta -->
+          </div>
+          <!-- .card-body -->
+        </div>
+      </a>
+    </article>
+  
+    <article class="card-wrapper card">
+      <a href="/posts/CMake-Brief-Reference/" class="post-preview row g-0 flex-md-row-reverse">
+        
+
+        
+
+        <div class="col-md-12">
+          <div class="card-body d-flex flex-column">
+            <h1 class="card-title my-2 mt-md-0">CMake - Brief Reference</h1>
+
+            <div class="card-text content mt-0 mb-3">
+              <p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief refer...</p>
+            </div>
+
+            <div class="post-meta flex-grow-1 d-flex align-items-end">
+              <div class="me-auto">
+                <!-- posted date -->
+                <i class="far fa-calendar fa-fw me-1"></i>
+                <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1695129120"
+  data-df="ll"
+  
+>
+  Sep 19, 2023
+</time>
+
+
+                <!-- categories -->
+                
+                  <i class="far fa-folder-open fa-fw me-1"></i>
+                  <span class="categories">
+                    
+                      software,
+                      C++,
+                      cmake
+                  </span>
+                
+              </div>
+
+              
+            </div>
+            <!-- .post-meta -->
+          </div>
+          <!-- .card-body -->
+        </div>
+      </a>
+    </article>
+  
+    <article class="card-wrapper card">
+      <a href="/posts/BlackPill-STM32F411CEU6/" class="post-preview row g-0 flex-md-row-reverse">
+        
+
+        
+
+        <div class="col-md-12">
+          <div class="card-body d-flex flex-column">
+            <h1 class="card-title my-2 mt-md-0">The Black Pill (STM32F411CEU6)</h1>
+
+            <div class="card-text content mt-0 mb-3">
+              <p>In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.
+
+    This chip is based on ARM Cortex-M4 32-Bit Architecture...</p>
+            </div>
+
+            <div class="post-meta flex-grow-1 d-flex align-items-end">
+              <div class="me-auto">
+                <!-- posted date -->
+                <i class="far fa-calendar fa-fw me-1"></i>
+                <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1684323660"
+  data-df="ll"
+  
+>
+  May 17, 2023
+</time>
+
+
+                <!-- categories -->
+                
+                  <i class="far fa-folder-open fa-fw me-1"></i>
+                  <span class="categories">
+                    
+                      embedded,
+                      stm32,
+                      STM32F411CEU6
+                  </span>
+                
+              </div>
+
+              
+            </div>
+            <!-- .post-meta -->
+          </div>
+          <!-- .card-body -->
+        </div>
+      </a>
+    </article>
+  
+    <article class="card-wrapper card">
+      <a href="/posts/Tester/" class="post-preview row g-0 flex-md-row-reverse">
+        
+
+        
+
+        <div class="col-md-12">
+          <div class="card-body d-flex flex-column">
+            <h1 class="card-title my-2 mt-md-0">Jekyll Chirpy Tester</h1>
+
+            <div class="card-text content mt-0 mb-3">
+              <p>Code
+
+    uint8_t PA0;
+    PA0 = GPIOA -&amp;gt; IDR &amp;amp; GPIO_PIN_0;            // directly
+    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
+
+    #include &amp;lt;iostream&amp;gt;
+
+int ma...</p>
+            </div>
+
+            <div class="post-meta flex-grow-1 d-flex align-items-end">
+              <div class="me-auto">
+                <!-- posted date -->
+                <i class="far fa-calendar fa-fw me-1"></i>
+                <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1684237260"
+  data-df="ll"
+  
+>
+  May 16, 2023
+</time>
+
+
+                <!-- categories -->
+                
+                  <i class="far fa-folder-open fa-fw me-1"></i>
+                  <span class="categories">
+                    
+                      Web,
+                      Jekyll
                   </span>
                 
               </div>
@@ -635,7 +923,35 @@
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/welcome-to-jekyll/">Welcome to Jekyll!</a>
+          <a href="/posts/CMake-Adding-Libraries/">CMake - Adding Libraries</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/CMake-On-Windows/">CMake On Windows</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/Tester/">Jekyll Chirpy Tester</a>
         </li>
       
     </ul>
@@ -659,7 +975,400 @@
 
 
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <section>
+    <h2 class="panel-heading">Trending Tags</h2>
+    <div class="d-flex flex-wrap mt-3 mb-1 me-3">
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+      
+    </div>
+  </section>
 
 
             </div>
@@ -733,7 +1442,400 @@
 
 
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <section>
+    <h2 class="panel-heading">Trending Tags</h2>
+    <div class="d-flex flex-wrap mt-3 mb-1 me-3">
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+      
+    </div>
+  </section>
 
 
     </div>
@@ -908,6 +2010,6 @@
   });
 </script>
 
+
   </body>
 </html>
-

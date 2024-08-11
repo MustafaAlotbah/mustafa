@@ -1,17 +1,1026 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-11T13:54:12+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/posts/welcome-to-jekyll/" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2024-08-10T22:12:03+02:00</published><updated>2024-08-10T22:12:03+02:00</updated><id>http://localhost:4000/posts/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/posts/welcome-to-jekyll/"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-11T20:51:52+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">CMake - Adding Libraries</title><link href="http://localhost:4000/posts/CMake-Adding-Libraries/" rel="alternate" type="text/html" title="CMake - Adding Libraries" /><published>2023-11-15T17:08:00+01:00</published><updated>2023-11-15T17:08:00+01:00</updated><id>http://localhost:4000/posts/CMake-Adding-Libraries</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Adding-Libraries/"><![CDATA[<p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.</p>
 
-<p>Jekyll requires blog post files to be named according to the following format:</p>
+<h2 id="1-google-test">1. Google Test</h2>
 
-<p><code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.MARKUP</code></p>
+<h3 id="11-using-fetchcontent">1.1 Using FetchContent</h3>
 
-<p>Where <code class="language-plaintext highlighter-rouge">YEAR</code> is a four-digit number, <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">DAY</code> are both two-digit numbers, and <code class="language-plaintext highlighter-rouge">MARKUP</code> is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+<p>Google Test is a popular testing framework for C++. Below is the procedure to integrate Google Test using CMake’s <code class="language-plaintext highlighter-rouge">FetchContent</code> module within your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> file:</p>
 
-<p>Jekyll also offers powerful support for code snippets:</p>
+<pre><code class="language-cpp">include(FetchContent)         # to use FetchContent_Declare
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
-<span class="k">end</span>
-<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
-<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
+# -- START: GOOGLE_TEST_INCLUDE --
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG main
+    OVERRIDE_FIND_PACKAGE
+)
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry></feed>
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)         # to use gtest_discover_tests
+target_link_libraries(simple_test GTest::gtest_main)
+# -- END: GOOGLE_TEST_INCLUDE --
+
+# test files
+add_executable(simple_test "simple_test.cpp")
+gtest_discover_tests(simple_test)
+</code></pre>
+
+<p>Below is an example of a simple Google Test implementation in <code class="language-plaintext highlighter-rouge">simple_test.cpp</code>:</p>
+
+<pre><code class="language-cpp"># include &lt;gtest/gtest.h&gt;
+TEST(HelloTest, BasicAssertions) {
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    // Expect equality.
+    EXPECT_EQ(7 * 6, 42);
+}
+</code></pre>
+
+<h2 id="2-google-benchmark">2. Google Benchmark</h2>
+
+<h3 id="21-using-fetchcontent">2.1 Using FetchContent</h3>
+
+<p>Google Benchmark is a library designed to support the benchmarking of C++ code. The following CMake configuration demonstrates how to add Google Benchmark to your project:</p>
+
+<pre><code class="language-cpp">include(FetchContent)   # to use FetchContent_Declare
+
+# -- START: GOOGLE_BENCHMARK_INCLUDE --
+FetchContent_Declare(
+    googlebenchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG main
+    OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(googlebenchmark)
+target_link_libraries(${EXE_NAME} benchmark::benchmark)
+# -- END: GOOGLE_BENCHMARK_INCLUDE --
+
+# test files
+add_executable(simple_test "simple_test.cpp")
+gtest_discover_tests(simple_test)
+</code></pre>
+<p>Example benchmarking code in <code class="language-plaintext highlighter-rouge">simple_benchmark.cpp</code>:</p>
+<pre><code class="language-cpp">#include &lt;benchmark/benchmark.h&gt;
+
+static void BM_StringCreation(benchmark::State&amp; state) {
+  for (auto _ : state)
+    std::string empty_string;
+}
+// Register the function as a benchmark
+BENCHMARK(BM_StringCreation);
+
+static void BM_StringCopy(benchmark::State&amp; state) {
+  std::string x = "hello";
+  for (auto _ : state)
+    std::string copy(x);
+}
+
+BENCHMARK(BM_StringCopy);
+</code></pre>
+
+<h2 id="3-opencv">3. OpenCV</h2>
+
+<p>To integrate OpenCV into your C++ project using the MinGW64 compiler, follow these steps:</p>
+
+<ul>
+  <li>Download and extract the OpenCV-MinGW build from the following repository: <a href="https://github.com/huihut/OpenCV-MinGW-Build">OpenCV-MinGW-Build</a></li>
+  <li>Ensure that Python 3.x is installed on your system.</li>
+  <li>Add the OpenCV binary folder to your system’s <code class="language-plaintext highlighter-rouge">PATH</code> environment variable.</li>
+</ul>
+
+<p>Update your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> to include and link OpenCV:</p>
+
+<pre><code class="language-cpp"># Add this
+set(OpenCV_DIR "C:\\OpenCV-MinGW-Build-OpenCV-4.5.5-x64")
+
+# Find and link OpenCV
+find_package(OpenCV REQUIRED)
+target_include_directories(MyApp PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(MyApp PRIVATE ${OpenCV_LIBS} )
+</code></pre>
+
+<p>Sample OpenCV code:</p>
+
+<pre><code class="language-cpp">#include &lt;opencv2/opencv.hpp&gt;
+
+int main(int argc, char *argv[]) {
+
+     // Create a window using OpenCV
+     cv::namedWindow("MyWindow", cv::WINDOW_AUTOSIZE);
+
+     // Wait for a keystroke in the window
+     cv::waitKey(0);
+
+    return 0;
+}
+</code></pre>
+
+<h2 id="4-pkgfinder-package-for-cmake">4. PkgFinder Package for CMake</h2>
+
+<p>To integrate libraries using PkgConfig, you’ll need to install the required binaries. Copy the following files into your <strong>MinGW64</strong> <code class="language-plaintext highlighter-rouge">bin</code> directory:</p>
+
+<ul>
+  <li><strong>bin/pkg-config.exe</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip">pkg-config_0.26-1_win32.zip</a></li>
+  <li><strong>bin/intl.dll</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/gettext-runtime_0.18.1.1-2_win32.zip">gettext-runtime_0.18.1.1-2_win32.zip</a></li>
+  <li><strong>bin/libglib-2.0-0.dll</strong> from <a href="https://download.gnome.org/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip">glib_2.28.8-1_win32.zip</a></li>
+</ul>
+
+<h2 id="5-gstreamer">5. GStreamer</h2>
+
+<p>Gstream requires PkgFinder packe for CMake</p>
+
+<p>To use GStreamer in your C++ projects, ensure the following:</p>
+
+<ol>
+  <li>
+    <p>Install the Microsoft Visual C++ Redistributable:
+ <a href="https://aka.ms/vs/17/release/vc_redist.x86.exe">vc_redist.x86.exe</a></p>
+  </li>
+  <li>
+    <p>Download and install the GStreamer runtime and SDK (MSVC-64 version) from <a href="https://gstreamer.freedesktop.org/download/">here</a>.</p>
+  </li>
+  <li>
+    <p>Add the GStreamer binary folder to the system <code class="language-plaintext highlighter-rouge">PATH</code> environment variable.</p>
+  </li>
+  <li>
+    <p>Set the <code class="language-plaintext highlighter-rouge">PKG_CONFIG_PATH</code> environment variable to the GStreamer package config path:<br />
+ <code class="language-plaintext highlighter-rouge">PKG_CONFIG_PATH = ..\gstreamer\1.0\msvc_x86_64\lib\pkgconfig</code>`</p>
+  </li>
+</ol>
+
+<p>Update your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</p>
+
+<pre><code class="language-cpp"># ...
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(GST REQUIRED gstreamer-1.0)
+pkg_search_module(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0&gt;=1.4)
+
+target_include_directories(${PROJECT_NAME} PRIVATE  ${GST_INCLUDE_DIRS})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::GSTREAMER)
+</code></pre>
+
+<h2 id="6-catch2">6. Catch2</h2>
+
+<h3 id="61-downloading-and-installing-catch2">6.1 Downloading and Installing Catch2</h3>
+
+<p>Catch2 is another popular testing framework. To add Catch2 to your project, clone the repository and build it:</p>
+
+<pre><code class="language-bash">git clone https://github.com/catchorg/Catch2.git
+cd Catch2
+# if you want a specific version
+git checkout v2.13.9
+</code></pre>
+
+<p>Build and install the library:</p>
+
+<pre><code class="language-bash">mkdir build &amp;&amp; cd build
+cmake .. -G "MinGW Makefiles"
+cmake --build . --target install  # This adds the package to CMake
+</code></pre>
+
+<p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="windows" /><summary type="html"><![CDATA[This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.]]></summary></entry><entry><title type="html">CMake On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
+
+<h2 id="1-getting-started">1. Getting Started</h2>
+
+<h3 id="11-downloads">1.1 Downloads</h3>
+
+<ul>
+  <li>Download MinGW64 (posix, seh, msvcrt) from <a href="https://github.com/niXman/mingw-builds-binaries/releases">here</a>.</li>
+  <li>Download CMake (Windows x64) from <a href="https://cmake.org/download/">here</a>.</li>
+</ul>
+
+<hr />
+
+<h3 id="12-installation">1.2 Installation</h3>
+
+<ul>
+  <li>Install CMake in <code class="language-plaintext highlighter-rouge">C:\Program Files\Cmake</code>.</li>
+  <li>Copy the <code class="language-plaintext highlighter-rouge">minGW64</code> folder into <code class="language-plaintext highlighter-rouge">C:\</code>.</li>
+  <li>Add the following binary paths to the <code class="language-plaintext highlighter-rouge">PATH</code> variable:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">C:\minGW64\bin</code></li>
+      <li><code class="language-plaintext highlighter-rouge">C:\Program Files\Cmake\bin</code></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="13-first-project">1.3 First Project</h3>
+
+<ul>
+  <li>The simplest project to build is a <code class="language-plaintext highlighter-rouge">Hello world</code> program. Hence we will add a <code class="language-plaintext highlighter-rouge">main.cpp</code> source:</li>
+</ul>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Hello World!\n";
+    return 0;
+}
+</code></pre>
+
+<ul>
+  <li>The corresponding <code class="language-plaintext highlighter-rouge">cmake</code> instruction would be the file <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</li>
+</ul>
+
+<pre><code class="language-cpp">cmake_minimum_required(VERSION 3.10)
+
+# Project Name
+project(HelloWorld)
+
+# Add an executable with sources
+add_executable(
+    ${PROJECT_NAME} main.cpp
+)
+</code></pre>
+
+<ul>
+  <li>To build the project now you should run the following commands</li>
+</ul>
+
+<pre><code class="language-sh"># compile
+mkdir build
+cd build
+cmake .. -G "MinGW Makefiles"   # Makefile for minGW
+mingw32-make
+
+# clean
+cd ..
+rmdir /s /q build
+</code></pre>
+
+<h2 id="more">More</h2>
+
+<ul>
+  <li>Check out the <a href="https://alotbah.com/cmake-quick-reference/">Quick reference</a> for more.</li>
+  <li>Check out the the <a href="https://alotbah.com/cmakelists-txt-template/">Minimum CMakeLists.txt Template</a>.</li>
+</ul>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="windows" /><summary type="html"><![CDATA[Here is a quick way to get started into development with CMake on Windows x64.]]></summary></entry><entry><title type="html">CMake - Brief Reference</title><link href="http://localhost:4000/posts/CMake-Brief-Reference/" rel="alternate" type="text/html" title="CMake - Brief Reference" /><published>2023-09-19T15:12:00+02:00</published><updated>2023-09-19T15:12:00+02:00</updated><id>http://localhost:4000/posts/CMake%20-%20Brief%20Reference</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Brief-Reference/"><![CDATA[<p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
+
+<h2 id="key-commands-and-concepts">Key Commands and Concepts</h2>
+
+<h3 id="project-definition">Project Definition</h3>
+
+<p>CMake allows for detailed configuration of your project. Below are different levels of project definition:</p>
+
+<ul>
+  <li><strong>Basic Project Definition</strong>: Defines the project name.</li>
+</ul>
+
+<pre><code class="language-cpp">project(MyProjectName)
+</code></pre>
+
+<ul>
+  <li><strong>Project with Versioning</strong>: Specifies the project name along with its version.</li>
+</ul>
+
+<pre><code class="language-cpp">project(MyProjectName VERSION 1.0.0)
+</code></pre>
+
+<ul>
+  <li><strong>Comprehensive Project Configuration</strong>: Provides additional details such as the languages used, a brief description, and a homepage URL.</li>
+</ul>
+
+<pre><code class="language-cpp">project(
+  MyProjectName 
+  VERSION 1.0.0
+  LANGUAGES C CXX ASM Fortran CUDA
+  DESCRIPTION "This is a sample project"
+  HOMEPAGE_URL "https://example.com"
+)
+</code></pre>
+
+<h2 id="variables">Variables</h2>
+
+<p>Variables in CMake are fundamental for managing values and passing data throughout the <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> files.</p>
+
+<h3 id="definition">Definition</h3>
+
+<ul>
+  <li><strong>Basic Variable</strong>: Sets a variable with a specified value. Scoping can be controlled by specifying the parent scope.</li>
+</ul>
+
+<pre><code class="language-cpp">set(VARIABLE_NAME "Value")                  # local scope
+set(VARIABLE_NAME "Value" PARENT_SCOPE)     # parent scope
+</code></pre>
+
+<ul>
+  <li><strong>List Variable</strong>: Commonly used for defining lists of source files.</li>
+</ul>
+
+<pre><code class="language-cpp">set(SOURCES main.cpp MyClass.cpp AnotherClass.cpp)
+</code></pre>
+
+<h3 id="appending-to-variables">Appending to Variables</h3>
+
+<ul>
+  <li><strong>Appending Values</strong>: Adds new values to an existing list.</li>
+</ul>
+
+<pre><code class="language-cpp">set(SOURCES ${SOURCES} YetAnotherClass.cpp) # Traditional way
+list(APPEND SOURCES YetAnotherClass.cpp)    # using APPEND
+</code></pre>
+
+<h2 id="executable-configuration">Executable Configuration</h2>
+
+<p>Defining and managing executables within your project can be easily achieved through CMake:</p>
+
+<ul>
+  <li><strong>Basic Executable</strong>: Defines an executable from a single source file.</li>
+</ul>
+
+<pre><code class="language-cpp">add_executable(my_executable main.cpp)
+</code></pre>
+
+<ul>
+  <li><strong>Multiple Source Files</strong>: Creates an executable from multiple source files.</li>
+</ul>
+
+<pre><code class="language-c">add_executable(my_executable ${SOURCES})
+</code></pre>
+
+<ul>
+  <li><strong>Conditional Source Files</strong>: Dynamically adds source files based on platform or other conditions.</li>
+</ul>
+
+<pre><code class="language-c">if(WIN32)
+    list(APPEND SOURCES win_main.cpp)
+else()
+    list(APPEND SOURCES unix_main.cpp)
+endif()
+
+add_executable(my_app ${SOURCES})
+</code></pre>
+
+<ul>
+  <li><strong>Setting Executable Properties</strong>: Configures specific properties, such as the C++ standard required.</li>
+</ul>
+
+<pre><code class="language-c">add_executable(my_app main.cpp)
+set_target_properties(my_app PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+</code></pre>
+
+<h2 id="including-directories">Including Directories</h2>
+
+<p>CMake offers flexible methods to manage include directories, ensuring that the compiler can locate the necessary header files:</p>
+
+<ul>
+  <li><strong>Global Include Directory</strong>: This approach sets include directories globally, but it is generally discouraged due to its potential to introduce conflicts.</li>
+</ul>
+
+<pre><code class="language-c">include_directories(${CMAKE_SOURCE_DIR}/include)    # bad practice
+</code></pre>
+
+<ul>
+  <li><strong>Target-Specific Include Directory</strong>: Specifies include directories for a specific target, promoting better encapsulation and avoiding global scope issues.</li>
+</ul>
+
+<pre><code class="language-c">add_executable(my_app main.cpp)
+target_include_directories(my_app PRIVATE ${CMAKE_SOURCE_DIR}/include)
+</code></pre>
+
+<h2 id="library-management">Library Management</h2>
+
+<p>Libraries are crucial in C++ projects, and CMake provides robust commands for adding and linking libraries effectively:</p>
+
+<h3 id="adding-libraries">Adding Libraries</h3>
+
+<ul>
+  <li><strong>Static Library</strong>: Creates a static library from specified source files.</li>
+</ul>
+
+<pre><code class="language-cpp">add_library(my_static_lib STATIC src/lib.cpp)
+</code></pre>
+
+<ul>
+  <li><strong>Shared Library</strong>: Creates a shared library.</li>
+</ul>
+
+<pre><code class="language-c">add_library(my_shared_lib SHARED src/lib.cpp)
+</code></pre>
+
+<ul>
+  <li><strong>Module Library</strong>: Creates a library that is loaded dynamically at runtime.</li>
+</ul>
+
+<pre><code class="language-c">add_library(my_shared_lib MODULE src/lib.cpp)
+</code></pre>
+
+<ul>
+  <li><strong>Object Library</strong>: Compiles sources into object files without archiving or linking them into a library.</li>
+</ul>
+
+<pre><code class="language-c">add_library(my_shared_lib OBJECT src/lib.cpp)
+</code></pre>
+
+<h3 id="linking-libraries">Linking Libraries</h3>
+
+<ul>
+  <li><strong>Linking to an Executable</strong>: Links a library to an executable.</li>
+</ul>
+
+<pre><code class="language-c">add_executable(my_app main.cpp)
+add_library(my_lib STATIC src/lib.cpp)
+target_link_libraries(my_app PRIVATE my_lib)
+</code></pre>
+
+<ul>
+  <li><strong>Linking System Libraries</strong>: Links against a system-provided library.</li>
+</ul>
+
+<pre><code class="language-c">find_library(MATH_LIB m)
+if(MATH_LIB)
+    target_link_libraries(my_app PRIVATE ${MATH_LIB})
+endif()
+</code></pre>
+
+<ul>
+  <li><strong>Importing External Libraries</strong>: Allows the use of an external library in your project.</li>
+</ul>
+
+<pre><code class="language-cpp">add_library(external_lib UNKNOWN IMPORTED)
+set_target_properties(external_lib PROPERTIES
+  IMPORTED_LOCATION "/path/to/external_lib.a"
+  INTERFACE_INCLUDE_DIRECTORIES "/path/to/includes"
+)
+</code></pre>
+
+<ul>
+  <li><strong>Known Libraries</strong>: Examples of linking against some well-known libraries. (Examples for Threads, Catch2, OpenCV, Google Benchmark, and Eigen provided)</li>
+</ul>
+
+<h4 id="predefined-variables">Predefined Variables</h4>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_SOURCE_DIR</code></strong>: The top-level source directory.</li>
+</ul>
+
+<pre><code class="language-cpp">message("Top-level source directory: ${CMAKE_SOURCE_DIR}")
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_BINARY_DIR</code></strong>: The top-level build directory (usually the directory where you invoked CMake).</li>
+</ul>
+
+<pre><code class="language-cpp">message("Binary directory: ${CMAKE_BINARY_DIR}")
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_CURRENT_SOURCE_DIR</code></strong>: The source directory of the current CMakeLists.txt.</li>
+</ul>
+
+<pre><code class="language-cpp">include(${CMAKE_CURRENT_SOURCE_DIR}/extra.cmake)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_CURRENT_BINARY_DIR</code></strong>: The build directory corresponding to the current source directory.</li>
+</ul>
+
+<pre><code class="language-cpp">set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_PROJECT_NAME</code></strong>: The name of the first project set in the top-level CMakeLists.txt.</li>
+</ul>
+
+<pre><code class="language-c">message("Top level project: ${CMAKE_PROJECT_NAME}")
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_CXX_COMPILER</code></strong>: The full path to the C++ compiler.</li>
+</ul>
+
+<pre><code class="language-c">message("Using compiler: ${CMAKE_CXX_COMPILER}")
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_C_COMPILER</code></strong>: The full path to the C++ compiler.</li>
+</ul>
+
+<pre><code class="language-c">message("Using compiler: ${CMAKE_C_COMPILER}")
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_PREFIX_PATH</code></strong>: Directories to be searched by <code class="language-plaintext highlighter-rouge">find_package()</code> before its default paths.</li>
+</ul>
+
+<pre><code class="language-cpp">list(APPEND CMAKE_PREFIX_PATH "/custom/path")
+</code></pre>
+
+<h2 id="installation">Installation</h2>
+
+<p>CMake provides a flexible <code class="language-plaintext highlighter-rouge">install()</code> command that allows you to specify which files should be installed and where they should go. This is useful for deploying your project after it has been built.</p>
+
+<h3 id="basic-install-command">Basic Install Command</h3>
+
+<p>To install a target, such as a library or an executable, you can use the <code class="language-plaintext highlighter-rouge">install()</code> command in your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</p>
+
+<pre><code class="language-cpp"># Install an executable
+install(TARGETS my_executable DESTINATION bin)
+
+# Install a library
+install(TARGETS my_library
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+</code></pre>
+
+<h3 id="installing-header-files">Installing Header Files</h3>
+
+<p>You can also install header files using the <code class="language-plaintext highlighter-rouge">install()</code> command:</p>
+
+<pre><code class="language-cpp">install(FILES my_header.h DESTINATION include)
+</code></pre>
+
+<h3 id="directory-installation">Directory Installation</h3>
+
+<p>If you have multiple header files in a directory, you can install them all at once:</p>
+
+<pre><code class="language-cpp">install(DIRECTORY include/ DESTINATION include)
+</code></pre>
+
+<h3 id="full-installation-example">Full Installation Example</h3>
+
+<p>Here’s an example that combines everything:</p>
+
+<pre><code class="language-cpp">project(MyProject)
+
+add_executable(my_executable main.cpp)
+add_library(my_library STATIC my_library.cpp)
+
+install(TARGETS my_executable my_library
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+
+install(FILES my_header.h DESTINATION include)
+install(DIRECTORY include/ DESTINATION include)
+</code></pre>
+
+<h3 id="running-the-install-command">Running the Install Command</h3>
+
+<p>To install the targets and files as specified, you can run the following CMake command after building:</p>
+
+<pre><code class="language-bash">cmake --install build
+</code></pre>
+
+<p>This will copy the built executables, libraries, and header files to the directories specified in your <code class="language-plaintext highlighter-rouge">install()</code> commands.</p>
+
+<p>By understanding and utilizing these commands and best practices, developers can efficiently manage their C++ projects with CMake, ensuring scalability, maintainability, and cross-platform compatibility.</p>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="reference" /><summary type="html"><![CDATA[CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.]]></summary></entry><entry><title type="html">The Black Pill (STM32F411CEU6)</title><link href="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" rel="alternate" type="text/html" title="The Black Pill (STM32F411CEU6)" /><published>2023-05-17T13:41:00+02:00</published><updated>2023-05-17T13:41:00+02:00</updated><id>http://localhost:4000/posts/BlackPill-STM32F411CEU6</id><content type="html" xml:base="http://localhost:4000/posts/BlackPill-STM32F411CEU6/"><![CDATA[<div style="display: flex; flex-wrap: wrap; align-items: center;">
+  <div style="flex: 0 0 auto; min-width: 200px;">
+    <img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" />
+  </div>
+  <div style="flex: 1; min-width: 200px;">
+    <p>In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board <a href="https://stm32-base.org/boards/STM32F411CEU6-WeAct-Black-Pill-V2.0.html">see this</a>.</p>
+
+    <p>This chip is based on ARM Cortex-M4 32-Bit Architecture with clock frequency of 100 MHz RAM of 512KB.</p>
+
+    <p>This chip is manufactured by the Dutch company STMicroelectronics, which is based in Switzerland. The company provides several tools to develop for their chips. The official IDE is called the <a href="https://www.st.com/en/development-tools/stm32cubeide.html">STM32CUBE IDE</a> which is used for this quick tutorial.</p>
+  </div>
+</div>
+
+<h2 id="overview">Overview</h2>
+
+<p>The illustration below demonstrates the characteristics of the pins on the board.</p>
+
+<p><img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1_PinoutDiagram_RichardBalint.png?ssl=1" alt="The pins diagram of the chip/board." /></p>
+
+<h2 id="requirements">Requirements</h2>
+
+<ol>
+  <li>
+    <p><strong>Development Environment</strong>: You can choose either of the following:</p>
+
+    <ul>
+      <li><strong>STM32Cube IDE</strong>:</li>
+    </ul>
+
+    <p>This is the official STM32 IDE and it includes build environment. you can download it from <a href="https://www.st.com/en/development-tools/stm32cubeide.html">here</a>.</p>
+
+    <ul>
+      <li>
+        <p><strong>CMake and Custom IDE</strong>:</p>
+
+        <p>Assuming you have CMake installed.</p>
+
+        <ol>
+          <li>
+            <p>Download the <em>GNU Arm Embedded Toolchain</em> from <a href="https://developer.arm.com/downloads/-/gnu-rm">here</a> and add it to <code class="language-plaintext highlighter-rouge">PATH</code>. This is important to compile the project.</p>
+          </li>
+          <li>
+            <p>Download the <em>OpenOCD</em> from <a href="https://gnutoolchains.com/arm-eabi/openocd/">here</a> and add it to <code class="language-plaintext highlighter-rouge">PATH</code>. This is important for debugging.</p>
+          </li>
+          <li>
+            <p>Download the <strong>STM32CubeMX</strong> from <a href="https://www.st.com/en/development-tools/stm32cubemx.html">here</a> and add it to <code class="language-plaintext highlighter-rouge">PATH</code>. This is important to generate the project files along HAL library.</p>
+          </li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>STM32 Cube Programmer</strong>: To upload the binary to the chip. You can download it from <a href="https://www.st.com/en/development-tools/stm32cubeprog.html">here</a>.</p>
+  </li>
+</ol>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<!-- TODO: Starting the project -->
+
+<h3 id="project-settings-myprojectioc">Project Settings (<code class="language-plaintext highlighter-rouge">myproject.ioc</code>)</h3>
+
+<p>This file defines the settings of the chip when it starts, and the necessary code is re-generated whenever this file is updated. From here, you can set the initial mode of the pins (input. output, etc…), Direct Memory Access (DMA) settings, timers and more.</p>
+
+<h3 id="linker-script-stm32f411ceu6_flashld">Linker Script (<code class="language-plaintext highlighter-rouge">STM32F411CEU6_FLASH.ld</code>)</h3>
+
+<p>Let’s take a look at the linker script generated by STM32 Cube MX:</p>
+
+<pre><code class="language-c">/* Entry Point */
+ENTRY(Reset_Handler)
+
+/* Highest address of the user mode stack */
+_estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
+/* Generate a link error if heap and stack don't fit into RAM */
+_Min_Heap_Size = 0x200;      /* required amount of heap  */
+_Min_Stack_Size = 0x400; /* required amount of stack */
+
+/* Specify the memory areas */
+MEMORY
+{
+RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 20K
+FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 64K
+}
+/* ... */
+</code></pre>
+
+<p>In the linker script (<code class="language-plaintext highlighter-rouge">STM32F411CEU6_FLASH.ld</code>), the <code class="language-plaintext highlighter-rouge">ENTRY(Reset_Handler)</code> directive specifies this entry point.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Reset_Handler</code> is the entry point for the program and is defined in the assembly file <code class="language-plaintext highlighter-rouge">startup_stm32f103xb.s</code>.</p>
+<ul>
+  <li>It is responsible for initializing the system and preparing the execution environment before jumping to the main application code.</li>
+  <li>When the microcontroller is reset, the <code class="language-plaintext highlighter-rouge">Reset_Handler</code> is the first function that gets executed as specified in the above linker.</li>
+  <li>This handler is crucial in setting up the system by configuring the stack pointer, initializing data segments, and calling the <code class="language-plaintext highlighter-rouge">main()</code> function.</li>
+</ul>
+
+<h4 id="memory-layout">Memory Layout</h4>
+
+<p>The memory configuration is defined in the linker script under the <code class="language-plaintext highlighter-rouge">MEMORY</code> section. This section specifies the start addresses and lengths of different memory regions in the microcontroller:</p>
+
+<ul>
+  <li><strong>RAM</strong>: The RAM region is defined with a starting address of <code class="language-plaintext highlighter-rouge">0x20000000</code> and a length of 20KB. This is the area where the runtime data (variables, stack, and heap) will be stored.</li>
+  <li><strong>FLASH</strong>: The FLASH region, starting at <code class="language-plaintext highlighter-rouge">0x08000000</code> with a length of 64KB, is used to store the program code and constants.</li>
+</ul>
+
+<h4 id="stack-and-heap-configuration">Stack and Heap Configuration</h4>
+
+<ul>
+  <li>
+    <p><strong>_estack</strong>: The <code class="language-plaintext highlighter-rouge">_estack</code> symbol defines the highest address of the stack in RAM. It is calculated as the sum of the starting address of RAM (<code class="language-plaintext highlighter-rouge">ORIGIN(RAM)</code>) and the total length of RAM (<code class="language-plaintext highlighter-rouge">LENGTH(RAM)</code>). 
+This ensures that the stack starts at the end of the available RAM space and grows downwards.</p>
+  </li>
+  <li>
+    <p><strong>_Min_Heap_Size</strong>: This value specifies the minimum required heap size, which is set to <code class="language-plaintext highlighter-rouge">0x200</code> (512 bytes). 
+The heap is used for dynamic memory allocation during runtime.</p>
+  </li>
+  <li>
+    <p><strong>_Min_Stack_Size</strong>: This value defines the minimum required stack size, set to <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes). 
+The stack is used for storing local variables and function call information during execution.</p>
+  </li>
+</ul>
+
+<p>These values ensure that the heap and stack have enough space within the RAM, preventing overlap and potential runtime errors. The linker script will generate an error if the specified heap and stack sizes do not fit within the defined RAM area.</p>
+
+<h3 id="c-entry-file-coresrcmainc">C Entry File (<code class="language-plaintext highlighter-rouge">core/Src/main.c</code>)</h3>
+
+<p>This is the main source code, where the entry function resides. Also, this is place where most of the generated code done by the IDE is written after updating <em>myproject.ioc</em>.</p>
+
+<p>We will look into two important functions here.</p>
+
+<h5 id="static-void-mx_gpio_initvoid">static void MX_GPIO_Init(void);</h5>
+
+<p>This function sets up the initial settings for the IO pins of the chip. On the board the blue LED is connected to pin C13. If we set this pin mode to GPIO_Output mode in the <em>myproject.ioc</em> file, as in the illustration below</p>
+
+<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-03_091414183.png?resize=905%2C782&amp;ssl=1" alt="" /></p>
+
+<p>Figure 2: Configuring the chip’s pins</p>
+
+<p>we can see that the IDE has generated the following code in the function MX_GPIO_Init:</p>
+
+<pre><code class="language-cpp">GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+/* GPIO Ports Clock Enable */
+__HAL_RCC_GPIOC_CLK_ENABLE();
+
+/*Configure GPIO pin Output Level */
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+
+/*Configure GPIO pin : PC13 */
+GPIO_InitStruct.Pin = GPIO_PIN_13;
+GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+GPIO_InitStruct.Pull = GPIO_NOPULL;
+GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
+</code></pre>
+
+<p>Lines from 9 to 14 are responsible for initializing the pin C13. We can see in line that the HAL library provides the function <em>HAL_GPIO_Init</em> which takes first the name of the Pins block and then a pointer to a structure <em>GPIO_InitTypeDef</em>. This is also how the pin settings is changed programmatically. The details of the pins settings are explained in the following sub-section.</p>
+
+<h5 id="pin-settings-struct-gpio_inittypedef">Pin Settings struct: GPIO_InitTypeDef</h5>
+
+<p>This C-structure contains five different settings for each pin</p>
+
+<ol>
+  <li>Pin</li>
+  <li>Mode</li>
+  <li>Pull</li>
+  <li>Speed</li>
+  <li>Alternate</li>
+</ol>
+
+<p>The <strong>Pin</strong> specifies the number of the pin in the Pins block.</p>
+
+<hr />
+
+<p>The <strong>Mode</strong> specifies the operating mode of the pin. For example, this can be one of the following mode:</p>
+
+<ul>
+  <li>Input</li>
+  <li>Output</li>
+  <li>Alternate Function</li>
+  <li>Analog mode</li>
+  <li>External Interrupt</li>
+  <li>External Event</li>
+</ul>
+
+<p>The <strong>input</strong> mode changes a variable variable according to the voltage applied to the pin (Note this should never exceed 3.3V for most pins). To access this input of a pin, we can either access it directly as in the second line, or using the HAL library as in the third line in the code snippet below</p>
+
+<pre><code class="language-cpp">    uint8_t PA0;
+    PA0 = GPIOA -&gt; IDR &amp; GPIO_PIN_0;            // directly
+    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
+</code></pre>
+
+<p>To set up the pin as input mode, use the definition GPIO_MODE_INPUT.</p>
+
+<p>The <strong>output</strong> mode has two modes itself, these are</p>
+
+<ul>
+  <li>Push-Pull</li>
+  <li>Open-Drain</li>
+</ul>
+
+<p>The <strong>push-pull mode</strong> sets up the pin for a single direction output. The pin state, can either be high or low. While the <strong>open-drain mode</strong>, sets up the pin to accept bidirectional input and output. (For more <a href="https://open4tech.com/open-drain-output-vs-push-pull-output/">see this article</a>)</p>
+
+<p>In the example of the blue LED, the pin mode was set to one direction only since, the pin has apply a voltage to the LED.</p>
+
+<p>Tu turn on the blue LED, we need to apply a low voltage at the pin C13 as follows</p>
+
+<pre><code class="language-cpp">HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+</code></pre>
+
+<p>To set up a pin in an output mode, either use GPIO_MODE_OUTPUT_PP for Push-Pull mode or GPIO_MODE_OUTPUT_OD for open drain mode.</p>
+
+<p>Note that the function <em>HAL_GPIO_WritePin</em> writes the value to the pin <strong>atomically</strong> without ORing it with other masks. That means interrupts do not have to be disabled.</p>
+
+<p>The <strong>analog</strong> mode allows the pin to read the voltage applied to it. However, not all pins are able to be set to this mode, in the case of this chip, these pins are A0..A7 as well as B0 and B1, which also correspond to ADC0..ADC9.</p>
+
+<p>Accessing the analog value read from the pin needs additional configuration, such as direct memory access (DMA), which we will look into in the following sections.</p>
+
+<p>The rest of the modes are not relevant for this section.</p>
+
+<hr />
+
+<p>The <strong>Pull</strong> variable specifies which resistors should be connected to the pin. The possible configurations are</p>
+
+<ul>
+  <li>Pull down (GPIO_PULLDOWN)</li>
+  <li>Pull up (GPIO_PULLUP)</li>
+  <li>No resistor (GPIO_NOPULL)</li>
+</ul>
+
+<p>The pull down resistor connects the pin to the ground, while the pull up resistor connects the pin to 3.3V.</p>
+
+<hr />
+
+<p>The <strong>Speed</strong> variable specifies the frequency at which the pin should operate</p>
+
+<ul>
+  <li>GPIO_SPEED_FREQ_LOW ( works at 2MHz )</li>
+  <li>GPIO_SPEED_FREQ_MEDIUM ( 12.5MHz to 50MHz )</li>
+  <li>GPIO_SPEED_FREQ_HIGH ( 25MHz to 100MHz )</li>
+  <li>GPIO_SPEED_FREQ_VERY_HIGH ( 50MHz to 200MHz )</li>
+</ul>
+
+<hr />
+
+<h2 id="general-pin-blocks">General Pin Blocks</h2>
+
+<p>In the previous section, we saw how to set up a pin to an push-pull output mode and explored the other modes. Here we will continue to see how to work with the pin blocks, i.e. GPIOA, GPIOB, etc…</p>
+
+<p>The C-structure for the Pin Blocks is <em>GPIO_TypeDef</em>. This structure contains the following variables</p>
+
+<ol>
+  <li>MODER</li>
+  <li>OTYPER</li>
+  <li>OSPEEDER</li>
+  <li>PUPDR</li>
+  <li>IDR</li>
+  <li>ODR</li>
+  <li>BSRR</li>
+  <li>LCKR</li>
+  <li>AFR[2]</li>
+</ol>
+
+<p>In the following, we will at some of these registers</p>
+
+<h3 id="gpio-portmoderegister-moder">GPIO Port <strong>Mode</strong> <strong>R</strong>egister (MODER)</h3>
+
+<p>This 32-bit register is split into 16 words (two bytes) MODER0..MODER15, each word is responsible to set the mode of the corresponding pin, possible modes are:</p>
+
+<ul>
+  <li>00: Input Mode</li>
+  <li>01: Output Mode</li>
+  <li>10: Alternate Function</li>
+  <li>11: Analog Mode</li>
+</ul>
+
+<h3 id="gpio-portoutputtype-register-otyper">GPIO Port <strong>O</strong>utput <strong>Type R</strong>egister (OTYPER)</h3>
+
+<p>When the mode is set to output mode or alternate function, this register specifies the mode whether push-pull or open-drain (see <a href="https://alotbah.com/the-black-pill-stm32f411ceu6/#PP_OD">here</a>).</p>
+
+<h3 id="gpioinputdataregister-idr">GPIO <strong>I</strong>nput <strong>D</strong>ata <strong>R</strong>egister (IDR)</h3>
+
+<p>This register is where the values read from input pins are written. (see <a href="https://alotbah.com/the-black-pill-stm32f411ceu6/#pin-input">this</a>)</p>
+
+<h3 id="gpiooutputdataregister-odr">GPIO <strong>O</strong>utput <strong>D</strong>ata <strong>R</strong>egister (ODR)</h3>
+
+<p>This register is where the values are written into the output pins. It is not recommended to use this register to write to selected pin of the port, use rather the BSRR instead, since this register writes to the whole port. That means writing to a pin requires multiple operations, while the BSRR provides atomic operations to write to a single pin.</p>
+
+<h3 id="gpio-portbitsetresetregister-bsrr">GPIO Port <strong>B</strong>it <strong>S</strong>et/<strong>R</strong>eset <strong>R</strong>egister (BSRR)</h3>
+
+<p>This register is used to atomically write to an output pin. It is used this way</p>
+
+<pre><code class="language-cpp">GPIOA -&gt; BSSR = (uint32_t)GPIO_PIN_0 &lt;&lt; 16U;
+</code></pre>
+
+<p>But this is exactly what HAL libary’s function <em>HAL_GPIO_WritePin</em> does. Hence, there is no need to access it directly for most cases.</p>
+
+<h2 id="pulse-width-modulation-pwm">Pulse-Width-Modulation (PWM)</h2>
+
+<p>The STM32Cube IDE sets this easily, from the file <em>myproject.ioc</em>, first go to System Core, then click on RCC. Set both High and Low Clocks speeds to Crystal/Ceramic Resonator. Then go to Tim3 Peripheral in Timers. The timer 3 has four channels, we activate the first channel by setting it to “PWM Generation CH1”.</p>
+
+<p>The frequency of the PWM is defined by</p>
+
+<p>fPWM=fAPB Timer Clock(ARR+1)⋅(PSC+1)fPWM=fAPB Timer Clock(ARR+1)⋅(PSC+1)</p>
+
+<p>Here, <strong>ARR</strong> is the <em>Auto-reload register,</em> which defines the counter period. <strong>PSC</strong> is the <em>pre-scaler.</em> Note that both ARR and PSC registers contain the corresponding values minus one.</p>
+
+<p>The Duty is defined by</p>
+
+<p>Duty=CCRARR[%]Duty=CCRARR[%]</p>
+
+<p>Here <strong>CCR</strong> is the <em>capture compare register</em>.</p>
+
+<p>These registers can be set in the “Parameter Settings” window by their names.</p>
+
+<p>This generates a private variable “htim3” in <em>main.c</em>. This is the handler of the timer. To initialize the timer, we need to call the following function</p>
+
+<pre><code class="language-cpp">HAL_TIM_PWM_Start(&amp;htim3, TIM_CHANNEL_1);
+</code></pre>
+
+<p>And this will get the PWM working.</p>
+
+<h2 id="setting-up-the-clock-frequency">Setting up the Clock Frequency</h2>
+
+<p>From <em>myproject.ioc</em> click on the tab “Clock Configuration”, you should see the following screen</p>
+
+<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_114731533.png?resize=1024%2C738&amp;ssl=1" alt="" /></p>
+
+<p>Figure 3: Screenshot of the Clock Configuration</p>
+
+<p>The clock speed is the HCLK register. Now we will configure the clock depending on the chip. For instance, the black pill STM32F411CEUx from WeAct is connected to a 32.786KHz resonator on the LSE and 25MHz on the HSE. Therefore, it has to be set up as in Figure 3 to clock it up to 100MHz.</p>
+
+<p>However, sometimes certain services require a certain clock speeds, as explained in the next section.</p>
+
+<h2 id="serial-connection">Serial Connection</h2>
+
+<p>Here, we will explain the service “universal serial bus on-the-go full speed” (USB OTG FS) which is compliant with USB 2.0. This service requires a dedicated 48MHz clock connected to the HSE oscillator. (see datasheet 3.27)</p>
+
+<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_120919409.png?resize=975%2C480&amp;ssl=1" alt="" /></p>
+
+<p>Figure 4: Screenshot of the Clock configured for the USB_OTG_FS service</p>
+
+<p>After having configured the APB1 peripheral clock to run at 48MHz, we should</p>
+
+<ol>
+  <li>In the Connectivity, USB_OTG_FS configuration set the mode to “Device Only”. This activates the middleware “USB_DEVICE” in the “Middleware” category.</li>
+  <li>Go to Middleware, USB_DEVICE and set the class to be “Communication Device Class (Virtual Port Com)”.</li>
+  <li>Now in the configuration, you can change the “PRODUCT_String” among other settings.</li>
+</ol>
+
+<p>Notes<br />
+– The “USB_DEVICE” middleware uses another middleware which is STM32<em>USB_DEVICE Library, which uses the “usb_core” from it.<br />
+– The “usb_core” controls the important parts of the USB device but not the communication<br />
+– From “USB_DEVICE”, the core is stored in the _usb_device.c</em><br />
+– The description (vendor, product, ..) is stored in <em>usbd_desc.c</em><br />
+– The functionality to send and receive data are in <em>usb_cdc_if.c</em>, which is what we need to edit.</p>]]></content><author><name></name></author><category term="embedded" /><category term="stm32" /><category term="STM32F411CEU6" /><category term="embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="Arm" /><category term="Cortex_m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="code">Code</h2>
+
+<pre><code class="language-cpp">    uint8_t PA0;
+    PA0 = GPIOA -&gt; IDR &amp; GPIO_PIN_0;            // directly
+    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
+
+    #include &lt;iostream&gt;
+
+int main(int argc, char *argv[]) {
+
+  /* An annoying "Hello World" example */
+  for (auto i = 0; i &lt; 0xFFFF; i++)
+    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;
+
+  char c = '\n';
+  unordered_map &lt;string, vector&lt;string&gt; &gt; m;
+  m["key"] = "\\\\"; // this is an error
+
+  return -2e3 + 12l;
+
+  
+GPIO_InitStruct.Pin = GPIO_PIN_13;
+GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+GPIO_InitStruct.Pull = GPIO_NOPULL;
+GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
+}
+</code></pre>
+
+<div class="language-cpp highlighter-rouge">
+<div class="code-header">
+<span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span>
+<button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button>
+</div>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">uint8_t</span> <span class="n">PA0</span><span class="p">;</span>
+<span class="n">PA0</span> <span class="o">=</span> <span class="n">GPIOA</span> <span class="o">-&gt;</span> <span class="n">IDR</span> <span class="o">&amp;</span> <span class="n">GPIO_PIN_0</span><span class="p">;</span>            <span class="c1">// directly</span>
+<span class="n">PA0</span> <span class="o">=</span> <span class="n">HAL_GPIO_ReadPin</span><span class="p">(</span><span class="n">GPIOA</span><span class="p">,</span> <span class="n">GPIO_PIN_0</span><span class="p">);</span>  <span class="c1">// using HAL Library</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+
+  <span class="cm">/* An annoying "Hello World" example */</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mh">0xFFFF</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Hello, World!"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+
+  <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">'\n'</span><span class="p">;</span>
+  <span class="n">unordered_map</span> <span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">;</span>
+  <span class="n">m</span><span class="p">[</span><span class="s">"key"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"</span><span class="se">\\\\</span><span class="s">"</span><span class="p">;</span> <span class="c1">// this is an error</span>
+
+  <span class="k">return</span> <span class="o">-</span><span class="mf">2e3</span> <span class="o">+</span> <span class="mi">12l</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+</div>
+
+<h2 id="callouts">Callouts</h2>
+
+<div class="alert alert-primary" role="alert">
+  <p>Here are multiple items</p>
+  <ul>
+    <li>item 1</li>
+    <li>item 2
+      <ul>
+        <li>item 2.1</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="alert alert-success" role="alert">
+  <p>Here are multiple items</p>
+  <ul>
+    <li>item 1</li>
+    <li>item 2
+      <ul>
+        <li>item 2.1</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="alert alert-danger" role="alert">
+  <p>This is a danger alert—be cautious!</p>
+
+  <p><img src="https://via.placeholder.com/150" alt="Example Image" /></p>
+</div>
+
+<div class="alert alert-warning" role="alert">
+  This is a warning alert—attention needed! 
+   d
+</div>
+
+<div class="alert alert-info" role="alert">
+  This is an informational alert—take note!
+</div>]]></content><author><name></name></author><category term="Web" /><category term="Jekyll" /><summary type="html"><![CDATA[Code]]></summary></entry></feed>
