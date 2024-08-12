@@ -272,6 +272,20 @@
 }
 </style>
 
+<script type="text/x-mathjax-config">
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\(', '\)']],
+      displayMath: [['$$', '$$'], ['\[', '\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 
 
@@ -587,6 +601,64 @@
 <div id="post-list" class="flex-grow-1 px-xl-1">
   
     <article class="card-wrapper card">
+      <a href="/posts/CMake-Production/" class="post-preview row g-0 flex-md-row-reverse">
+        
+
+        
+
+        <div class="col-md-12">
+          <div class="card-body d-flex flex-column">
+            <h1 class="card-title my-2 mt-md-0">CMake - Publish Your Own Library</h1>
+
+            <div class="card-text content mt-0 mb-3">
+              <p>Introduction to Publishing CMake Projects
+
+When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project...</p>
+            </div>
+
+            <div class="post-meta flex-grow-1 d-flex align-items-end">
+              <div class="me-auto">
+                <!-- posted date -->
+                <i class="far fa-calendar fa-fw me-1"></i>
+                <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1700308800"
+  data-df="ll"
+  
+>
+  Nov 18, 2023
+</time>
+
+
+                <!-- categories -->
+                
+                  <i class="far fa-folder-open fa-fw me-1"></i>
+                  <span class="categories">
+                    
+                      Software-Development,
+                      Cmake
+                  </span>
+                
+              </div>
+
+              
+            </div>
+            <!-- .post-meta -->
+          </div>
+          <!-- .card-body -->
+        </div>
+      </a>
+    </article>
+  
+    <article class="card-wrapper card">
       <a href="/posts/CMake-Adding-Libraries/" class="post-preview row g-0 flex-md-row-reverse">
         
 
@@ -627,9 +699,8 @@
                   <i class="far fa-folder-open fa-fw me-1"></i>
                   <span class="categories">
                     
-                      software,
-                      C++,
-                      cmake
+                      Software-Development,
+                      Cmake
                   </span>
                 
               </div>
@@ -651,18 +722,18 @@
 
         <div class="col-md-12">
           <div class="card-body d-flex flex-column">
-            <h1 class="card-title my-2 mt-md-0">CMake On Windows</h1>
+            <h1 class="card-title my-2 mt-md-0">CMake - Installation On Windows</h1>
 
             <div class="card-text content mt-0 mb-3">
               <p>Here is a quick way to get started into development with CMake on Windows x64.
 
-1. Getting Started
+Getting Started
 
-1.1 Downloads
+Downloads
 
 
   Download MinGW64 (posix, seh, msvcrt) from here.
-  Download CMake (Windows x64)...</p>
+  Download CMake (Windows x64) from h...</p>
             </div>
 
             <div class="post-meta flex-grow-1 d-flex align-items-end">
@@ -692,9 +763,8 @@
                   <i class="far fa-folder-open fa-fw me-1"></i>
                   <span class="categories">
                     
-                      software,
-                      C++,
-                      cmake
+                      Software-Development,
+                      Cmake
                   </span>
                 
               </div>
@@ -749,9 +819,8 @@
                   <i class="far fa-folder-open fa-fw me-1"></i>
                   <span class="categories">
                     
-                      software,
-                      C++,
-                      cmake
+                      Software-Development,
+                      Cmake
                   </span>
                 
               </div>
@@ -808,8 +877,8 @@
                   <i class="far fa-folder-open fa-fw me-1"></i>
                   <span class="categories">
                     
-                      embedded,
-                      stm32,
+                      Embedded-Development,
+                      STM32,
                       STM32F411CEU6
                   </span>
                 
@@ -835,15 +904,17 @@
             <h1 class="card-title my-2 mt-md-0">Jekyll Chirpy Tester</h1>
 
             <div class="card-text content mt-0 mb-3">
-              <p>Code
+              <p>Math
 
-    uint8_t PA0;
-    PA0 = GPIOA -&amp;gt; IDR &amp;amp; GPIO_PIN_0;            // directly
-    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
+Inline math with \(\sin(x)\): \(\sin(x)\)
 
-    #include &amp;lt;iostream&amp;gt;
+Display math with \(\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}\):
 
-int ma...</p>
+\[
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+\]
+
+Inline math with es...</p>
             </div>
 
             <div class="post-meta flex-grow-1 d-flex align-items-end">
@@ -923,6 +994,13 @@ int ma...</p>
         
         
         <li class="text-truncate lh-lg">
+          <a href="/posts/CMake-Production/">CMake - Publish Your Own Library</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
           <a href="/posts/CMake-Adding-Libraries/">CMake - Adding Libraries</a>
         </li>
       
@@ -930,7 +1008,7 @@ int ma...</p>
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-On-Windows/">CMake On Windows</a>
+          <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
         </li>
       
         
@@ -945,13 +1023,6 @@ int ma...</p>
         
         <li class="text-truncate lh-lg">
           <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/Tester/">Jekyll Chirpy Tester</a>
         </li>
       
     </ul>
@@ -990,27 +1061,6 @@ int ma...</p>
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1035,19 +1085,12 @@ int ma...</p>
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -1088,6 +1131,124 @@ int ma...</p>
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1152,103 +1313,6 @@ int ma...</p>
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1291,6 +1355,8 @@ int ma...</p>
     
     
     
+      
+    
   
     
     
@@ -1302,6 +1368,76 @@ int ma...</p>
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -1338,16 +1474,16 @@ int ma...</p>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -1356,16 +1492,16 @@ int ma...</p>
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -1457,27 +1593,6 @@ int ma...</p>
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1502,19 +1617,12 @@ int ma...</p>
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -1555,6 +1663,124 @@ int ma...</p>
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1619,103 +1845,6 @@ int ma...</p>
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1758,6 +1887,8 @@ int ma...</p>
     
     
     
+      
+    
   
     
     
@@ -1769,6 +1900,76 @@ int ma...</p>
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -1805,16 +2006,16 @@ int ma...</p>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -1823,16 +2024,16 @@ int ma...</p>
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>

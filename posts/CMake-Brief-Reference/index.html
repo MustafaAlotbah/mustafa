@@ -278,6 +278,20 @@
 }
 </style>
 
+<script type="text/x-mathjax-config">
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\(', '\)']],
+      displayMath: [['$$', '$$'], ['\[', '\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 
 
@@ -884,9 +898,9 @@
   <div class="content">
     <p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
 
-<h2 id="key-commands-and-concepts"><span class="me-2">Key Commands and Concepts</span><a href="#key-commands-and-concepts" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="key-commands-and-concepts">1. <span class="me-2">Key Commands and Concepts</span><a href="#key-commands-and-concepts" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
-<h3 id="project-definition"><span class="me-2">Project Definition</span><a href="#project-definition" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="project-definition">1.1. <span class="me-2">Project Definition</span><a href="#project-definition" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>CMake allows for detailed configuration of your project. Below are different levels of project definition:</p>
 
@@ -917,11 +931,11 @@
 )
 </code></pre>
 
-<h2 id="variables"><span class="me-2">Variables</span><a href="#variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="variables">2. <span class="me-2">Variables</span><a href="#variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>Variables in CMake are fundamental for managing values and passing data throughout the <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> files.</p>
 
-<h3 id="definition"><span class="me-2">Definition</span><a href="#definition" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="definition">2.1. <span class="me-2">Definition</span><a href="#definition" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li><strong>Basic Variable</strong>: Sets a variable with a specified value. Scoping can be controlled by specifying the parent scope.</li>
@@ -938,7 +952,7 @@ set(VARIABLE_NAME "Value" PARENT_SCOPE)     # parent scope
 <pre><code class="language-cpp">set(SOURCES main.cpp MyClass.cpp AnotherClass.cpp)
 </code></pre>
 
-<h3 id="appending-to-variables"><span class="me-2">Appending to Variables</span><a href="#appending-to-variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="appending-to-variables">2.2. <span class="me-2">Appending to Variables</span><a href="#appending-to-variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li><strong>Appending Values</strong>: Adds new values to an existing list.</li>
@@ -948,7 +962,7 @@ set(VARIABLE_NAME "Value" PARENT_SCOPE)     # parent scope
 list(APPEND SOURCES YetAnotherClass.cpp)    # using APPEND
 </code></pre>
 
-<h2 id="executable-configuration"><span class="me-2">Executable Configuration</span><a href="#executable-configuration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="executable-configuration">3. <span class="me-2">Executable Configuration</span><a href="#executable-configuration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>Defining and managing executables within your project can be easily achieved through CMake:</p>
 
@@ -991,7 +1005,7 @@ set_target_properties(my_app PROPERTIES
 )
 </code></pre>
 
-<h2 id="including-directories"><span class="me-2">Including Directories</span><a href="#including-directories" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="including-directories">4. <span class="me-2">Including Directories</span><a href="#including-directories" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>CMake offers flexible methods to manage include directories, ensuring that the compiler can locate the necessary header files:</p>
 
@@ -1010,11 +1024,11 @@ set_target_properties(my_app PROPERTIES
 target_include_directories(my_app PRIVATE ${CMAKE_SOURCE_DIR}/include)
 </code></pre>
 
-<h2 id="library-management"><span class="me-2">Library Management</span><a href="#library-management" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="library-management">5. <span class="me-2">Library Management</span><a href="#library-management" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>Libraries are crucial in C++ projects, and CMake provides robust commands for adding and linking libraries effectively:</p>
 
-<h3 id="adding-libraries"><span class="me-2">Adding Libraries</span><a href="#adding-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="adding-libraries">5.1. <span class="me-2">Adding Libraries</span><a href="#adding-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li><strong>Static Library</strong>: Creates a static library from specified source files.</li>
@@ -1044,7 +1058,7 @@ target_include_directories(my_app PRIVATE ${CMAKE_SOURCE_DIR}/include)
 <pre><code class="language-c">add_library(my_shared_lib OBJECT src/lib.cpp)
 </code></pre>
 
-<h3 id="linking-libraries"><span class="me-2">Linking Libraries</span><a href="#linking-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="linking-libraries">5.2. <span class="me-2">Linking Libraries</span><a href="#linking-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li><strong>Linking to an Executable</strong>: Links a library to an executable.</li>
@@ -1080,7 +1094,7 @@ set_target_properties(external_lib PROPERTIES
   <li><strong>Known Libraries</strong>: Examples of linking against some well-known libraries. (Examples for Threads, Catch2, OpenCV, Google Benchmark, and Eigen provided)</li>
 </ul>
 
-<h4 id="predefined-variables"><span class="me-2">Predefined Variables</span><a href="#predefined-variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h4 id="predefined-variables">5.2.1. <span class="me-2">Predefined Variables</span><a href="#predefined-variables" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <ul>
   <li><strong><code class="language-plaintext highlighter-rouge">CMAKE_SOURCE_DIR</code></strong>: The top-level source directory.</li>
@@ -1138,11 +1152,11 @@ set_target_properties(external_lib PROPERTIES
 <pre><code class="language-cpp">list(APPEND CMAKE_PREFIX_PATH "/custom/path")
 </code></pre>
 
-<h2 id="installation"><span class="me-2">Installation</span><a href="#installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="installation">6. <span class="me-2">Installation</span><a href="#installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>CMake provides a flexible <code class="language-plaintext highlighter-rouge">install()</code> command that allows you to specify which files should be installed and where they should go. This is useful for deploying your project after it has been built.</p>
 
-<h3 id="basic-install-command"><span class="me-2">Basic Install Command</span><a href="#basic-install-command" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="basic-install-command">6.1. <span class="me-2">Basic Install Command</span><a href="#basic-install-command" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>To install a target, such as a library or an executable, you can use the <code class="language-plaintext highlighter-rouge">install()</code> command in your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</p>
 
@@ -1156,21 +1170,21 @@ install(TARGETS my_library
         RUNTIME DESTINATION bin)
 </code></pre>
 
-<h3 id="installing-header-files"><span class="me-2">Installing Header Files</span><a href="#installing-header-files" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="installing-header-files">6.2. <span class="me-2">Installing Header Files</span><a href="#installing-header-files" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>You can also install header files using the <code class="language-plaintext highlighter-rouge">install()</code> command:</p>
 
 <pre><code class="language-cpp">install(FILES my_header.h DESTINATION include)
 </code></pre>
 
-<h3 id="directory-installation"><span class="me-2">Directory Installation</span><a href="#directory-installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="directory-installation">6.3. <span class="me-2">Directory Installation</span><a href="#directory-installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>If you have multiple header files in a directory, you can install them all at once:</p>
 
 <pre><code class="language-cpp">install(DIRECTORY include/ DESTINATION include)
 </code></pre>
 
-<h3 id="full-installation-example"><span class="me-2">Full Installation Example</span><a href="#full-installation-example" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="full-installation-example">6.4. <span class="me-2">Full Installation Example</span><a href="#full-installation-example" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>Here’s an example that combines everything:</p>
 
@@ -1188,7 +1202,7 @@ install(FILES my_header.h DESTINATION include)
 install(DIRECTORY include/ DESTINATION include)
 </code></pre>
 
-<h3 id="running-the-install-command"><span class="me-2">Running the Install Command</span><a href="#running-the-install-command" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="running-the-install-command">6.5. <span class="me-2">Running the Install Command</span><a href="#running-the-install-command" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>To install the targets and files as specified, you can run the following CMake command after building:</p>
 
@@ -1207,9 +1221,8 @@ install(DIRECTORY include/ DESTINATION include)
       <div class="post-meta mb-3">
         <i class="far fa-folder-open fa-fw me-1"></i>
         
-          <a href="/categories/software/">software</a>,
-          <a href="/categories/c/">C++</a>,
-          <a href="/categories/cmake/">cmake</a>
+          <a href="/categories/software-development/">Software-Development</a>,
+          <a href="/categories/cmake/">Cmake</a>
       </div>
     
 
@@ -1221,22 +1234,22 @@ install(DIRECTORY include/ DESTINATION include)
           <a
             href="/tags/software/"
             class="post-tag no-text-decoration"
-          >software</a>
+          >Software</a>
         
           <a
             href="/tags/c/"
             class="post-tag no-text-decoration"
-          >c++</a>
+          >C++</a>
         
           <a
             href="/tags/cmake/"
             class="post-tag no-text-decoration"
-          >cmake</a>
+          >Cmake</a>
         
           <a
             href="/tags/reference/"
             class="post-tag no-text-decoration"
-          >reference</a>
+          >Reference</a>
         
       </div>
     
@@ -1313,8 +1326,15 @@ install(DIRECTORY include/ DESTINATION include)
 
 
   <section id="access-lastmod">
-    <h2 class="panel-heading">Recently Updated</h2>
+    <h2 class="panel-heading">7. Recently Updated</h2>
     <ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/CMake-Production/">CMake - Publish Your Own Library</a>
+        </li>
       
         
         
@@ -1327,7 +1347,7 @@ install(DIRECTORY include/ DESTINATION include)
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-On-Windows/">CMake On Windows</a>
+          <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
         </li>
       
         
@@ -1342,13 +1362,6 @@ install(DIRECTORY include/ DESTINATION include)
         
         <li class="text-truncate lh-lg">
           <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/Tester/">Jekyll Chirpy Tester</a>
         </li>
       
     </ul>
@@ -1387,27 +1400,6 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1432,19 +1424,12 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -1485,6 +1470,124 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1549,103 +1652,6 @@ install(DIRECTORY include/ DESTINATION include)
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1688,6 +1694,8 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
+      
+    
   
     
     
@@ -1699,6 +1707,76 @@ install(DIRECTORY include/ DESTINATION include)
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -1731,20 +1809,20 @@ install(DIRECTORY include/ DESTINATION include)
 
 
   <section>
-    <h2 class="panel-heading">Trending Tags</h2>
+    <h2 class="panel-heading">8. Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -1753,16 +1831,16 @@ install(DIRECTORY include/ DESTINATION include)
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -1777,7 +1855,7 @@ install(DIRECTORY include/ DESTINATION include)
 
 
   <section id="toc-wrapper" class="d-none ps-0 pe-4">
-    <h2 class="panel-heading ps-3 mb-2">Contents</h2>
+    <h2 class="panel-heading ps-3 mb-2">9. Contents</h2>
     <nav id="toc"></nav>
   </section>
 
@@ -1843,6 +1921,18 @@ install(DIRECTORY include/ DESTINATION include)
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
 
 
 
@@ -1854,8 +1944,38 @@ install(DIRECTORY include/ DESTINATION include)
 
 
   <aside id="related-posts" aria-labelledby="related-label">
-    <h3 class="mb-4" id="related-label">Further Reading</h3>
+    <h3 class="mb-4" id="related-label">9.1. Further Reading</h3>
     <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
+      
+        <article class="col">
+          <a href="/posts/CMake-Production/" class="post-preview card h-100">
+            <div class="card-body">
+              <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1700308800"
+  data-df="ll"
+  
+>
+  Nov 18, 2023
+</time>
+
+              <h4 class="pt-0 my-2">9.1.1. CMake - Publish Your Own Library</h4>
+              <div class="text-muted">
+                <p>Introduction to Publishing CMake Projects
+
+When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project...</p>
+              </div>
+            </div>
+          </a>
+        </article>
       
         <article class="col">
           <a href="/posts/CMake-Adding-Libraries/" class="post-preview card h-100">
@@ -1877,7 +1997,7 @@ install(DIRECTORY include/ DESTINATION include)
   Nov 15, 2023
 </time>
 
-              <h4 class="pt-0 my-2">CMake - Adding Libraries</h4>
+              <h4 class="pt-0 my-2">9.1.2. CMake - Adding Libraries</h4>
               <div class="text-muted">
                 <p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, ...</p>
               </div>
@@ -1905,17 +2025,17 @@ install(DIRECTORY include/ DESTINATION include)
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">CMake On Windows</h4>
+              <h4 class="pt-0 my-2">9.1.3. CMake - Installation On Windows</h4>
               <div class="text-muted">
                 <p>Here is a quick way to get started into development with CMake on Windows x64.
 
-1. Getting Started
+Getting Started
 
-1.1 Downloads
+Downloads
 
 
   Download MinGW64 (posix, seh, msvcrt) from here.
-  Download CMake (Windows x64)...</p>
+  Download CMake (Windows x64) from h...</p>
               </div>
             </div>
           </a>
@@ -1950,7 +2070,7 @@ install(DIRECTORY include/ DESTINATION include)
       class="btn btn-outline-primary"
       aria-label="Newer"
     >
-      <p>CMake On Windows</p>
+      <p>CMake - Installation On Windows</p>
     </a>
   
 </nav>
@@ -2037,27 +2157,6 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -2082,19 +2181,12 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -2135,6 +2227,124 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -2199,103 +2409,6 @@ install(DIRECTORY include/ DESTINATION include)
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2338,6 +2451,8 @@ install(DIRECTORY include/ DESTINATION include)
     
     
     
+      
+    
   
     
     
@@ -2349,6 +2464,76 @@ install(DIRECTORY include/ DESTINATION include)
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -2381,20 +2566,20 @@ install(DIRECTORY include/ DESTINATION include)
 
 
   <section>
-    <h2 class="panel-heading">Trending Tags</h2>
+    <h2 class="panel-heading">10. Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -2403,16 +2588,16 @@ install(DIRECTORY include/ DESTINATION include)
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -2596,7 +2781,7 @@ install(DIRECTORY include/ DESTINATION include)
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('search-results'),
     json: '/assets/js/data/search.json',
-    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2><a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
+    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>11. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
     noResultsText: '<p class="mt-5">Oops! No results found.</p>',
     templateMiddleware: function(prop, value, template) {
       if (prop === 'categories') {

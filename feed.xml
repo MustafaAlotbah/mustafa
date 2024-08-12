@@ -1,4 +1,596 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-11T20:51:52+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">CMake - Adding Libraries</title><link href="http://localhost:4000/posts/CMake-Adding-Libraries/" rel="alternate" type="text/html" title="CMake - Adding Libraries" /><published>2023-11-15T17:08:00+01:00</published><updated>2023-11-15T17:08:00+01:00</updated><id>http://localhost:4000/posts/CMake-Adding-Libraries</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Adding-Libraries/"><![CDATA[<p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-12T21:33:28+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">CMake - Publish Your Own Library</title><link href="http://localhost:4000/posts/CMake-Production/" rel="alternate" type="text/html" title="CMake - Publish Your Own Library" /><published>2023-11-18T13:00:00+01:00</published><updated>2023-11-18T13:00:00+01:00</updated><id>http://localhost:4000/posts/CMake-Production</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Production/"><![CDATA[<h2 id="introduction-to-publishing-cmake-projects">Introduction to Publishing CMake Projects</h2>
+
+<p>When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project effectively and use a build system that facilitates this process. CMake is a powerful and widely-used build system that helps manage the build process in a platform-independent manner. This tutorial will guide you through the process of structuring and publishing your own CMake project, ensuring that your library is not only well-organized but also easy to build, test, and distribute.</p>
+
+<p>CMake projects are organized to streamline the development process, allowing for easy integration of dependencies, consistent build processes across different platforms, and a clear separation between the public API, private code, and other components like tests. By following a well-defined structure, you make your project more maintainable and accessible to other developers, who can easily understand and contribute to your code.</p>
+
+<h2 id="objectives">Objectives</h2>
+
+<p>The primary objective of this article is to provide a comprehensive guide on setting up a CMake-based C++ project for public release. We will cover essential topics such as project structure, CMake configuration, handling platform-specific dependencies, and defining installation rules. By the end of this guide, you will be equipped to publish a well-organized, portable, and easily integrable library.</p>
+
+<p>However, this guide will focus on the CMake configuration and project structuring aspects, rather than delving deeply into the testing or the internal implementation of the library itself. Testing will be mentioned briefly, but the core emphasis will be on preparing your library for public consumption through CMake.</p>
+
+<h2 id="project-structure-overview">Project Structure Overview</h2>
+
+<p>The structure of a CMake project plays a significant role in how easily it can be built, tested, and integrated into other projects. A well-organized project directory helps in separating different concerns such as public headers, source files, dependencies, and configuration files. Below is a typical structure for a CMake-based C++ project, which we will dissect:</p>
+
+<pre><code class="language-bash">my_library_project/                # Project Folder
+│
+├── CMakeLists.txt                 # Root CMake configuration file
+├── cmake/
+│   └── my_libraryConfig.cmake.in  # CMake config template for installation
+│
+├── dependencies/                  # External dependencies for different platforms
+│   ├── win_x86_64/                # Dependencies for Windows x64
+│   └── linux_x86_64/              # Dependencies for Linux x64
+│
+├── include/                       # Public header files exposed to users
+│   └── my_library/                # Library-specific headers
+│       ├── my_library.h           # Main public API header
+│       └── my_project_export.h    # Export macros for DLLs/shared libraries
+│
+├── my_library/                    # Source code for the library
+│   ├── CMakeLists.txt             # Module-specific CMake configuration
+│   │
+│   ├── internal/                  # Internal headers (not exposed to users)
+│   │   └── internal_helpers.h     # Helpers and private interfaces
+│   │
+│   └── source/                    # Implementation files
+│       ├── my_library.cpp         # Implementation of the public API
+│       └── internal_helpers.cpp   # Implementation of internal functionality
+│    
+│
+└── tests/                         # Test code for the library
+    ├── CMakeLists.txt             # CMake Configuration for tests
+    └── test_my_library.cpp        # Unit or integration tests
+</code></pre>
+
+<p>Breakdown of the Project Structure</p>
+
+<ul>
+  <li>
+    <p><strong>CMakeLists.txt (Root Level):</strong></p>
+
+    <p>This file serves as the entry point for CMake, defining the project’s configuration and build settings. It sets the required CMake version, specifies the C++ standard, configures platform-specific dependencies, and adjusts compiler flags based on the build type. The file also defines output directories and includes subdirectories for building the main library and associated tests. Additionally, it manages required packages and ensures compatibility across different platforms.</p>
+  </li>
+  <li>
+    <p><strong>cmake/ Directory:</strong></p>
+
+    <p>Contains custom CMake modules and configuration templates, such as <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code>, which is used for packaging and installing your library. This template allows users to find and link against your library using <code class="language-plaintext highlighter-rouge">find_package</code>.</p>
+  </li>
+  <li>
+    <p><strong>dependencies/ Directory:</strong></p>
+
+    <p>This is where you would store any external dependencies your project relies on, especially if they are platform-specific. Subdirectories can be organized by platform, such as <code class="language-plaintext highlighter-rouge">win_x86_64</code> for Windows and <code class="language-plaintext highlighter-rouge">linux_x86_64</code> for Linux. Including dependencies here makes it easier to manage third-party libraries that are not readily available through package managers.</p>
+  </li>
+  <li>
+    <p><strong>include/ Directory:</strong></p>
+
+    <p>This folder contains the public API headers. These are the files that other projects will include when they use your library. The headers are usually organized in a subdirectory named after your library (e.g., <code class="language-plaintext highlighter-rouge">my_library/</code>). The main API header (<code class="language-plaintext highlighter-rouge">my_library.h</code>) should include the core functions and classes, while the <code class="language-plaintext highlighter-rouge">my_project_export.h</code> file handles macro definitions that control symbol visibility, which is crucial when building shared libraries.</p>
+  </li>
+  <li>
+    <p><strong>my_library/ Directory:</strong></p>
+
+    <p>This is the main codebase of your library. It typically contains a <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> file if the module needs its own build rules, an <code class="language-plaintext highlighter-rouge">internal/</code> directory for private headers not exposed to users, and a <code class="language-plaintext highlighter-rouge">source/</code> directory for the implementation files (<code class="language-plaintext highlighter-rouge">.cpp</code>). This separation between internal and public components helps in encapsulating the internal details of your library.</p>
+  </li>
+  <li>
+    <p><strong>tests/ Directory:</strong></p>
+
+    <p>Contains unit or integration tests that validate your library’s functionality. These tests are usually written using a testing framework (like Google Test, Catch2, or Boost.Test) and should cover both the public API and critical internal components. The <code class="language-plaintext highlighter-rouge">test_my_library.cpp</code> file is an example test that might include various test cases to ensure your library works as expected. Here we will, however, focus on the project structure rather than on testing.</p>
+  </li>
+</ul>
+
+<h2 id="root-cmakeliststxt">Root CMakeLists.txt</h2>
+
+<p>The root <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> file is the cornerstone of your project’s build configuration. It defines the essential settings and directives that guide CMake in compiling, linking, and packaging your project. Writing a well-structured <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> ensures that your project is not only maintainable but also portable across different environments and platforms. Below is a detailed explanation of the key components of this file.</p>
+
+<h3 id="minimum-cmake-version-and-project-definition">Minimum CMake Version and Project Definition</h3>
+
+<p>To start, you must define the minimum version of CMake that is required to build your project, as well as the project name and version. This is not only a formality but also a fundamental part of your project’s identity.</p>
+
+<pre><code class="language-cpp">cmake_minimum_required(VERSION 3.20)
+project(my_library_project VERSION 0.1.0)
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">cmake_minimum_required</code> command specifies the minimum version of CMake that is required to build your project. This ensures that all developers and continuous integration systems use a compatible version of CMake, avoiding potential issues caused by deprecated or unavailable features in older versions. Here, version 3.20 is chosen to leverage modern CMake capabilities.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">project</code> command defines the name of the project and its version. This is critical as it not only names your project but also associates a version number with it, which can be useful for packaging and version control purposes.</p>
+
+<h3 id="c-standard-configuration">C++ Standard Configuration</h3>
+
+<p>In a C++ project, it’s critical to enforce a specific C++ standard across all compiled files to ensure consistency and avoid compatibility issues between different compilers or environments.</p>
+
+<pre><code class="language-py"># This specifies that the C++20 standard should be enforced for all targets.
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+</code></pre>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">CMAKE_CXX_STANDARD</code> is set to <code class="language-plaintext highlighter-rouge">20</code>, which enforces the C++20 standard.</p>
+  </li>
+  <li>
+    <p>The <code class="language-plaintext highlighter-rouge">CMAKE_CXX_STANDARD_REQUIRED</code> directive ensures that the build process will halt if the compiler does not support C++20, preventing potential issues later.</p>
+  </li>
+  <li>
+    <p>Disabling <code class="language-plaintext highlighter-rouge">CMAKE_CXX_EXTENSIONS</code> avoids using compiler-specific language extensions, which enhances the portability of your code across different compilers.</p>
+  </li>
+</ul>
+
+<h3 id="compiler-flags-based-on-build-type">Compiler Flags Based on Build Type</h3>
+
+<p>Compiler flags are instrumental in controlling the behavior of the compiler, particularly when distinguishing between Debug and Release builds. This section configures these flags to optimize for either debugging or performance, depending on the build type.</p>
+
+<pre><code class="language-cpp">if(CMAKE_BUILD_TYPE MATCHES Debug)
+    message(STATUS "Configuring for a Debug build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g3 -Og")
+    add_definitions(-DDEBUG_MODE)
+else()
+    message(STATUS "Configuring for a Release build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g0 -O3")
+endif()
+</code></pre>
+
+<p>In Debug mode, the flags enable detailed debugging information (<code class="language-plaintext highlighter-rouge">-g3</code>) and turn off aggressive optimizations (<code class="language-plaintext highlighter-rouge">-Og</code>) to make the debugging process more straightforward.
+Additionally, a <code class="language-plaintext highlighter-rouge">DEBUG_MODE</code> macro is defined, which can be used within your code to conditionally include debug-specific logic.
+In Release mode, the configuration focuses on optimization (<code class="language-plaintext highlighter-rouge">-O3</code>) and minimal debug information (<code class="language-plaintext highlighter-rouge">-g0</code>) to ensure maximum performance.</p>
+
+<h3 id="platform-specific-dependency-configuration">Platform-Specific Dependency Configuration</h3>
+
+<p>Handling dependencies can be complex, especially when targeting multiple platforms. This section of the CMakeLists.txt is designed to manage platform-specific dependencies and packaging configurations.</p>
+
+<pre><code class="language-py"># Define the platform-specific paths and packaging configurations.
+# This ensures that the correct dependencies are used depending on the platform.
+if(WIN32)
+
+    # Set the dependency folder for Windows x64.
+    set(DEPENDENCY_FOLDER "${CMAKE_SOURCE_DIR}/dependencies/win_x86_64/")
+
+    # Use ZIP as the packaging format for Windows.
+    set(CPACK_GENERATOR "ZIP")
+
+
+elseif (UNIX AND NOT APPLE)
+    # Set the dependency folder for Linux x64.
+    set(DEPENDENCY_FOLDER "${CMAKE_SOURCE_DIR}/dependencies/linux_x86_64/")
+    
+    # Use TGZ (tarball gzip) as the packaging format for Linux.
+    set(CPACK_GENERATOR "TGZ")
+
+else()
+
+    # Fatal error if the platform is unsupported.
+    message(FATAL_ERROR "Unsupported Platform: ${CMAKE_SYSTEM_NAME}")
+
+endif()
+</code></pre>
+
+<p>This code block first checks the platform being used (<code class="language-plaintext highlighter-rouge">WIN32</code> for Windows or <code class="language-plaintext highlighter-rouge">UNIX</code> for Linux) and then sets the appropriate directory for dependencies and the correct packaging format (<code class="language-plaintext highlighter-rouge">ZIP</code> for Windows and <code class="language-plaintext highlighter-rouge">TGZ</code> for Linux). If the platform is not supported, CMake will throw a fatal error, stopping the build process.</p>
+
+<h3 id="cmake-prefix-path">CMake Prefix Path</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">CMAKE_PREFIX_PATH</code> variable is used to specify additional directories where CMake should look for packages, particularly when they are not located in standard system paths. This is especially useful when working with third-party libraries that are bundled with your project.</p>
+
+<pre><code class="language-py"># Set the CMake prefix path to include platform-specific dependency directories.
+# This helps CMake locate the required libraries and packages.
+set(CMAKE_PREFIX_PATH
+        "${DEPENDENCY_FOLDER}/pkgconfig/"
+        "${DEPENDENCY_FOLDER}/some_library/"
+)
+</code></pre>
+
+<p>By setting the CMAKE_PREFIX_PATH, you direct CMake to search in the specified directories for the necessary libraries and packages, ensuring that the build process can locate and link all required dependencies.</p>
+
+<p>Of course this assumes the dependencies are set for all platforms.</p>
+
+<pre><code class="language-bash">my_library_project/               
+└── dependencies/   
+    ├── win_x86_64/     
+    |   ├── pkgconfig/           
+    |   └── some_library/   
+    └── linux_x86_64/  
+        ├── pkgconfig/           
+        └── some_library/   
+</code></pre>
+
+<h3 id="finding-and-configuring-packages">Finding and Configuring Packages</h3>
+
+<p>Finding and linking external libraries is a common requirement in C++ projects. The find_package command helps automate this process by locating the necessary libraries and integrating them into your project.</p>
+
+<pre><code class="language-py">find_package(PkgConfig REQUIRED)
+</code></pre>
+
+<p>Here, we use find_package to locate the PkgConfig tool, which is required to manage the inclusion of external libraries. By marking it as REQUIRED, we ensure that the build process will stop with an error if PkgConfig is not found, preventing any further issues.</p>
+
+<h3 id="output-directory-configuration">Output Directory Configuration</h3>
+
+<p>To keep the build process organized, it’s important to specify where the compiled binaries and libraries should be output. This not only makes it easier to locate the build artifacts but also keeps your project directory clean.</p>
+
+<pre><code class="language-bash"># Set the output directories for the project.
+# These settings ensure that all binaries, libraries, and archives are organized in one place.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/output")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/output")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/output/lib")
+</code></pre>
+
+<p>This configuration sets all the runtime executables, shared libraries, and static libraries to be placed in a central <code class="language-plaintext highlighter-rouge">output</code> directory. The distinction between runtime, library, and archive outputs ensures that the files are well-organized.</p>
+
+<h3 id="adding-subdirectories">Adding Subdirectories</h3>
+
+<p>In complex projects, organizing your code into subdirectories makes it easier to manage and maintain. The <code class="language-plaintext highlighter-rouge">add_subdirectory</code> command allows you to include additional CMake configurations from different parts of your project.</p>
+
+<pre><code class="language-bash"># Add subdirectories for the library and tests. 
+# This modular approach keeps the project organized and easy to manage.
+add_subdirectory(my_library)
+add_subdirectory(tests)
+</code></pre>
+
+<p>By adding subdirectories, you modularize your project, allowing each component, such as the core library and its tests, to have its own CMakeLists.txt file. This makes the overall project more maintainable and scalable.</p>
+
+<hr />
+
+<h2 id="library-cmakeliststxt">Library CMakeLists.txt</h2>
+
+<p>Now we will look at each section of the <code class="language-plaintext highlighter-rouge">my_library/CMakeLists.txt</code> file, explaining the purpose and nuances of each part.</p>
+
+<h3 id="defining-the-library-target">Defining the Library Target</h3>
+
+<p>In modern CMake, source files for a library are explicitly listed and associated with the target. This approach makes the build process clear and maintainable.</p>
+
+<pre><code class="language-bash"># Define the my_library library target
+add_library(my_library SHARED)
+
+# Add sources to the http_server library target
+target_sources(my_library PRIVATE
+        source/my_library.cpp
+        source/internal_helpers.cpp
+        # Add more files as needed
+)
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">add_library(my_library SHARED)</code>:</strong> This command defines a new library target named <code class="language-plaintext highlighter-rouge">my_library</code> and specifies that it should be built as a shared library (<code class="language-plaintext highlighter-rouge">SHARED</code>).</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">target_sources(my_library PRIVATE ...)</code>:</strong> This command explicitly adds the specified source file (<code class="language-plaintext highlighter-rouge">my_library.cpp</code>) to the <code class="language-plaintext highlighter-rouge">my_library</code> library target. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that the source file is only relevant to this specific target and will not be exposed to other targets.</p>
+  </li>
+</ul>
+
+<h3 id="passing-version-information-to-the-source-code">Passing Version Information to the Source Code</h3>
+
+<p>Passing the version number to the source code can be useful for embedding version information into the compiled library, which can be accessed at runtime.</p>
+
+<pre><code class="language-cpp">target_compile_definitions(my_library PRIVATE MY_LIBRARY_VERSION="${PROJECT_VERSION}")
+</code></pre>
+
+<p><strong><code class="language-plaintext highlighter-rouge">target_compile_definitions(my_library PRIVATE MY_LIBRARY_VERSION="${PROJECT_VERSION}")</code>:</strong> This command defines a preprocessor macro (<code class="language-plaintext highlighter-rouge">MY_LIBRARY_VERSION</code>) with the value of the project’s version (<code class="language-plaintext highlighter-rouge">${PROJECT_VERSION}</code>), making this version accessible in the source code. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that this definition is only available within the <code class="language-plaintext highlighter-rouge">my_library</code> target and not propagated to targets that link against this library.</p>
+
+<h3 id="specifying-include-directories"><strong>Specifying Include Directories</strong></h3>
+
+<p>Include directories are necessary for resolving header files during compilation. It’s important to specify both build-time and install-time include directories.</p>
+
+<pre><code class="language-rb"># Specify the include directories for the target
+target_include_directories(my_library
+    PUBLIC
+        # Use absolute path for building
+        $&lt;BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include&gt;
+
+        # Use relative path for installation
+        $&lt;INSTALL_INTERFACE:include&gt;
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/internal
+)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">target_include_directories(my_library PUBLIC ...)</code>:</strong> This command sets up include directories for the <code class="language-plaintext highlighter-rouge">my_library</code> target. The <code class="language-plaintext highlighter-rouge">PUBLIC</code> keyword indicates that these directories should be used both when building the library and when other targets include this library.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">$&lt;BUILD_INTERFACE:...&gt;</code> and <code class="language-plaintext highlighter-rouge">$&lt;INSTALL_INTERFACE:...&gt;</code></strong>: These generator expressions ensure that different paths are used depending on whether the library is being built (<code class="language-plaintext highlighter-rouge">BUILD_INTERFACE</code>) or installed (<code class="language-plaintext highlighter-rouge">INSTALL_INTERFACE</code>). This separation ensures that the correct paths are used in each context, enhancing portability.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/internal</code></strong>: This directory is used for internal headers that should not be exposed to users of the library. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that these include directories are only used when compiling this target.</li>
+</ul>
+
+<h3 id="linking-external-libraries">Linking External Libraries</h3>
+
+<p>To use external libraries like <code class="language-plaintext highlighter-rouge">libmicrohttpd</code>, you need to find and link them to your project. CMake offers several ways to find libraries, including <code class="language-plaintext highlighter-rouge">find_library</code>.</p>
+
+<pre><code class="language-rb"># Find and link the required libmicrohttpd library using pkg-config
+find_library(MICROHTTPD_LIB NAMES microhttpd libmicrohttpd)
+
+# Link the static microhttpd library
+target_link_libraries(my_library PRIVATE ${MICROHTTPD_LIB})
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">find_library(MICROHTTPD_LIB NAMES microhttpd libmicrohttpd)</code>:</strong> This command searches for the <code class="language-plaintext highlighter-rouge">libmicrohttpd</code> library, storing the path in the <code class="language-plaintext highlighter-rouge">MICROHTTPD_LIB</code> variable. The <code class="language-plaintext highlighter-rouge">NAMES</code> option specifies possible names for the library, accommodating different naming conventions on various systems.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">target_link_libraries(my_library PRIVATE ${MICROHTTPD_LIB})</code>:</strong> This command links the <code class="language-plaintext highlighter-rouge">libmicrohttpd</code> library to the <code class="language-plaintext highlighter-rouge">my_library</code> target. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword ensures that this linkage is only relevant for the <code class="language-plaintext highlighter-rouge">my_library</code> target and is not inherited by other targets that depend on it.</li>
+</ul>
+
+<h3 id="configuring-visibility-for-internal-functions">Configuring Visibility for Internal Functions</h3>
+
+<p>To reduce the binary size and improve load times, it’s important to hide internal symbols that do not need to be exposed outside the library.</p>
+
+<pre><code class="language-cpp">target_compile_options(my_library PRIVATE -fvisibility=hidden)
+set_target_properties(my_library PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(my_library PROPERTIES VISIBILITY_INLINES_HIDDEN YES)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">target_compile_options(my_library PRIVATE -fvisibility=hidden)</code>:</strong> This option hides symbols by default, making only explicitly marked symbols (using <code class="language-plaintext highlighter-rouge">__attribute__((visibility("default")))</code>) visible outside the library.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">set_target_properties(... PROPERTIES CXX_VISIBILITY_PRESET hidden)</code></strong>: This sets the default visibility of C++ symbols to hidden.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">set_target_properties(... PROPERTIES VISIBILITY_INLINES_HIDDEN YES)</code></strong>: This command hides inline function symbols, further reducing the number of exported symbols and improving binary efficiency.</li>
+</ul>
+
+<h3 id="defining-installation-rules-for-the-library"><strong>Defining Installation Rules for the Library</strong></h3>
+
+<p>Installing your library correctly ensures that it can be easily found and used by other projects. The installation rules specify where the library files will be placed on the target system.</p>
+
+<pre><code class="language-php"># Installation Rules
+# Define the installation directories
+install(TARGETS my_library
+        EXPORT my_libraryTargets
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(TARGETS my_library ...)</code></strong>: This command defines how the <code class="language-plaintext highlighter-rouge">my_library</code> library should be installed. The <code class="language-plaintext highlighter-rouge">ARCHIVE</code>, <code class="language-plaintext highlighter-rouge">LIBRARY</code>, and <code class="language-plaintext highlighter-rouge">RUNTIME</code> options specify the directories for different types of build outputs (static libraries, shared libraries, and executables, respectively). The <code class="language-plaintext highlighter-rouge">INCLUDES DESTINATION</code> specifies where the public headers will be installed.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">EXPORT my_libraryTargets</code></strong>: This option exports the target, which allows it to be included in the package configuration files, making the library discoverable by other projects using <code class="language-plaintext highlighter-rouge">find_package</code>.</li>
+</ul>
+
+<h3 id="installing-public-headers"><strong>Installing Public Headers</strong></h3>
+
+<pre><code class="language-php">install(DIRECTORY include/ DESTINATION include)
+</code></pre>
+
+<p>Alongside the compiled library, you must install the public headers so that they can be included by other projects.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(DIRECTORY include/ DESTINATION include)</code>:</strong> This command installs the contents of the <code class="language-plaintext highlighter-rouge">include/</code> directory to the <code class="language-plaintext highlighter-rouge">include</code> directory on the target system. This is essential for making the public API available to other projects that depend on your library.</li>
+</ul>
+
+<h3 id="installing-package-configuration-files"><strong>Installing Package Configuration Files</strong></h3>
+
+<pre><code class="language-php"># Install the package configuration files
+install(EXPORT my_libraryTargets
+        FILE my_libraryTargets.cmake
+        NAMESPACE my_library::
+        DESTINATION lib/cmake/my_library
+)
+
+# Create and install the package configuration files
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/my_libraryConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+)
+
+configure_package_config_file(
+        "../cmake/my_libraryConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/my_libraryConfig.cmake"
+        INSTALL_DESTINATION lib/cmake/my_library
+)
+
+install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/my_libraryConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/my_libraryConfigVersion.cmake"
+        DESTINATION lib/cmake/my_library
+)
+</code></pre>
+
+<p>To make your library discoverable by CMake’s <code class="language-plaintext highlighter-rouge">find_package</code>, you need to generate and install package configuration files.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(EXPORT my_libraryTargets ...)</code>:</strong> This command exports the target configuration, allowing it to be used by <code class="language-plaintext highlighter-rouge">find_package</code> when other projects search for <code class="language-plaintext highlighter-rouge">my_library</code>.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">include(CMakePackageConfigHelpers)</code>:</strong> This includes helpers for generating package configuration files.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">write_basic_package_version_file(...)</code>:</strong> Generates a version file that defines the compatibility of the library with different versions.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">configure_package_config_file(...)</code>:</strong> Configures the main package configuration file, which helps other projects find and link against your library.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(FILES ...)</code>:</strong> Installs the generated configuration files to the appropriate directory.</li>
+</ul>
+
+<h3 id="configuring-package-information-for-distribution"><strong>Configuring Package Information for Distribution</strong></h3>
+
+<p>Finally, to make the library distributable, package information such as the package name, version, and contact details is configured using <code class="language-plaintext highlighter-rouge">CPack</code>.</p>
+
+<pre><code class="language-php"># Set the package name and version
+set(CPACK_PACKAGE_NAME "my_library")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_CONTACT "Mustafa Alotbah &lt;mustafa.alotbah@gmail.com&gt;")
+
+# CPACK_GENERATOR set by root CMakeLists.txt
+include(CPack)
+</code></pre>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">set(CPACK_PACKAGE_NAME "my_library")</code>:</strong> Sets the name of the package for distribution.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})</code>:</strong> Sets the package version, aligning it with the project version.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">set(CPACK_PACKAGE_CONTACT "Mustafa Alotbah &lt;mustafa.alotbah@gmail.com&gt;")</code>:</strong> Provides contact information for the package, useful for users or maintainers.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">include(CPack)</code>:</strong> Includes CPack, which handles the creation of distribution packages based on the specified configuration.</li>
+</ul>
+
+<h2 id="cmake-template-file">CMake Template File</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code> file is a template used by CMake to generate a <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake</code> file during the installation process. This configuration file plays a crucial role in making your library discoverable and easily integrable into other projects through CMake’s <code class="language-plaintext highlighter-rouge">find_package</code> command.</p>
+
+<pre><code class="language-cpp">@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code> file typically contains initialization code and references to other generated files, such as the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code>:</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> Macro</strong> is a placeholder that is replaced by CMake with the necessary initialization code when the file is processed. The <code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> macro is essential as it sets up the environment for the package configuration. It ensures that any necessary CMake variables are initialized and that the package configuration is compatible with the CMake version used by the consuming project.</p>
+  </li>
+  <li>
+    <p><strong>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> File:</strong> This line includes the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file, which contains the actual definitions of the targets (such as the <code class="language-plaintext highlighter-rouge">my_library</code> library) that were exported during the installation process. This inclusion is critical for making the targets available to projects that use <code class="language-plaintext highlighter-rouge">find_package</code> to locate your library.</p>
+
+    <blockquote>
+      <p>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file is what allows other projects to link against your library. It ensures that all necessary targets, build settings, and dependencies are correctly set up in the consuming project. Without this inclusion, the library would not be properly registered with CMake, making it unavailable for use.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<h2 id="source-code">Source Code</h2>
+
+<p>When designing a C++ library that will be used by other projects, it is crucial to manage the visibility of functions and symbols properly. This is particularly important when creating shared libraries, where you want to expose only the necessary API functions while keeping internal details hidden.</p>
+
+<h3 id="source-code-structure">Source Code Structure</h3>
+
+<p>For demonstration purposes, we will implement a simple API function, <code class="language-plaintext highlighter-rouge">std::string getVersion()</code>, which returns the version of the library. This API function will internally rely on another function, <code class="language-plaintext highlighter-rouge">std::string internalGetVersion()</code>, which should remain hidden from the library users. The internal function will only be accessible within the library’s codebase.</p>
+
+<p>Given that we have configured the default visibility of all symbols to be hidden (as detailed in the <a href="#configuring-visibility-for-internal-functions">section on configuring visibility for internal functions</a>), we must explicitly declare which symbols should be visible to the outside world. This is achieved using visibility attributes that are platform-specific.</p>
+
+<h3 id="declaring-visibility-in-header-files">Declaring Visibility in Header Files</h3>
+
+<p>To control the visibility of our API and internal functions, we use different attributes depending on the platform.</p>
+
+<h4 id="for-gcc-and-msvc-on-windows">For GCC and MSVC on Windows</h4>
+
+<p>When compiling a shared library on Windows, the <code class="language-plaintext highlighter-rouge">__declspec(dllexport)</code> attribute is used to export functions from a DLL, making them available to other projects that link against the DLL. Conversely, <code class="language-plaintext highlighter-rouge">__declspec(dllimport)</code> is used in the client code to import these functions. We encapsulate this logic in a macro <code class="language-plaintext highlighter-rouge">MY_LIBRARY_API</code>:</p>
+
+<pre><code class="language-cpp">#ifdef BUILDING_MY_LIBRARY
+#define MY_LIBRARY_API __declspec(dllexport)
+#else
+#define MY_LIBRARY_API __declspec(dllimport)
+#endif
+</code></pre>
+
+<h4 id="for-gcc-on-linux">For GCC on Linux</h4>
+
+<p>On Linux, GCC provides a visibility attribute, <code class="language-plaintext highlighter-rouge">__attribute__((visibility("default")))</code>, which is used to mark symbols that should be visible outside the library. We also define an internal visibility attribute to explicitly hide symbols:</p>
+
+<pre><code class="language-cpp">#if defined(__GNUC__) &amp;&amp; __GNUC__ &gt;= 4
+#define MY_LIBRARY_API __attribute__((visibility("default")))
+#else
+#define MY_LIBRARY_API
+#endif
+</code></pre>
+
+<p><strong>Combined Platform-Independent Definition:</strong></p>
+
+<p>To maintain cross-platform compatibility, we combine these definitions into a single header file, <code class="language-plaintext highlighter-rouge">my_project_export.h</code>. This header ensures that the correct visibility attributes are applied based on the target platform:</p>
+
+<pre><code class="language-cpp">#pragma once
+
+#ifdef _WIN32
+#ifdef BUILDING_MY_LIBRARY
+#define MY_LIBRARY_API __declspec(dllexport)
+#else
+#define MY_LIBRARY_API __declspec(dllimport)
+#endif
+#else
+#if defined(__GNUC__) &amp;&amp; __GNUC__ &gt;= 4
+#define MY_LIBRARY_API __attribute__((visibility("default")))
+#else
+#define MY_LIBRARY_API
+#endif
+#endif
+</code></pre>
+
+<h4 id="public-api-declaration">Public API Declaration</h4>
+
+<p>In the public API header, <code class="language-plaintext highlighter-rouge">my_library.h</code>, we use the <code class="language-plaintext highlighter-rouge">MY_LIBRARY_API</code> macro to declare the visibility of the <code class="language-plaintext highlighter-rouge">getVersion()</code> function:</p>
+
+<pre><code class="language-cpp">#pragma once
+
+#include "my_project_export.h"
+#include &lt;string&gt;
+
+MY_LIBRARY_API std::string getVersion();
+</code></pre>
+
+<p>This ensures that <code class="language-plaintext highlighter-rouge">getVersion()</code> is visible to any project that links against the library, while other internal functions remain hidden.</p>
+
+<h4 id="internal-function-declaration">Internal Function Declaration</h4>
+
+<p>In contrast, the internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is declared in an internal header, <code class="language-plaintext highlighter-rouge">internal_helpers.h</code>, without any visibility attributes, meaning it will remain hidden:</p>
+
+<pre><code class="language-cpp">#pragma once
+
+#include &lt;string&gt;
+
+std::string internalGetVersion();
+</code></pre>
+
+<p>Since this header is marked as <code class="language-plaintext highlighter-rouge">PRIVATE</code> in the CMake configuration (as discussed in the <a href="#specifying-include-directories">section on specifying include directories</a>), it is not exposed to the users of the library when the library is installed.</p>
+
+<h4 id="implementing-the-functions">Implementing the Functions</h4>
+
+<p>The internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is implemented in the <code class="language-plaintext highlighter-rouge">source/internal_helpers.cpp</code> file. This function retrieves the version information, which we previously passed to the source code using a preprocessor definition in our CMake configuration:</p>
+
+<pre><code class="language-cpp">#include "internal_server.h"
+
+
+std::string internalGetVersion() {
+    return HTTP_SERVER_VERSION;
+}
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">HTTP_SERVER_VERSION</code> macro was defined earlier in the CMake configuration (as detailed in the <a href="#passing-version-information-to-the-source-code">section on passing version information to the source code</a>).</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">getVersion()</code> API function, which calls the internal function, is implemented in <code class="language-plaintext highlighter-rouge">source/my_library.cpp</code>:</p>
+
+<pre><code class="language-cpp">#include "musta_http_server/musta_http_server.h"
+#include "internal_server.h"
+
+std::string getVersion() {
+    return internalGetVersion();
+}
+</code></pre>
+
+<p>This structure ensures that while <code class="language-plaintext highlighter-rouge">getVersion()</code> is accessible to external projects, <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> remains encapsulated within the library, hidden from external access.</p>
+
+<h4 id="verifying-visibility-and-symbol-export">Verifying Visibility and Symbol Export</h4>
+
+<p>To verify that only the intended symbols are exposed, you can inspect the exported symbols of the compiled shared library. On Linux, this can be done using the <code class="language-plaintext highlighter-rouge">nm</code> command:</p>
+
+<pre><code class="language-bash">nm -C -D lib/libmy_library.so | grep " T "
+&gt;&gt;&gt; 
+0000000000001120 T getVersion[abi:cxx11]()
+</code></pre>
+
+<p>This command lists all symbols marked as globally visible (<code class="language-plaintext highlighter-rouge">T</code>). As expected, only <code class="language-plaintext highlighter-rouge">getVersion()</code> is exposed.</p>
+
+<p>On Windows, you can use the <code class="language-plaintext highlighter-rouge">dumpbin</code> tool to inspect the DLL exports:</p>
+
+<pre><code class="language-bash">dumpbin /EXPORTS libmy_library.dll
+&gt;&gt;&gt; 
+...
+    ordinal hint RVA      name
+
+          1    0 00001370 _Z10getVersionB5cxx11v
+
+  Summary
+...
+</code></pre>
+
+<p>Again, only the <code class="language-plaintext highlighter-rouge">getVersion()</code> function is visible, confirming that the internal details of the library remain hidden as intended.</p>
+
+<h2 id="installing-the-project">Installing the Project</h2>
+
+<p>After configuring and building the library, it is crucial to install it correctly. This ensures that all necessary files—binaries, headers, and configuration files—are placed in the appropriate directories, ready for use by other projects.</p>
+
+<pre><code class="language-sh">mkdir build 
+cd build
+cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+cmake --install . --prefix .
+</code></pre>
+
+<p>These commands create a build directory, configure the project for a release build, and then install the library. The installation process places the compiled binaries, headers, and CMake configuration files in the specified prefix directory.</p>
+
+<p>To package the project for distribution, you can use CPack:</p>
+
+<pre><code class="language-sh">cpack
+</code></pre>
+
+<p>CPack generates a package (e.g., a ZIP or TGZ file) containing the installed files, making it easy to distribute the library.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="Cmake" /><category term="Windows" /><category term="C++" /><category term="Library" /><category term="Cross-Platform" /><category term="Build-Systems" /><category term="Dependency-Management" /><category term="Continuous-Integration" /><category term="CI" /><category term="CD/CI" /><summary type="html"><![CDATA[Introduction to Publishing CMake Projects]]></summary></entry><entry><title type="html">CMake - Adding Libraries</title><link href="http://localhost:4000/posts/CMake-Adding-Libraries/" rel="alternate" type="text/html" title="CMake - Adding Libraries" /><published>2023-11-15T17:08:00+01:00</published><updated>2023-11-15T17:08:00+01:00</updated><id>http://localhost:4000/posts/CMake-Adding-Libraries</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Adding-Libraries/"><![CDATA[<p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.</p>
 
 <h2 id="1-google-test">1. Google Test</h2>
 
@@ -182,11 +774,11 @@ cmake .. -G "MinGW Makefiles"
 cmake --build . --target install  # This adds the package to CMake
 </code></pre>
 
-<p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="windows" /><summary type="html"><![CDATA[This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.]]></summary></entry><entry><title type="html">CMake On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
+<p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.]]></summary></entry><entry><title type="html">CMake - Installation On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake - Installation On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
 
-<h2 id="1-getting-started">1. Getting Started</h2>
+<h2 id="getting-started">Getting Started</h2>
 
-<h3 id="11-downloads">1.1 Downloads</h3>
+<h3 id="downloads">Downloads</h3>
 
 <ul>
   <li>Download MinGW64 (posix, seh, msvcrt) from <a href="https://github.com/niXman/mingw-builds-binaries/releases">here</a>.</li>
@@ -195,7 +787,7 @@ cmake --build . --target install  # This adds the package to CMake
 
 <hr />
 
-<h3 id="12-installation">1.2 Installation</h3>
+<h3 id="installation">Installation</h3>
 
 <ul>
   <li>Install CMake in <code class="language-plaintext highlighter-rouge">C:\Program Files\Cmake</code>.</li>
@@ -210,7 +802,7 @@ cmake --build . --target install  # This adds the package to CMake
 
 <hr />
 
-<h3 id="13-first-project">1.3 First Project</h3>
+<h3 id="first-project">First Project</h3>
 
 <ul>
   <li>The simplest project to build is a <code class="language-plaintext highlighter-rouge">Hello world</code> program. Hence we will add a <code class="language-plaintext highlighter-rouge">main.cpp</code> source:</li>
@@ -259,7 +851,7 @@ rmdir /s /q build
 <ul>
   <li>Check out the <a href="https://alotbah.com/cmake-quick-reference/">Quick reference</a> for more.</li>
   <li>Check out the the <a href="https://alotbah.com/cmakelists-txt-template/">Minimum CMakeLists.txt Template</a>.</li>
-</ul>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="windows" /><summary type="html"><![CDATA[Here is a quick way to get started into development with CMake on Windows x64.]]></summary></entry><entry><title type="html">CMake - Brief Reference</title><link href="http://localhost:4000/posts/CMake-Brief-Reference/" rel="alternate" type="text/html" title="CMake - Brief Reference" /><published>2023-09-19T15:12:00+02:00</published><updated>2023-09-19T15:12:00+02:00</updated><id>http://localhost:4000/posts/CMake%20-%20Brief%20Reference</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Brief-Reference/"><![CDATA[<p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
+</ul>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[Here is a quick way to get started into development with CMake on Windows x64.]]></summary></entry><entry><title type="html">CMake - Brief Reference</title><link href="http://localhost:4000/posts/CMake-Brief-Reference/" rel="alternate" type="text/html" title="CMake - Brief Reference" /><published>2023-09-19T15:12:00+02:00</published><updated>2023-09-19T15:12:00+02:00</updated><id>http://localhost:4000/posts/CMake%20-%20Brief%20Reference</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Brief-Reference/"><![CDATA[<p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
 
 <h2 id="key-commands-and-concepts">Key Commands and Concepts</h2>
 
@@ -574,7 +1166,7 @@ install(DIRECTORY include/ DESTINATION include)
 
 <p>This will copy the built executables, libraries, and header files to the directories specified in your <code class="language-plaintext highlighter-rouge">install()</code> commands.</p>
 
-<p>By understanding and utilizing these commands and best practices, developers can efficiently manage their C++ projects with CMake, ensuring scalability, maintainability, and cross-platform compatibility.</p>]]></content><author><name></name></author><category term="software" /><category term="C++" /><category term="cmake" /><category term="software" /><category term="c++" /><category term="cmake" /><category term="reference" /><summary type="html"><![CDATA[CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.]]></summary></entry><entry><title type="html">The Black Pill (STM32F411CEU6)</title><link href="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" rel="alternate" type="text/html" title="The Black Pill (STM32F411CEU6)" /><published>2023-05-17T13:41:00+02:00</published><updated>2023-05-17T13:41:00+02:00</updated><id>http://localhost:4000/posts/BlackPill-STM32F411CEU6</id><content type="html" xml:base="http://localhost:4000/posts/BlackPill-STM32F411CEU6/"><![CDATA[<div style="display: flex; flex-wrap: wrap; align-items: center;">
+<p>By understanding and utilizing these commands and best practices, developers can efficiently manage their C++ projects with CMake, ensuring scalability, maintainability, and cross-platform compatibility.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Reference" /><summary type="html"><![CDATA[CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.]]></summary></entry><entry><title type="html">The Black Pill (STM32F411CEU6)</title><link href="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" rel="alternate" type="text/html" title="The Black Pill (STM32F411CEU6)" /><published>2023-05-17T13:41:00+02:00</published><updated>2023-05-17T13:41:00+02:00</updated><id>http://localhost:4000/posts/BlackPill-STM32F411CEU6</id><content type="html" xml:base="http://localhost:4000/posts/BlackPill-STM32F411CEU6/"><![CDATA[<div style="display: flex; flex-wrap: wrap; align-items: center;">
   <div style="flex: 0 0 auto; min-width: 200px;">
     <img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" />
   </div>
@@ -587,13 +1179,15 @@ install(DIRECTORY include/ DESTINATION include)
   </div>
 </div>
 
-<h2 id="overview">Overview</h2>
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="overview">Overview</h3>
 
 <p>The illustration below demonstrates the characteristics of the pins on the board.</p>
 
 <p><img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1_PinoutDiagram_RichardBalint.png?ssl=1" alt="The pins diagram of the chip/board." /></p>
 
-<h2 id="requirements">Requirements</h2>
+<h3 id="requirements">Requirements</h3>
 
 <ol>
   <li>
@@ -630,6 +1224,24 @@ install(DIRECTORY include/ DESTINATION include)
   </li>
 </ol>
 
+<h3 id="setting-up-the-environment">Setting up the environment</h3>
+
+<h3 id="setting-up-the-clock">Setting Up the Clock</h3>
+
+<p>Set <code class="language-plaintext highlighter-rouge">HSE</code> and <code class="language-plaintext highlighter-rouge">LSE</code> to crystal clock on the <code class="language-plaintext highlighter-rouge">RCC</code>. Now we will configure the clock depending on the chip. For example, the <code class="language-plaintext highlighter-rouge">STM32F411CEUx</code> from <em>Weact</em> is connected to a $32.786$ kHz resonator on the LSE and a 25 MHz resonator on the HSE, so the configuration diagram should be like this:</p>
+
+<ul>
+  <li>Set <em>PPL Source Mux</em> to <em>HSE</em></li>
+  <li>Set <code class="language-plaintext highlighter-rouge">/M</code> = <code class="language-plaintext highlighter-rouge">/ 25</code></li>
+  <li>Set <code class="language-plaintext highlighter-rouge">*N</code> = <code class="language-plaintext highlighter-rouge">X 192</code></li>
+  <li>Set <code class="language-plaintext highlighter-rouge">/Q</code> = <code class="language-plaintext highlighter-rouge">/ 4</code></li>
+  <li>Set <code class="language-plaintext highlighter-rouge">/P</code> = <code class="language-plaintext highlighter-rouge">/ 2</code></li>
+  <li>Set <em>System Clock Mux</em> to <em>PLLCLK</em></li>
+  <li>Set <code class="language-plaintext highlighter-rouge">AHB Prescaler</code> = <code class="language-plaintext highlighter-rouge">/ 1</code></li>
+</ul>
+
+<p>Notice that the STM32F411CEUx supports up to 100 MHz clocking, but since the Universal Serial Bus On-The-Go Full Speed (USB_OTG_FS) requires a dedicated 48 MHz clock (datasheet 3.27), the clock responsible for this (48 MHz clocks) comes from the Main PLL directly. By clocking the HCLK to 96 MHz, we can achieve a division that results in 48 MHz for this clock.</p>
+
 <h2 id="project-structure">Project Structure</h2>
 
 <!-- TODO: Starting the project -->
@@ -663,6 +1275,7 @@ FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 64K
 <p>In the linker script (<code class="language-plaintext highlighter-rouge">STM32F411CEU6_FLASH.ld</code>), the <code class="language-plaintext highlighter-rouge">ENTRY(Reset_Handler)</code> directive specifies this entry point.</p>
 
 <p>The <code class="language-plaintext highlighter-rouge">Reset_Handler</code> is the entry point for the program and is defined in the assembly file <code class="language-plaintext highlighter-rouge">startup_stm32f103xb.s</code>.</p>
+
 <ul>
   <li>It is responsible for initializing the system and preparing the execution environment before jumping to the main application code.</li>
   <li>When the microcontroller is reset, the <code class="language-plaintext highlighter-rouge">Reset_Handler</code> is the first function that gets executed as specified in the above linker.</li>
@@ -703,7 +1316,7 @@ The stack is used for storing local variables and function call information duri
 
 <p>We will look into two important functions here.</p>
 
-<h5 id="static-void-mx_gpio_initvoid">static void MX_GPIO_Init(void);</h5>
+<h4 id="static-void-mx_gpio_initvoid">static void MX_GPIO_Init(void)</h4>
 
 <p>This function sets up the initial settings for the IO pins of the chip. On the board the blue LED is connected to pin C13. If we set this pin mode to GPIO_Output mode in the <em>myproject.ioc</em> file, as in the illustration below</p>
 
@@ -729,137 +1342,317 @@ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 </code></pre>
 
-<p>Lines from 9 to 14 are responsible for initializing the pin C13. We can see in line that the HAL library provides the function <em>HAL_GPIO_Init</em> which takes first the name of the Pins block and then a pointer to a structure <em>GPIO_InitTypeDef</em>. This is also how the pin settings is changed programmatically. The details of the pins settings are explained in the following sub-section.</p>
-
-<h5 id="pin-settings-struct-gpio_inittypedef">Pin Settings struct: GPIO_InitTypeDef</h5>
-
-<p>This C-structure contains five different settings for each pin</p>
-
-<ol>
-  <li>Pin</li>
-  <li>Mode</li>
-  <li>Pull</li>
-  <li>Speed</li>
-  <li>Alternate</li>
-</ol>
-
-<p>The <strong>Pin</strong> specifies the number of the pin in the Pins block.</p>
-
-<hr />
-
-<p>The <strong>Mode</strong> specifies the operating mode of the pin. For example, this can be one of the following mode:</p>
-
-<ul>
-  <li>Input</li>
-  <li>Output</li>
-  <li>Alternate Function</li>
-  <li>Analog mode</li>
-  <li>External Interrupt</li>
-  <li>External Event</li>
-</ul>
-
-<p>The <strong>input</strong> mode changes a variable variable according to the voltage applied to the pin (Note this should never exceed 3.3V for most pins). To access this input of a pin, we can either access it directly as in the second line, or using the HAL library as in the third line in the code snippet below</p>
-
-<pre><code class="language-cpp">    uint8_t PA0;
-    PA0 = GPIOA -&gt; IDR &amp; GPIO_PIN_0;            // directly
-    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
-</code></pre>
-
-<p>To set up the pin as input mode, use the definition GPIO_MODE_INPUT.</p>
-
-<p>The <strong>output</strong> mode has two modes itself, these are</p>
-
-<ul>
-  <li>Push-Pull</li>
-  <li>Open-Drain</li>
-</ul>
-
-<p>The <strong>push-pull mode</strong> sets up the pin for a single direction output. The pin state, can either be high or low. While the <strong>open-drain mode</strong>, sets up the pin to accept bidirectional input and output. (For more <a href="https://open4tech.com/open-drain-output-vs-push-pull-output/">see this article</a>)</p>
-
-<p>In the example of the blue LED, the pin mode was set to one direction only since, the pin has apply a voltage to the LED.</p>
-
-<p>Tu turn on the blue LED, we need to apply a low voltage at the pin C13 as follows</p>
-
-<pre><code class="language-cpp">HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-</code></pre>
-
-<p>To set up a pin in an output mode, either use GPIO_MODE_OUTPUT_PP for Push-Pull mode or GPIO_MODE_OUTPUT_OD for open drain mode.</p>
-
-<p>Note that the function <em>HAL_GPIO_WritePin</em> writes the value to the pin <strong>atomically</strong> without ORing it with other masks. That means interrupts do not have to be disabled.</p>
-
-<p>The <strong>analog</strong> mode allows the pin to read the voltage applied to it. However, not all pins are able to be set to this mode, in the case of this chip, these pins are A0..A7 as well as B0 and B1, which also correspond to ADC0..ADC9.</p>
-
-<p>Accessing the analog value read from the pin needs additional configuration, such as direct memory access (DMA), which we will look into in the following sections.</p>
-
-<p>The rest of the modes are not relevant for this section.</p>
+<p>Lines from 9 to 14 are responsible for initializing the pin C13. We can see in line that the HAL library provides the function <code class="language-plaintext highlighter-rouge">HAL_GPIO_Init</code> which takes first the name of the Pins block and then a pointer to a structure <code class="language-plaintext highlighter-rouge">GPIO_InitTypeDef</code>. This is also how the pin settings is changed programmatically. The details of the pins settings are explained in the following section.</p>
 
 <hr />
 
 <p>The <strong>Pull</strong> variable specifies which resistors should be connected to the pin. The possible configurations are</p>
 
 <ul>
-  <li>Pull down (GPIO_PULLDOWN)</li>
-  <li>Pull up (GPIO_PULLUP)</li>
-  <li>No resistor (GPIO_NOPULL)</li>
+  <li>Pull down (<code class="language-plaintext highlighter-rouge">GPIO_PULLDOWN</code>)</li>
+  <li>Pull up (<code class="language-plaintext highlighter-rouge">GPIO_PULLUP</code>)</li>
+  <li>No resistor (<code class="language-plaintext highlighter-rouge">GPIO_NOPULL</code>)</li>
 </ul>
 
 <p>The pull down resistor connects the pin to the ground, while the pull up resistor connects the pin to 3.3V.</p>
 
 <hr />
 
-<p>The <strong>Speed</strong> variable specifies the frequency at which the pin should operate</p>
+<h2 id="uploading-firmware">Uploading Firmware</h2>
+
+<p>Uploading firmware to an STM32 microcontroller can be achieved using different interfaces such as DFU (Device Firmware Upgrade) or UART. Below are the steps for using both methods with the <em>WeAct</em> Black Pill board.</p>
+
+<h3 id="using-dfu-mode">Using DFU Mode</h3>
+
+<p>To upload the firmware via DFU mode, connect your device via USB and use the following command:</p>
+
+<pre><code class="language-bash">STM32_Programmer_CLI -c port=usb1 -w \Debug\app.bin 0x08000000
+</code></pre>
 
 <ul>
-  <li>GPIO_SPEED_FREQ_LOW ( works at 2MHz )</li>
-  <li>GPIO_SPEED_FREQ_MEDIUM ( 12.5MHz to 50MHz )</li>
-  <li>GPIO_SPEED_FREQ_HIGH ( 25MHz to 100MHz )</li>
-  <li>GPIO_SPEED_FREQ_VERY_HIGH ( 50MHz to 200MHz )</li>
+  <li><code class="language-plaintext highlighter-rouge">port=usb1</code>: Specifies the USB port.</li>
+  <li><code class="language-plaintext highlighter-rouge">-w \Debug\app.bin</code>: Indicates the path to the binary file.</li>
+  <li><code class="language-plaintext highlighter-rouge">0x08000000</code>: Specifies the start address in the flash memory.</li>
 </ul>
+
+<h3 id="using-uart">Using UART</h3>
+
+<p>To upload the firmware via UART, use the following command:</p>
+
+<pre><code class="language-bash">STM32_Programmer_CLI -c port=COM10 -w \Debug\app.elf
+</code></pre>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">port=COM10</code>: Specifies the COM port.</li>
+  <li><code class="language-plaintext highlighter-rouge">-w \Debug\app.elf</code>: Indicates the path to the ELF file.</li>
+</ul>
+
+<p>To reset and disable the read protection of the microcontroller, you can use:</p>
+
+<pre><code class="language-bash">STM32_Programmer_CLI -c port=COM10 -rdu
+</code></pre>
 
 <hr />
 
-<h2 id="general-pin-blocks">General Pin Blocks</h2>
+<h2 id="working-with-gpios">Working with GPIOs</h2>
 
-<p>In the previous section, we saw how to set up a pin to an push-pull output mode and explored the other modes. Here we will continue to see how to work with the pin blocks, i.e. GPIOA, GPIOB, etc…</p>
+<p>GPIO (General Purpose Input/Output) is crucial for interfacing with the STM32 microcontroller’s pins. Below is an overview of how to configure and use GPIOs.</p>
 
-<p>The C-structure for the Pin Blocks is <em>GPIO_TypeDef</em>. This structure contains the following variables</p>
+<h3 id="gpio-initialization-gpio_inittypedef">GPIO Initialization (<code class="language-plaintext highlighter-rouge">GPIO_InitTypeDef</code>)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">GPIO_InitTypeDef</code> is a structure used to define the specifications of a GPIO pin. Below are the key fields in this structure:</p>
+
+<pre><code class="language-cpp">typedef struct  
+{  
+  uint32_t Pin;
+  uint32_t Mode
+  uint32_t Pull;
+  uint32_t Speed;  
+  uint32_t Alternate; // Only available in &gt;= Cortex-M4
+} GPIO_InitTypeDef;
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">Pin</code>:</strong> Specifies the GPIO pins to be configured. Multiple pins can be selected using a bitwise OR operation. Example: <code class="language-plaintext highlighter-rouge">(GPIO_PIN_0 | GPIO_PIN_1)</code>.
+  Mask of the pin, <code class="language-plaintext highlighter-rouge">(GPIO_PIN_0 = 0x0001)</code>, <code class="language-plaintext highlighter-rouge">(GPIO_PIN_1 = 0x0002)</code>…</p>
+  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Mode</code>:</strong> Defines the operating mode for the selected pins. The following modes are available:
+    <ol>
+      <li>Input Mode
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_INPUT:</code> Input Floating Mode
+            <blockquote>
+              <p>The <strong>input</strong> mode changes a variable variable according to the voltage applied to the pin (Note this should never exceed 3.3V for most pins).</p>
+            </blockquote>
+          </li>
+        </ul>
+      </li>
+      <li>Output Mode
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_OUTPUT_PP:</code> Output Push-Pull
+            <blockquote>
+              <p>The <strong>push-pull mode</strong> sets up the pin for a single direction output. The pin state, can either be high or low.</p>
+            </blockquote>
+          </li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_OUTPUT_OD:</code> Output Open Drain
+            <blockquote>
+              <p>The <strong>open-drain mode</strong>, sets up the pin to accept bidirectional input and output. (For more <a href="https://open4tech.com/open-drain-output-vs-push-pull-output/">see this article</a>).</p>
+            </blockquote>
+          </li>
+        </ul>
+      </li>
+      <li>Alternate Function
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_AF_PP:</code> Push-Pull</li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_AF_OD:</code> Open Drain</li>
+        </ul>
+      </li>
+      <li>Analog Mode
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_ANALOG:</code> Analog Mode
+            <blockquote>
+              <p>The <strong>analog</strong> mode allows the pin to read the voltage applied to it. However, not all pins are able to be set to this mode, in the case of this chip, these pins are A0..A7 as well as B0 and B1, which also correspond to ADC0..ADC9.
+Accessing the analog value read from the pin needs additional configuration, such as direct memory access (DMA), which we will look into in the following sections.</p>
+            </blockquote>
+          </li>
+        </ul>
+      </li>
+      <li>External Interrupt
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_IT_RISING:</code> Rising Edge</li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_IT_FALLING:</code> Falling Edge</li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_IT_RISING_FALLING:</code> Rising and Falling Edge</li>
+        </ul>
+      </li>
+      <li>External Event
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_EVT_RISING:</code> Rising Edge</li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_EVT_FALLING:</code> Falling Edge</li>
+          <li><code class="language-plaintext highlighter-rouge">GPIO_MODE_EVT_RISING_FALLING:</code> Rising and Falling Edge</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Pull</code>:</strong> Specifies the internal pull-up or pull-down resistor activation:
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_NOPULL</code>: No pull-up or pull-down activation.</li>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_PULLUP</code>: Pull-up resistor activation.</li>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_PULLDOWN</code>: Pull-down resistor activation.</li>
+    </ol>
+  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Speed</code>:</strong> Defines the speed for the GPIO pin:
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_SPEED_FREQ_LOW</code>: 2 MHz.</li>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_SPEED_FREQ_MEDIUM</code>: 12.5 to 50 MHz.</li>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_SPEED_FREQ_HIGH</code>: 25 to 100 MHz.</li>
+      <li><code class="language-plaintext highlighter-rouge">GPIO_SPEED_FREQ_VERY_HIGH</code>: 50 to 200 MHz.</li>
+    </ol>
+  </li>
+</ul>
+
+<p>An example of initializing a pin:</p>
+
+<pre><code class="language-cpp">GPIO_InitTypeDef GPIO_InitStruct = {};
+GPIO_InitStruct.Pin = GPIO_PIN_13;  
+GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;  
+GPIO_InitStruct.Pull = GPIO_NOPULL;  
+GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;  
+HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
+</code></pre>
+
+<h3 id="gpio-pin-states-gpio_pinstate">GPIO Pin States (<code class="language-plaintext highlighter-rouge">GPIO_PinState</code>)</h3>
+
+<p>A GPIO pin can be in one of the following two states:</p>
 
 <ol>
-  <li>MODER</li>
-  <li>OTYPER</li>
-  <li>OSPEEDER</li>
-  <li>PUPDR</li>
-  <li>IDR</li>
-  <li>ODR</li>
-  <li>BSRR</li>
-  <li>LCKR</li>
-  <li>AFR[2]</li>
+  <li><strong>Reset State (<code class="language-plaintext highlighter-rouge">GPIO_PIN_RESET</code>):</strong> Logical low (<code class="language-plaintext highlighter-rouge">0</code>).</li>
+  <li><strong>Set State (<code class="language-plaintext highlighter-rouge">GPIO_PIN_SET</code>):</strong> Logical high (<code class="language-plaintext highlighter-rouge">1</code>).</li>
+</ol>
+
+<h4 id="writing-to-a-pin">Writing to a Pin</h4>
+
+<p>To set or reset a GPIO pin, you can use the following methods:</p>
+
+<h5 id="setting-a-pin">Setting a Pin:</h5>
+
+<pre><code class="language-c">GPIOA -&gt; BSSR = GPIO_PIN_0;                         // fast
+GPIOA -&gt; ODR |= GPIO_PIN_0;                         // legacy
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET); // HAL Library
+</code></pre>
+
+<h5 id="resetting-a-pin">Resetting a Pin:</h5>
+
+<pre><code class="language-c">GPIOA -&gt; BSSR = (uint32_t)GPIO_PIN_0  &lt;&lt; 16U;         // fast
+GPIOA -&gt; ODR &amp;= ~GPIO_PIN_0;                          // legacy
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET); // HAL Library
+</code></pre>
+
+<p>No Masking needed for setting/resetting a pin when using BSRR register, ODR Registers stores the output values and we can use it to read the output values.</p>
+
+<p>Note that the function <code class="language-plaintext highlighter-rouge">HAL_GPIO_WritePin</code> writes the value to the pin <strong>atomically</strong> without OR’ing it with other masks. That means interrupts do not have to be disabled.</p>
+
+<h4 id="reading-a-pin">Reading a Pin</h4>
+
+<p>Just like reading the Output data from ODR, we can read the input data from IDR.</p>
+
+<pre><code class="language-c">uint8_t PA0;
+PA0 = GPIOA -&gt; IDT &amp; GPIO_PIN_0;            // legacy
+PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // HAL Library
+</code></pre>
+
+<h3 id="gpio-port-configuration-gpio_typedef">GPIO Port Configuration (<code class="language-plaintext highlighter-rouge">GPIO_TypeDef</code>)</h3>
+
+<p>Each GPIO port is represented by a <code class="language-plaintext highlighter-rouge">GPIO_TypeDef</code> structure, which contains the following registers:</p>
+
+<pre><code class="language-cpp">typedef struct  
+{  
+  __IO uint32_t MODER;   // Mode Register
+  __IO uint32_t OTYPER;  // Output Type Register
+  __IO uint32_t OSPEEDR  // Output Speed Register
+  __IO uint32_t PUPDR    // Pull-Up Pull-Down Register
+  __IO uint32_t IDR;     // Input Data Register
+  __IO uint32_t ODR;     // Output Data Rigister
+  __IO uint32_t BSRR     // Bit Set/Reset Register
+  __IO uint32_t LCKR;    // Lock Register
+  __IO uint32_t AFR[2];  // Alternate Function Registers
+} GPIO_TypeDef;
+</code></pre>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">MODER</code>: Port Mode Register (offset <code class="language-plaintext highlighter-rouge">0x00</code>).
+    <blockquote>
+      <p>Each pin has 2 bits in this register:</p>
+      <ul>
+        <li><code class="language-plaintext highlighter-rouge">00</code>: Input mode</li>
+        <li><code class="language-plaintext highlighter-rouge">01</code>: General-purpose output mode</li>
+        <li><code class="language-plaintext highlighter-rouge">10</code>: Alternate function mode (like UART, SPI, etc.)</li>
+        <li><code class="language-plaintext highlighter-rouge">11</code>: Analog mode</li>
+      </ul>
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">OTYPER</code>: Port Output Type Register (offset <code class="language-plaintext highlighter-rouge">0x04</code>).
+    <blockquote>
+      <p>Output Type</p>
+      <ul>
+        <li><code class="language-plaintext highlighter-rouge">0</code>: Output push-pull (default)</li>
+        <li><code class="language-plaintext highlighter-rouge">1</code>: Output open-drain</li>
+      </ul>
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">OSPEEDR</code>: Port Output Speed Register (offset <code class="language-plaintext highlighter-rouge">0x08</code>).
+    <blockquote>
+      <p>Each pin has 2 bits in this register:</p>
+      <ul>
+        <li><code class="language-plaintext highlighter-rouge">00</code>: Low speed</li>
+        <li><code class="language-plaintext highlighter-rouge">01</code>: Medium speed</li>
+        <li><code class="language-plaintext highlighter-rouge">10</code>: High speed</li>
+        <li><code class="language-plaintext highlighter-rouge">11</code>: Very high speed</li>
+      </ul>
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">PUPDR</code>: Port Pull-up/Pull-down Register (offset <code class="language-plaintext highlighter-rouge">0x0C</code>).
+    <blockquote>
+      <p>Each pin has 2 bits in this register:</p>
+      <ul>
+        <li><code class="language-plaintext highlighter-rouge">00</code>: No pull-up, pull-down</li>
+        <li><code class="language-plaintext highlighter-rouge">01</code>: Pull-up</li>
+        <li><code class="language-plaintext highlighter-rouge">10</code>: Pull-down</li>
+        <li><code class="language-plaintext highlighter-rouge">11</code>: Reserved</li>
+      </ul>
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">IDR</code>: Input Data Register (offset <code class="language-plaintext highlighter-rouge">0x10</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">ODR</code>: Output Data Register (offset <code class="language-plaintext highlighter-rouge">0x14</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">BSRR</code>: Port Bit Set/Reset Register (offset <code class="language-plaintext highlighter-rouge">0x18</code>).
+    <blockquote>
+      <p>This 32-bit register allows <strong>atomic</strong> bit-wise operations to set or reset individual bits in the <code class="language-plaintext highlighter-rouge">ODR</code>:</p>
+      <ul>
+        <li>The lower 16 bits (0-15) are used to set the corresponding ODR bits.</li>
+      </ul>
+
+      <pre><code class="language-cpp">// Set Pin A0
+GPIOA-&gt;BSRR = GPIO_PIN_0;
+</code></pre>
+
+      <ul>
+        <li>The upper 16 bits (16-31) are used to reset the corresponding ODR bits.</li>
+      </ul>
+
+      <pre><code class="language-cpp">// Reset Pin A0
+GPIOA -&gt; BSSR = (uint32_t)GPIO_PIN_0 &lt;&lt; 16U;
+</code></pre>
+
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">LCKR</code>: Port Configuration Lock Register (offset <code class="language-plaintext highlighter-rouge">0x1C</code>).
+    <blockquote>
+      <p>This 16-bit register locks the configuration of the GPIO port to prevent accidental changes</p>
+      <ul>
+        <li>Once locked, the configuration of the GPIO cannot be modified until the next reset.</li>
+      </ul>
+
+      <pre><code class="language-cpp">// Step 1: Write the pin's lock pattern and set LCKK bit
+GPIOA-&gt;LCKR = GPIO_LCKR_LCKK | GPIO_PIN_0;
+
+// Step 2: Write the pin's lock pattern without LCKK bit
+GPIOA-&gt;LCKR = GPIO_PIN_0;
+
+// Step 3: Write the pin's lock pattern with LCKK bit again
+GPIOA-&gt;LCKR = GPIO_LCKR_LCKK | GPIO_PIN_0;
+
+// Step 4: Read LCKR to complete the lock sequence
+uint32_t temp = GPIOA-&gt;LCKR;
+
+// The pin is now locked, and the configuration cannot be changed until a reset occurs
+</code></pre>
+
+    </blockquote>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">AFR[2]</code>: Alternate Function Registers (offset <code class="language-plaintext highlighter-rouge">0x20</code>, <code class="language-plaintext highlighter-rouge">0x24</code>).</li>
 </ol>
 
 <p>In the following, we will at some of these registers</p>
-
-<h3 id="gpio-portmoderegister-moder">GPIO Port <strong>Mode</strong> <strong>R</strong>egister (MODER)</h3>
-
-<p>This 32-bit register is split into 16 words (two bytes) MODER0..MODER15, each word is responsible to set the mode of the corresponding pin, possible modes are:</p>
-
-<ul>
-  <li>00: Input Mode</li>
-  <li>01: Output Mode</li>
-  <li>10: Alternate Function</li>
-  <li>11: Analog Mode</li>
-</ul>
-
-<h3 id="gpio-portoutputtype-register-otyper">GPIO Port <strong>O</strong>utput <strong>Type R</strong>egister (OTYPER)</h3>
-
-<p>When the mode is set to output mode or alternate function, this register specifies the mode whether push-pull or open-drain (see <a href="https://alotbah.com/the-black-pill-stm32f411ceu6/#PP_OD">here</a>).</p>
-
-<h3 id="gpioinputdataregister-idr">GPIO <strong>I</strong>nput <strong>D</strong>ata <strong>R</strong>egister (IDR)</h3>
-
-<p>This register is where the values read from input pins are written. (see <a href="https://alotbah.com/the-black-pill-stm32f411ceu6/#pin-input">this</a>)</p>
-
-<h3 id="gpiooutputdataregister-odr">GPIO <strong>O</strong>utput <strong>D</strong>ata <strong>R</strong>egister (ODR)</h3>
-
-<p>This register is where the values are written into the output pins. It is not recommended to use this register to write to selected pin of the port, use rather the BSRR instead, since this register writes to the whole port. That means writing to a pin requires multiple operations, while the BSRR provides atomic operations to write to a single pin.</p>
 
 <h3 id="gpio-portbitsetresetregister-bsrr">GPIO Port <strong>B</strong>it <strong>S</strong>et/<strong>R</strong>eset <strong>R</strong>egister (BSRR)</h3>
 
@@ -872,63 +1665,556 @@ HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 
 <h2 id="pulse-width-modulation-pwm">Pulse-Width-Modulation (PWM)</h2>
 
-<p>The STM32Cube IDE sets this easily, from the file <em>myproject.ioc</em>, first go to System Core, then click on RCC. Set both High and Low Clocks speeds to Crystal/Ceramic Resonator. Then go to Tim3 Peripheral in Timers. The timer 3 has four channels, we activate the first channel by setting it to “PWM Generation CH1”.</p>
+<p>Configuring PWM on the STM32 platform using STM32CubeIDE is a streamlined process. Beginning with the project’s configuration file, <code class="language-plaintext highlighter-rouge">_myproject.ioc_</code>, follow these steps:</p>
 
-<p>The frequency of the PWM is defined by</p>
+<h3 id="system-core-configuration">System Core Configuration</h3>
 
-<p>fPWM=fAPB Timer Clock(ARR+1)⋅(PSC+1)fPWM=fAPB Timer Clock(ARR+1)⋅(PSC+1)</p>
+<ol>
+  <li>
+    <p><strong>Clock Configuration</strong>:<br />
+ Navigate to <strong>System Core</strong> &gt; <code class="language-plaintext highlighter-rouge">RCC</code>. Set both the High-Speed Clock (<code class="language-plaintext highlighter-rouge">HCLK</code>) and Low-Speed Clock (<code class="language-plaintext highlighter-rouge">LCLK</code>) sources to <strong>Crystal/Ceramic Resonator</strong>. This ensures stable and accurate clocking for the timer peripherals.</p>
+  </li>
+  <li>
+    <p><strong>Timer Configuration</strong>:<br />
+ Go to <strong>Timers</strong> &gt; <code class="language-plaintext highlighter-rouge">TIM3</code>. The <code class="language-plaintext highlighter-rouge">TIM3</code> peripheral has four channels, each capable of generating PWM signals. For this example, activate <strong>Channel 1</strong> by setting it to <strong>PWM Generation CH1</strong>, optionally the same for channel 2.</p>
+  </li>
+</ol>
 
-<p>Here, <strong>ARR</strong> is the <em>Auto-reload register,</em> which defines the counter period. <strong>PSC</strong> is the <em>pre-scaler.</em> Note that both ARR and PSC registers contain the corresponding values minus one.</p>
+<h3 id="pwm-frequency-and-duty-cycle-calculation">PWM Frequency and Duty Cycle Calculation</h3>
 
-<p>The Duty is defined by</p>
+<p>The PWM signal’s frequency is governed by the following equation:</p>
 
-<p>Duty=CCRARR[%]Duty=CCRARR[%]</p>
+<p>\[
+f_\text{PWM} =\frac{f_\text{APB Timer Clock}}{(ARR+1) \cdot (PSC+1)}
+\]</p>
 
-<p>Here <strong>CCR</strong> is the <em>capture compare register</em>.</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">ARR</code> (Auto-reload Register)</strong>: Defines the maximum count value before the timer resets.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">PSC</code> (Prescaler)</strong>: Divides the timer clock frequency to adjust the PWM period.</li>
+</ul>
 
-<p>These registers can be set in the “Parameter Settings” window by their names.</p>
+<p>Both <code class="language-plaintext highlighter-rouge">ARR</code> and <code class="language-plaintext highlighter-rouge">PSC</code> registers hold values that are decremented by one from their actual count (i.e., an <code class="language-plaintext highlighter-rouge">ARR</code> value of 999 sets the period to 1000 counts).</p>
 
-<p>This generates a private variable “htim3” in <em>main.c</em>. This is the handler of the timer. To initialize the timer, we need to call the following function</p>
+<p>The duty cycle of the PWM signal is determined by the following relationship:
+\[
+f_\text{Duty}= \frac{CCR}{ARR} [\%]
+\]</p>
 
-<pre><code class="language-cpp">HAL_TIM_PWM_Start(&amp;htim3, TIM_CHANNEL_1);
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">CCR</code> (Capture Compare Register)</strong>: Controls the pulse width of the PWM signal, directly influencing the duty cycle.</li>
+</ul>
+
+<p>These register values can be configured through the “Parameter Settings” window in STM32CubeIDE.</p>
+
+<h3 id="timer-initialization-and-configuration">Timer Initialization and Configuration</h3>
+
+<p>Once the parameters are set in the <code class="language-plaintext highlighter-rouge">.ioc</code> file, STM32CubeIDE generates a private variable <code class="language-plaintext highlighter-rouge">htim3</code> in the <code class="language-plaintext highlighter-rouge">main.c</code> file. This variable is an instance of the <code class="language-plaintext highlighter-rouge">TIM_HandleTypeDef</code> structure, which manages and configures the timer.</p>
+
+<p>This generates a private variable <code class="language-plaintext highlighter-rouge">htim3</code> in <em>main.c</em>. This is the handler of the timer.</p>
+
+<pre><code class="language-cpp">/* Private variables */  
+TIM_HandleTypeDef htim3;
 </code></pre>
 
-<p>And this will get the PWM working.</p>
+<p><strong><code class="language-plaintext highlighter-rouge">TIM_HandleTypeDef</code> Structure Overview</strong>:</p>
 
-<h2 id="setting-up-the-clock-frequency">Setting up the Clock Frequency</h2>
+<pre><code class="language-cpp">typedef struct {
+  TIM_TypeDef* Instance;      // Points to the TIMx peripheral (e.g., TIM1, TIM2).
+  TIM_Base_InitTypeDef init;  // Configuration parameters for the time base.
+  HAL_TIM_ActiveChannel;      // Channel
+  DMA_HandleTypeDef* hdma[7]; // DMA Handlers array
+  HAL_LockTypeDef;            // Locking Object
+  HAL_TIM_StateTypeDef;       // State
+} TIM_HandleTypeDef;
+</code></pre>
 
-<p>From <em>myproject.ioc</em> click on the tab “Clock Configuration”, you should see the following screen</p>
+<p><strong>Timer Initialization Function</strong>:</p>
 
-<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_114731533.png?resize=1024%2C738&amp;ssl=1" alt="" /></p>
+<p>The <code class="language-plaintext highlighter-rouge">MX_TIM3_Init()</code> function is responsible for initializing the TIM3 peripheral with the desired settings:</p>
 
-<p>Figure 3: Screenshot of the Clock Configuration</p>
+<pre><code class="language-cpp">static void MX_TIM3_Init() {
+    // Initialize the TIM3 peripheral handle
+    htim3.Instance = TIM3;  
+    htim3.Init.Prescaler = 0;  
+    htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim3.Init.Period = 65535;  
+    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;  
+    htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;  
+    // Initialize the timer for PWM operation
+    if (HAL_TIM_PWM_Init(&amp;htim3) != HAL_OK) Error_Handler(); 
+	
+    // Configure the master configuration for synchronization
+    TIM_MasterConfigTypeDef sMasterConfig = {};  
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;  
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;  
+    // Apply the master configuration settings
+    if (HAL_TIMEx_MasterConfigSynchronization(&amp;htim3, &amp;sMasterConfig) != HAL_OK) Error_Handler(); 
+	
+    // Configure the output compare (OC) settings for PWM on channel 1 and 2
+    TIM_OC_InitTypeDef sConfigOC = {0};  
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;  
+    sConfigOC.Pulse = 0;  
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;  
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	// Configure PWM channel 1 with the above settings
+    if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_1) != HAL_OK) Error_Handler(); 
+	// Configure PWM channel 2 with the above settings
+    if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_2) != HAL_OK) Error_Handler();  
 
-<p>The clock speed is the HCLK register. Now we will configure the clock depending on the chip. For instance, the black pill STM32F411CEUx from WeAct is connected to a 32.786KHz resonator on the LSE and 25MHz on the HSE. Therefore, it has to be set up as in Figure 3 to clock it up to 100MHz.</p>
+    // Call post-initialization function to configure GPIO and other settings
+    HAL_TIM_MspPostInit(&amp;htim3);
+}
+</code></pre>
 
-<p>However, sometimes certain services require a certain clock speeds, as explained in the next section.</p>
+<h3 id="starting-pwm-output">Starting PWM Output</h3>
 
-<h2 id="serial-connection">Serial Connection</h2>
+<p>To begin PWM signal generation on the configured channels, the following function calls are necessary within the <code class="language-plaintext highlighter-rouge">main()</code> function:</p>
 
-<p>Here, we will explain the service “universal serial bus on-the-go full speed” (USB OTG FS) which is compliant with USB 2.0. This service requires a dedicated 48MHz clock connected to the HSE oscillator. (see datasheet 3.27)</p>
+<pre><code class="language-cpp">  
+int main(void)  
+{
+    /* ... */
+    
+    // Start PWM on Channel 1 
+    if (HAL_TIM_PWM_Start(&amp;htim3, TIM_CHANNEL_1) != HAL_OK) Error_Handler(); 
+    
+    // Start PWM on Channel 2
+    if (HAL_TIM_PWM_Start(&amp;htim3, TIM_CHANNEL_2) != HAL_OK) Error_Handler();
+    
+    /* ... */
+}
+</code></pre>
+
+<p>These function calls initiate PWM generation on the specified channels, allowing the microcontroller to output the configured PWM signals.</p>
+
+<h2 id="timers">Timers</h2>
+
+<p>General-purpose timers on the STM32 are highly versatile and can be used for a variety of timing tasks. Below are the steps to configure a general-purpose timer (e.g., <code class="language-plaintext highlighter-rouge">TIM2</code>) and set up an interrupt-based event handler.</p>
+
+<h3 id="timer-configuration">Timer Configuration</h3>
+
+<ol>
+  <li>
+    <p><strong>Set Clock Source</strong>:<br />
+ In STM32CubeIDE, set the clock source of <code class="language-plaintext highlighter-rouge">TIM2</code> to <strong>Internal Clock</strong> to use the system clock as the timer’s clock source.</p>
+  </li>
+  <li>
+    <p><strong>Set Counter Period and Prescaler</strong>:<br />
+ Configure the <strong>Counter Period</strong> (<code class="language-plaintext highlighter-rouge">ARR</code>) and <strong>Prescaler</strong> (<code class="language-plaintext highlighter-rouge">PSC</code>) values to achieve the desired timer frequency:</p>
+  </li>
+</ol>
+
+<p>\[
+f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
+\]</p>
+
+<p>This equation determines the frequency at which the timer overflows and triggers an interrupt or updates its count.</p>
+
+<ol>
+  <li><strong>Enable Auto-Reload Preload</strong>:<br />
+ Enable the <strong>Auto-Reload Preload</strong> to ensure that the counter resets seamlessly upon reaching the <code class="language-plaintext highlighter-rouge">ARR</code> value.</li>
+</ol>
+
+<h3 id="initialization-and-interrupt-configuration">Initialization and Interrupt Configuration</h3>
+
+<p>To initialize the timer and configure it for interrupt generation, include the following code in your initialization function:</p>
+
+<pre><code class="language-cpp">static void MX_TIM2_Init(void) {
+    // Initialize TIM2
+    htim2.Instance = TIM2;  
+    // Set prescaler to divide clock by 9600 (96 MHz / 9600 = 10 kHz)
+    htim2.Init.Prescaler = 9599;  
+    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+    // Set period for 1 Hz frequency (10 kHz / 10000 = 1 Hz)
+    htim2.Init.Period = 9999;
+    htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;  // Enable auto-reload preload
+    
+    // Initialize the timer
+    if (HAL_TIM_Base_Init(&amp;htim2) != HAL_OK) Error_Handler();
+    
+    // Start the timer with interrupt enabled
+    if (HAL_TIM_Base_Start_IT(&amp;htim2) != HAL_OK) Error_Handler(); 
+}
+</code></pre>
+
+<h3 id="handling-timer-interrupts">Handling Timer Interrupts</h3>
+
+<p>To handle timer interrupts, define the interrupt callback function:</p>
+
+<pre><code class="language-cpp">void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    // Check if the interrupt is from TIM2
+    if (htim-&gt;Instance == TIM2) {
+        // Toggle an LED on GPIO pin PC13 as an example
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);  
+    }
+}
+</code></pre>
+
+<p>This function is called whenever the timer reaches its period value and generates an interrupt, allowing you to execute time-based tasks, such as toggling an LED or triggering other events.</p>
+
+<h2 id="usb-serial-communication-setup">USB Serial Communication Setup</h2>
+
+<p>In this section, we will detail the setup and configuration of the Universal Serial Bus On-The-Go Full Speed (<code class="language-plaintext highlighter-rouge">USB OTG FS</code>) interface on the STM32 platform, which is compliant with the USB 2.0 standard. This interface is crucial for enabling USB communication, requiring a dedicated 48 MHz clock sourced from the High-Speed External (<code class="language-plaintext highlighter-rouge">HSE</code>) oscillator, as specified in the device’s datasheet (refer to section 3.27).</p>
+
+<h3 id="configuring-the-usb-otg-fs-clock">Configuring the USB OTG FS Clock</h3>
+
+<p>To ensure the <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code> peripheral operates correctly, it must be supplied with a precise 48 MHz clock, derived from the High-Speed External (<code class="language-plaintext highlighter-rouge">HSE</code>) oscillator. This clock configuration is critical for maintaining the timing requirements stipulated by the USB 2.0 standard.</p>
+
+<h4 id="step-by-step-clock-setup">Step-by-Step Clock Setup:</h4>
+
+<ol>
+  <li>
+    <p><strong>Activate the HSE and LSE Oscillators</strong>:</p>
+
+    <ul>
+      <li>Begin by configuring the RCC (Reset and Clock Control) settings in STM32CubeMX. Set both the High-Speed External (<code class="language-plaintext highlighter-rouge">HSE</code>) and Low-Speed External (<code class="language-plaintext highlighter-rouge">LSE</code>) clocks to use crystal oscillators, which offer superior stability compared to internal RC oscillators.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Configure the PLL (Phase-Locked Loop)</strong>:</p>
+
+    <ul>
+      <li>
+        <p>The main PLL should be configured to generate a system clock that is a multiple of 48 MHz. For instance, if your application allows, you might set the HCLK (High-speed Clock) to 96 MHz, which can then be divided by two to achieve the required 48 MHz for the USB peripheral.</p>
+      </li>
+      <li>
+        <p><strong>Example for STM32F411CEUx</strong>: This microcontroller typically uses a 25 MHz HSE and a 32.786 kHz LSE. Set the PLL to multiply the HSE to achieve a 96 MHz system clock, which can then be divided down to provide the 48 MHz USB clock directly from the Main PLL.</p>
+      </li>
+      <li>
+        <p><strong>Diagram Reference</strong>: The clock tree configuration should be adjusted accordingly to ensure the USB_OTG_FS peripheral is fed the correct 48 MHz signal, as visualized below.</p>
+      </li>
+    </ul>
+  </li>
+</ol>
 
 <p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_120919409.png?resize=975%2C480&amp;ssl=1" alt="" /></p>
 
-<p>Figure 4: Screenshot of the Clock configured for the USB_OTG_FS service</p>
+<p><strong>Figure 1: Clock Configuration for <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code></strong></p>
 
-<p>After having configured the APB1 peripheral clock to run at 48MHz, we should</p>
+<h3 id="usb-peripheral-configuration-in-stm32cubemx">USB Peripheral Configuration in STM32CubeMX</h3>
+
+<p>After ensuring the clock is properly configured, proceed with setting up the USB OTG FS peripheral to handle USB communication at the hardware level.</p>
+<h4 id="detailed-configuration-steps">Detailed Configuration Steps:</h4>
 
 <ol>
-  <li>In the Connectivity, USB_OTG_FS configuration set the mode to “Device Only”. This activates the middleware “USB_DEVICE” in the “Middleware” category.</li>
-  <li>Go to Middleware, USB_DEVICE and set the class to be “Communication Device Class (Virtual Port Com)”.</li>
-  <li>Now in the configuration, you can change the “PRODUCT_String” among other settings.</li>
+  <li>
+    <p><strong>Enable USB OTG FS</strong>:</p>
+
+    <ul>
+      <li>Within STM32CubeMX, navigate to <strong>Connectivity</strong> and select <strong>USB_OTG_FS</strong>.</li>
+      <li>Set the mode to <strong>Device Only</strong>, as this will configure the STM32 to act as a USB device when connected to a host system such as a PC.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Set Up the USB Device Middleware</strong>:</p>
+
+    <ul>
+      <li>
+        <p>Under <strong>Middleware</strong>, select <strong>USB_DEVICE</strong>. For serial communication over USB, choose the <strong>Communication Device Class (CDC)</strong>, commonly referred to as <em>Virtual COM Port</em>. This selection enables the microcontroller to communicate with a host as if it were a standard serial port.</p>
+      </li>
+      <li>
+        <p>Customize the USB device descriptors (such as the <code class="language-plaintext highlighter-rouge">PRODUCT_String</code>) within the <strong>Device Descriptor</strong> settings. These descriptors define how the USB device is identified by the host system, allowing for easier recognition and differentiation.</p>
+      </li>
+      <li>
+        <p><strong>Note</strong>: The USB_DEVICE middleware operates in conjunction with the <code class="language-plaintext highlighter-rouge">STM32_USB_DEVICE_Library</code>, which houses the core USB functionality, referred to as <code class="language-plaintext highlighter-rouge">usb_core</code>. The core library manages fundamental USB operations but delegates higher-level communication protocols to other modules.</p>
+      </li>
+    </ul>
+  </li>
 </ol>
 
-<p>Notes<br />
-– The “USB_DEVICE” middleware uses another middleware which is STM32<em>USB_DEVICE Library, which uses the “usb_core” from it.<br />
-– The “usb_core” controls the important parts of the USB device but not the communication<br />
-– From “USB_DEVICE”, the core is stored in the _usb_device.c</em><br />
-– The description (vendor, product, ..) is stored in <em>usbd_desc.c</em><br />
-– The functionality to send and receive data are in <em>usb_cdc_if.c</em>, which is what we need to edit.</p>]]></content><author><name></name></author><category term="embedded" /><category term="stm32" /><category term="STM32F411CEU6" /><category term="embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="Arm" /><category term="Cortex_m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="code">Code</h2>
+<h3 id="memory-management-adjusting-the-heap-size">Memory Management: Adjusting the Heap Size</h3>
+
+<p>To ensure the microcontroller can handle USB communication efficiently, particularly when dealing with data buffers, it is necessary to adjust the default heap size.</p>
+
+<h4 id="heap-size-adjustment">Heap Size Adjustment:</h4>
+
+<ol>
+  <li>
+    <p><strong>Increase Heap Size</strong>:</p>
+
+    <ul>
+      <li>
+        <p>Access the <strong>Project Manager</strong> tab in STM32CubeMX. By default, the heap size may be set to 0x200 (512 bytes), which is often insufficient for USB operations.</p>
+      </li>
+      <li>
+        <p>Increase the heap size to 0x600 (1536 bytes). This additional memory allocation is crucial for accommodating the buffers required by the USB communication stack, ensuring smooth data transmission and reception.</p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p>To ensure the heap size has increased we can look at the linker script</p>
+
+<pre><code class="language-cpp">/* Entry Point */
+ENTRY(Reset_Handler)
+
+/* Highest address of the user mode stack */
+_estack = ORIGIN(RAM) + LENGTH(RAM);    /* End of RAM */
+
+/* Define heap and stack sizes */
+_Min_Heap_Size = 0x600;      /* Required amount of heap (1.5KB) */
+_Min_Stack_Size = 0x400;     /* Required amount of stack (1KB) */
+
+/* Specify the memory areas */
+MEMORY
+{
+  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
+  FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 512K
+}
+</code></pre>
+
+<ul>
+  <li><strong>Heap Size</strong>: Updated to <code class="language-plaintext highlighter-rouge">0x600</code> (1536 bytes) to ensure sufficient memory for USB operations.</li>
+  <li><strong>Stack Size</strong>: Maintained at <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes) to support typical stack usage scenarios.</li>
+</ul>
+
+<h3 id="customizing-usb-communication-in-usbd_cdc_ifc">Customizing USB Communication in <code class="language-plaintext highlighter-rouge">usbd_cdc_if.c</code></h3>
+
+<p>To ensure that the device and the host computer agree on communication parameters such as baud rate, parity, and stop bits, the <code class="language-plaintext highlighter-rouge">usbd_cdc_if.c</code> file must be modified. This file also handles the reception of data from the USB interface.</p>
+
+<h4 id="modifying-line-coding-commands">Modifying Line Coding Commands:</h4>
+
+<ol>
+  <li>
+    <p><strong>Storing Line Coding Information</strong>:</p>
+
+    <ul>
+      <li>To handle the Line Coding commands, add a variable of type <code class="language-plaintext highlighter-rouge">USBD_CDC_LineCodingTypeDef</code> to store the communication settings.</li>
+    </ul>
+
+    <p>In the block for adding private variables (<code class="language-plaintext highlighter-rouge">PV</code>):</p>
+    <pre><code class="language-cpp">/* USER CODE BEGIN PV */
+/* Private variables ---------------------------------------------------------*/
+USBD_CDC_LineCodingTypeDef LineCoding;
+/* USER CODE END PV */
+</code></pre>
+  </li>
+  <li>
+    <p><strong>Handling SET and GET Line Coding Requests</strong>:</p>
+
+    <ul>
+      <li>Modify the <code class="language-plaintext highlighter-rouge">CDC_Control_FS</code> function to handle <code class="language-plaintext highlighter-rouge">CDC_SET_LINE_CODING</code> and <code class="language-plaintext highlighter-rouge">CDC_GET_LINE_CODING</code> requests. This ensures the device correctly receives and responds to the host’s communication settings.</li>
+    </ul>
+
+    <pre><code class="language-cpp"> case CDC_SET_LINE_CODING:
+     LineCoding.bitrate = 
+     (uint32_t)((pbuf[0]) | (pbuf[1] &lt;&lt; 8) | (pbuf[2] &lt;&lt; 16) | (pbuf[3] &lt;&lt; 24));
+     LineCoding.format = pbuf[4];
+     LineCoding.paritytype = pbuf[5];
+     LineCoding.datatype = pbuf[6];
+ break;
+ case CDC_GET_LINE_CODING:
+     pbuf[0] = (uint8_t)(LineCoding.bitrate);
+     pbuf[1] = (uint8_t)(LineCoding.bitrate &gt;&gt; 8);
+     pbuf[2] = (uint8_t)(LineCoding.bitrate &gt;&gt; 16);
+     pbuf[3] = (uint8_t)(LineCoding.bitrate &gt;&gt; 24);
+     pbuf[4] = LineCoding.format;
+     pbuf[5] = LineCoding.paritytype;
+     pbuf[6] = LineCoding.datatype;
+ break;
+</code></pre>
+
+    <ul>
+      <li>This implementation ensures that both the computer and the device agree on the communication parameters.</li>
+      <li>
+        <h4 id="handling-data-reception">Handling Data Reception:</h4>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Creating a Hook for Data Reception</strong>:</p>
+
+    <ul>
+      <li>Define a weak function <code class="language-plaintext highlighter-rouge">CDC_Receive_Handler</code> that can be overridden to handle incoming data. This provides flexibility by allowing custom data handling outside of the default library implementation.</li>
+    </ul>
+
+    <p>In the block for private function declarations:</p>
+
+    <ul>
+      <li>A weak function is only compiled if implemented; otherwise, all calls to it are ignored, which helps avoid unnecessary code execution.</li>
+    </ul>
+
+    <pre><code class="language-cpp"> __weak void CDC_Receive_Handler(uint8_t* pbuf, uint32_t *Len);
+</code></pre>
+  </li>
+  <li>
+    <p><strong>Modifying <code class="language-plaintext highlighter-rouge">CDC_Receive_FS</code> Function</strong>:</p>
+
+    <ul>
+      <li>Modify the <code class="language-plaintext highlighter-rouge">CDC_Receive_FS</code> function to call the <code class="language-plaintext highlighter-rouge">CDC_Receive_Handler</code> whenever data is received. This ensures that received data is processed as soon as it arrives.</li>
+    </ul>
+
+    <pre><code class="language-cpp"> static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
+ {
+   /* USER CODE BEGIN 6 */
+   USBD_CDC_SetRxBuffer(&amp;hUsbDeviceFS, &amp;Buf[0]);
+   USBD_CDC_ReceivePacket(&amp;hUsbDeviceFS);
+   CDC_Receive_Handler(Buf, Len);   /* &lt;-- added here */
+   return (USBD_OK);
+   /* USER CODE END 6 */
+ }
+</code></pre>
+
+    <ul>
+      <li>This function must execute quickly to ensure that the USB interface can continue processing incoming data without delays.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="finalizing-the-usb-communication-setup">Finalizing the USB Communication Setup</h3>
+
+<p>Once the clock and peripheral configurations are complete, and the project code is generated by STM32CubeMX, the final step involves refining the generated code to suit your application’s specific needs.</p>
+
+<h4 id="code-customization">Code Customization</h4>
+
+<ol>
+  <li>
+    <p><strong>Generated Code Overview</strong>:</p>
+
+    <ul>
+      <li>STM32CubeMX will generate several key files, including <code class="language-plaintext highlighter-rouge">usb_device.c</code>, <code class="language-plaintext highlighter-rouge">usbd_desc.c</code>, and <code class="language-plaintext highlighter-rouge">usb_cdc_if.c</code>. These files contain the foundational code for USB communication, including initialization routines and descriptor settings.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Editing <code class="language-plaintext highlighter-rouge">usb_cdc_if.c</code></strong>:</p>
+
+    <ul>
+      <li>
+        <p>The file <code class="language-plaintext highlighter-rouge">usb_cdc_if.c</code> is where the core data handling functions are implemented. This is the primary location for customizing how data is sent and received over USB. Modify these functions to align with your application’s communication protocol and data handling requirements.</p>
+      </li>
+      <li>
+        <p><strong>Middleware Structure</strong>:</p>
+
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">usb_device.c</code>: Manages the core USB device functionality.</li>
+          <li><code class="language-plaintext highlighter-rouge">usbd_desc.c</code>: Contains the USB device descriptors, which define how the device appears to the host.</li>
+          <li><code class="language-plaintext highlighter-rouge">usb_cdc_if.c</code>: Implements the interface for the CDC class, handling data transfers between the microcontroller and the USB host.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p>By carefully following these steps, you will configure a robust and efficient USB communication interface on your STM32 microcontroller. The process involves precise clock setup, enabling and configuring the appropriate peripherals, adjusting memory allocations, and customizing the generated code to meet your application’s specific needs. This comprehensive approach ensures reliable and high-performance USB communication, suitable for a wide range of embedded applications.</p>
+
+<h2 id="configuring-analog-channels-on-stm32">Configuring Analog Channels on STM32</h2>
+
+<p>Setting up analog channels on the STM32 microcontroller involves several key steps, particularly when configuring the ADC (Analog-to-Digital Converter) to read analog signals. This section will guide you through the process of declaring pins as analog inputs, configuring the ADC for optimal performance, and utilizing internal references such as the temperature sensor and voltage reference.</p>
+
+<h3 id="selecting-analog-input-pins">Selecting Analog Input Pins</h3>
+
+<p>Before proceeding with the configuration, it’s essential to identify which pins you will declare as analog inputs. This decision is crucial because changing the configuration later can be complex and may require reworking the hardware setup or significant software adjustments.</p>
+
+<h2 id="adc-configuration">ADC Configuration</h2>
+
+<p>The ADC peripheral in STM32 microcontrollers is highly versatile, capable of converting multiple analog inputs simultaneously using DMA (Direct Memory Access) for efficient data handling. The following steps outline the configuration process:</p>
+
+<ol>
+  <li>
+    <p><strong>Selecting ADC Channels (ADCx)</strong>:</p>
+
+    <ul>
+      <li><strong>Input Channels (INx)</strong>: Choose the specific analog pins (INx) you intend to use as input channels. Each INx corresponds to a physical pin on the microcontroller.</li>
+      <li><strong>Internal Channels</strong>: Additionally, you can select internal channels such as the temperature sensor and the internal voltage reference (<code class="language-plaintext highlighter-rouge">Vrefint</code>), which are invaluable for monitoring the microcontroller’s operating conditions.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Configuring DMA Settings</strong>:</p>
+
+    <ul>
+      <li><strong>DMA Channel</strong>: Add <code class="language-plaintext highlighter-rouge">ADC1</code> to the DMA settings. This will allow the ADC to transfer conversion results directly to memory without CPU intervention.</li>
+      <li><strong>Data Width</strong>: Set the data width to “WORD” to ensure that each conversion result is stored in a 32-bit word format.</li>
+      <li><strong>Mode</strong>: Enable “Circular” mode for DMA. This mode allows continuous ADC conversions, where the DMA automatically restarts after each full transfer, ideal for real-time data acquisition.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Adjusting ADC Parameters</strong>:</p>
+
+    <ul>
+      <li><strong>Continuous Conversion Mode</strong>: Enable this mode to allow the ADC to continuously convert the selected channels without requiring additional triggers.</li>
+      <li><strong>DMA Continuous Request</strong>: Enable this to keep the DMA in sync with the continuous ADC conversions, ensuring that each conversion result is automatically transferred to memory.</li>
+      <li><strong>Number of Conversions</strong>: Set this parameter to the number of channels you have configured. This determines how many conversions the ADC performs before resetting.</li>
+      <li><strong>Clock Prescaler</strong>: Set the prescaler to divide <code class="language-plaintext highlighter-rouge">PCLK2</code> by 4. Given our configuration with a <code class="language-plaintext highlighter-rouge">PCLK2</code> of 96 MHz, this results in an ADC clock of 24 MHz.</li>
+      <li><strong>Sampling Time Calculation</strong>: To determine the conversion time, divide the number of cycles by the ADC clock. For example:
+        <ul>
+          <li><strong>3 Cycles</strong>: 324 MHz=0.125 microseconds\frac{3}{24 \text{ MHz}} = 0.125 \text{ microseconds}24 MHz3​=0.125 microseconds. This is extremely fast and might not be suitable for accurate conversions.</li>
+          <li><strong>480 Cycles</strong>: 48024 MHz=20 microseconds\frac{480}{24 \text{ MHz}} = 20 \text{ microseconds}24 MHz480​=20 microseconds. This is a more reasonable time, balancing speed and accuracy for most applications.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Implementing the ADC in the Main Program</strong>:</p>
+
+    <ul>
+      <li>After configuring the ADC, a handle (<code class="language-plaintext highlighter-rouge">hadc1</code>) will be available in your main program. To store the ADC conversion results, declare a buffer:</li>
+    </ul>
+
+    <pre><code class="language-cpp"> uint32_t pData[2] = {0};  // Buffer to hold ADC conversion results
+</code></pre>
+
+    <ul>
+      <li>Start the ADC with DMA to begin storing conversion results in the buffer:</li>
+    </ul>
+
+    <pre><code class="language-cpp"> HAL_ADC_Start_DMA(&amp;hadc1, pData, 2);  // Start ADC with DMA, storing results in pData
+</code></pre>
+  </li>
+</ol>
+
+<h2 id="internal-voltage-reference-vrefint">Internal Voltage Reference (<code class="language-plaintext highlighter-rouge">Vrefint</code>)</h2>
+
+<p>The STM32 microcontrollers include an internal voltage reference (<code class="language-plaintext highlighter-rouge">Vrefint</code>), which is particularly useful for compensating for power supply variations or for calibrating measurements. According to the STM32 datasheet (Section 6.3.23), the typical value of <code class="language-plaintext highlighter-rouge">Vrefint</code> is 1.21V. You can use this reference to calculate the actual voltage of an input pin as follows:</p>
+
+<pre><code class="language-cpp">voltage = value_pinA0 * 1210 / value_Vrefint;  // Calculate voltage in mV
+</code></pre>
+
+<p>This formula assumes that <code class="language-plaintext highlighter-rouge">value_pinA0</code> is the ADC reading of the target pin, and <code class="language-plaintext highlighter-rouge">value_Vrefint</code> is the ADC reading of <code class="language-plaintext highlighter-rouge">Vrefint</code>. The result gives you the pin voltage in millivolts.</p>
+
+<h3 id="utilizing-the-internal-temperature-sensor">Utilizing the Internal Temperature Sensor</h3>
+
+<p>The internal temperature sensor in STM32 microcontrollers is useful for monitoring the temperature of the microcontroller itself, which can be an indicator of ambient temperature or the device’s thermal performance. However, note that the sensor primarily measures the temperature of the silicon die, which may not reflect rapid ambient temperature changes due to the sensor’s thermal inertia.</p>
+
+<h4 id="calculating-temperature">Calculating Temperature:</h4>
+
+<p>The temperature can be calculated using the following formula derived from the sensor’s characteristics:</p>
+
+<p>\[
+T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
+\]</p>
+
+<p>Where:</p>
+
+<ul>
+  <li>VtempV_{temp}Vtemp​ is the ADC reading of the temperature sensor.</li>
+  <li>V25V_{25}V25​ is the voltage corresponding to 25°C, typically 0.76V (as per Section 6.3.21 of the datasheet).</li>
+  <li>The slope is the change in voltage per degree Celsius.</li>
+</ul>
+
+<p>To implement this in code, assuming you are working in millivolts, the formula can be expressed as:</p>
+
+<pre><code class="language-cpp">temp = ((V_temp * 3300) / 4095 - 760) * 1000 / slope + 25;
+</code></pre>
+
+<p>For the STM32, where the slope might be around 2.5 mV/°C, you could simplify this further:</p>
+
+<pre><code class="language-cpp">temp = ((V_temp * 33000) / 4095 - 7600 + 25000) / 25;
+</code></pre>
+
+<p>This calculation yields the temperature in degrees Celsius, adjusting for the reference voltage and typical sensor characteristics.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="STM32" /><category term="STM32F411CEU6" /><category term="Embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="Arm" /><category term="Cortex-m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="math">Math</h2>
+
+<p>Inline math with \(\sin(x)\): \(\sin(x)\)</p>
+
+<p>Display math with \(\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}\):</p>
+
+<p>\[
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+\]</p>
+
+<p>Inline math with escaped delimiters: \(x^2\)</p>
+
+<h2 id="code">Code</h2>
 
 <pre><code class="language-cpp">    uint8_t PA0;
     PA0 = GPIOA -&gt; IDR &amp; GPIO_PIN_0;            // directly
@@ -1023,4 +2309,4 @@ HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 
 <div class="alert alert-info" role="alert">
   This is an informational alert—take note!
-</div>]]></content><author><name></name></author><category term="Web" /><category term="Jekyll" /><summary type="html"><![CDATA[Code]]></summary></entry></feed>
+</div>]]></content><author><name></name></author><category term="Web" /><category term="Jekyll" /><summary type="html"><![CDATA[Math]]></summary></entry></feed>

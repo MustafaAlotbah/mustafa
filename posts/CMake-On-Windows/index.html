@@ -30,7 +30,7 @@
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <meta name="generator" content="Jekyll v4.3.3" />
-<meta property="og:title" content="CMake On Windows" />
+<meta property="og:title" content="CMake - Installation On Windows" />
 <meta property="og:locale" content="en" />
 <meta name="description" content="Here is a quick way to get started into development with CMake on Windows x64." />
 <meta property="og:description" content="Here is a quick way to get started into development with CMake on Windows x64." />
@@ -40,14 +40,14 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2023-09-19T16:18:00+02:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="CMake On Windows" />
+<meta property="twitter:title" content="CMake - Installation On Windows" />
 <meta name="twitter:site" content="@" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-09-19T16:18:00+02:00","datePublished":"2023-09-19T16:18:00+02:00","description":"Here is a quick way to get started into development with CMake on Windows x64.","headline":"CMake On Windows","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/posts/CMake-On-Windows/"},"url":"http://localhost:4000/posts/CMake-On-Windows/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-09-19T16:18:00+02:00","datePublished":"2023-09-19T16:18:00+02:00","description":"Here is a quick way to get started into development with CMake on Windows x64.","headline":"CMake - Installation On Windows","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/posts/CMake-On-Windows/"},"url":"http://localhost:4000/posts/CMake-On-Windows/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
-  <title>CMake On Windows | Mustafa Alotbah's Blog
+  <title>CMake - Installation On Windows | Mustafa Alotbah's Blog
   </title>
 
   <!--
@@ -278,6 +278,20 @@
 }
 </style>
 
+<script type="text/x-mathjax-config">
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\(', '\)']],
+      displayMath: [['$$', '$$'], ['\[', '\]']]
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 
 
@@ -474,7 +488,7 @@
         
           
             
-              <span>CMake On Windows</span>
+              <span>CMake - Installation On Windows</span>
             
 
           
@@ -658,7 +672,7 @@
 
 <article class="px-1">
   <header>
-    <h1 data-toc-skip>CMake On Windows</h1>
+    <h1 data-toc-skip>CMake - Installation On Windows</h1>
     
 
     <div class="post-meta text-muted">
@@ -730,7 +744,7 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="150 words"
+  title="146 words"
 >
   <em>1 min</em> read</span>
 
@@ -742,9 +756,9 @@
   <div class="content">
     <p>Here is a quick way to get started into development with CMake on Windows x64.</p>
 
-<h2 id="1-getting-started"><span class="me-2">1. Getting Started</span><a href="#1-getting-started" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="getting-started">1. <span class="me-2">Getting Started</span><a href="#getting-started" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
-<h3 id="11-downloads"><span class="me-2">1.1 Downloads</span><a href="#11-downloads" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="downloads">1.1. <span class="me-2">Downloads</span><a href="#downloads" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li>Download MinGW64 (posix, seh, msvcrt) from <a href="https://github.com/niXman/mingw-builds-binaries/releases">here</a>.</li>
@@ -753,7 +767,7 @@
 
 <hr />
 
-<h3 id="12-installation"><span class="me-2">1.2 Installation</span><a href="#12-installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="installation">1.2. <span class="me-2">Installation</span><a href="#installation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li>Install CMake in <code class="language-plaintext highlighter-rouge">C:\Program Files\Cmake</code>.</li>
@@ -768,7 +782,7 @@
 
 <hr />
 
-<h3 id="13-first-project"><span class="me-2">1.3 First Project</span><a href="#13-first-project" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="first-project">1.3. <span class="me-2">First Project</span><a href="#first-project" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <ul>
   <li>The simplest project to build is a <code class="language-plaintext highlighter-rouge">Hello world</code> program. Hence we will add a <code class="language-plaintext highlighter-rouge">main.cpp</code> source:</li>
@@ -812,7 +826,7 @@ cd ..
 rmdir /s /q build
 </code></pre>
 
-<h2 id="more"><span class="me-2">More</span><a href="#more" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="more">2. <span class="me-2">More</span><a href="#more" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <ul>
   <li>Check out the <a href="https://alotbah.com/cmake-quick-reference/">Quick reference</a> for more.</li>
@@ -827,9 +841,8 @@ rmdir /s /q build
       <div class="post-meta mb-3">
         <i class="far fa-folder-open fa-fw me-1"></i>
         
-          <a href="/categories/software/">software</a>,
-          <a href="/categories/c/">C++</a>,
-          <a href="/categories/cmake/">cmake</a>
+          <a href="/categories/software-development/">Software-Development</a>,
+          <a href="/categories/cmake/">Cmake</a>
       </div>
     
 
@@ -841,22 +854,22 @@ rmdir /s /q build
           <a
             href="/tags/software/"
             class="post-tag no-text-decoration"
-          >software</a>
+          >Software</a>
         
           <a
             href="/tags/c/"
             class="post-tag no-text-decoration"
-          >c++</a>
+          >C++</a>
         
           <a
             href="/tags/cmake/"
             class="post-tag no-text-decoration"
-          >cmake</a>
+          >Cmake</a>
         
           <a
             href="/tags/windows/"
             class="post-tag no-text-decoration"
-          >windows</a>
+          >Windows</a>
         
       </div>
     
@@ -933,8 +946,15 @@ rmdir /s /q build
 
 
   <section id="access-lastmod">
-    <h2 class="panel-heading">Recently Updated</h2>
+    <h2 class="panel-heading">3. Recently Updated</h2>
     <ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/CMake-Production/">CMake - Publish Your Own Library</a>
+        </li>
       
         
         
@@ -947,7 +967,7 @@ rmdir /s /q build
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-On-Windows/">CMake On Windows</a>
+          <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
         </li>
       
         
@@ -962,13 +982,6 @@ rmdir /s /q build
         
         <li class="text-truncate lh-lg">
           <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/Tester/">Jekyll Chirpy Tester</a>
         </li>
       
     </ul>
@@ -1007,27 +1020,6 @@ rmdir /s /q build
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1052,19 +1044,12 @@ rmdir /s /q build
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -1105,6 +1090,124 @@ rmdir /s /q build
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1169,103 +1272,6 @@ rmdir /s /q build
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1308,6 +1314,8 @@ rmdir /s /q build
     
     
     
+      
+    
   
     
     
@@ -1319,6 +1327,76 @@ rmdir /s /q build
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -1351,20 +1429,20 @@ rmdir /s /q build
 
 
   <section>
-    <h2 class="panel-heading">Trending Tags</h2>
+    <h2 class="panel-heading">4. Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -1373,16 +1451,16 @@ rmdir /s /q build
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -1397,7 +1475,7 @@ rmdir /s /q build
 
 
   <section id="toc-wrapper" class="d-none ps-0 pe-4">
-    <h2 class="panel-heading ps-3 mb-2">Contents</h2>
+    <h2 class="panel-heading ps-3 mb-2">5. Contents</h2>
     <nav id="toc"></nav>
   </section>
 
@@ -1463,6 +1541,18 @@ rmdir /s /q build
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
 
 
 
@@ -1474,8 +1564,38 @@ rmdir /s /q build
 
 
   <aside id="related-posts" aria-labelledby="related-label">
-    <h3 class="mb-4" id="related-label">Further Reading</h3>
+    <h3 class="mb-4" id="related-label">5.1. Further Reading</h3>
     <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
+      
+        <article class="col">
+          <a href="/posts/CMake-Production/" class="post-preview card h-100">
+            <div class="card-body">
+              <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1700308800"
+  data-df="ll"
+  
+>
+  Nov 18, 2023
+</time>
+
+              <h4 class="pt-0 my-2">5.1.1. CMake - Publish Your Own Library</h4>
+              <div class="text-muted">
+                <p>Introduction to Publishing CMake Projects
+
+When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project...</p>
+              </div>
+            </div>
+          </a>
+        </article>
       
         <article class="col">
           <a href="/posts/CMake-Adding-Libraries/" class="post-preview card h-100">
@@ -1497,7 +1617,7 @@ rmdir /s /q build
   Nov 15, 2023
 </time>
 
-              <h4 class="pt-0 my-2">CMake - Adding Libraries</h4>
+              <h4 class="pt-0 my-2">5.1.2. CMake - Adding Libraries</h4>
               <div class="text-muted">
                 <p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, ...</p>
               </div>
@@ -1525,7 +1645,7 @@ rmdir /s /q build
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">CMake - Brief Reference</h4>
+              <h4 class="pt-0 my-2">5.1.3. CMake - Brief Reference</h4>
               <div class="text-muted">
                 <p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief refer...</p>
               </div>
@@ -1649,27 +1769,6 @@ rmdir /s /q build
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1694,19 +1793,12 @@ rmdir /s /q build
     
     
     
-      
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -1747,6 +1839,124 @@ rmdir /s /q build
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1811,103 +2021,6 @@ rmdir /s /q build
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1950,6 +2063,8 @@ rmdir /s /q build
     
     
     
+      
+    
   
     
     
@@ -1961,6 +2076,76 @@ rmdir /s /q build
     
     
       
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
     
   
     
@@ -1993,20 +2178,20 @@ rmdir /s /q build
 
 
   <section>
-    <h2 class="panel-heading">Trending Tags</h2>
+    <h2 class="panel-heading">6. Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/c/">c++</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">windows</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
@@ -2015,16 +2200,16 @@ rmdir /s /q build
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cortex-m4/">Cortex_m4</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">embedded</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/reference/">reference</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -2208,7 +2393,7 @@ rmdir /s /q build
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('search-results'),
     json: '/assets/js/data/search.json',
-    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2><a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
+    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>7. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
     noResultsText: '<p class="mt-5">Oops! No results found.</p>',
     templateMiddleware: function(prop, value, template) {
       if (prop === 'categories') {
