@@ -890,6 +890,61 @@
 
       
     
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
 
     
   
@@ -905,39 +960,6 @@
       
         
         
-      
-
-      
-      
-
-      
-      
-      
-
-      
-    
-      
-
-      
-      
-
-      
-      
-      
-
-      
-    
-      
-
-      
-      
-
-      
-      
-      
-
-      
-    
       
 
       
@@ -1062,9 +1084,9 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="3903 words"
+  title="4036 words"
 >
-  <em>21 min</em> read</span>
+  <em>22 min</em> read</span>
 
         </div>
       </div>
@@ -1196,7 +1218,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 <p>Compiler flags are instrumental in controlling the behavior of the compiler, particularly when distinguishing between Debug and Release builds. This section configures these flags to optimize for either debugging or performance, depending on the build type.</p>
 
-<pre><code class="language-cpp">if(CMAKE_BUILD_TYPE MATCHES Debug)
+<pre><code class="language-cpp">if(CMAKE_BUILD_TYPE STREQUAL Debug)
     message(STATUS "Configuring for a Debug build")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g3 -Og")
     add_definitions(-DDEBUG_MODE)
@@ -1315,7 +1337,7 @@ add_subdirectory(tests)
 <pre><code class="language-bash"># Define the my_library library target
 add_library(my_library SHARED)
 
-# Add sources to the http_server library target
+# Add sources to the my_library library target
 target_sources(my_library PRIVATE
         source/my_library.cpp
         source/internal_helpers.cpp
@@ -1341,7 +1363,16 @@ target_sources(my_library PRIVATE
 
 <p><strong><code class="language-plaintext highlighter-rouge">target_compile_definitions(my_library PRIVATE MY_LIBRARY_VERSION="${PROJECT_VERSION}")</code>:</strong> This command defines a preprocessor macro (<code class="language-plaintext highlighter-rouge">MY_LIBRARY_VERSION</code>) with the value of the project’s version (<code class="language-plaintext highlighter-rouge">${PROJECT_VERSION}</code>), making this version accessible in the source code. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that this definition is only available within the <code class="language-plaintext highlighter-rouge">my_library</code> target and not propagated to targets that link against this library.</p>
 
-<h3 id="specifying-include-directories">5.3. <span class="me-2"><strong>Specifying Include Directories</strong></span><a href="#specifying-include-directories" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="setting-build-flags-for-the-library">5.3. <span class="me-2">Setting Build Flags for the Library</span><a href="#setting-build-flags-for-the-library" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>Defining specific macros during the build process is essential for controlling how the library is compiled and differentiating between internal and external usage of the library. (see <a href="#combined-platform-independent-definition">the section about declaring visiblity</a>)</p>
+
+<pre><code class="language-cpp">target_compile_definitions(my_library PRIVATE BUILDING_MY_LIBRARY="1")
+</code></pre>
+
+<p><strong><code class="language-plaintext highlighter-rouge">target_compile_definitions(my_library PRIVATE BUILDING_MY_LIBRARY="1")</code>:</strong> This command establishes the BUILDING_MY_LIBRARY macro with a value of “1”, signaling that the current build is for the library itself. This distinction is crucial for correctly applying the visibility attributes defined earlier, ensuring that internal components are exported properly while maintaining clean separation from the end-user’s environment.</p>
+
+<h3 id="specifying-include-directories">5.4. <span class="me-2">Specifying Include Directories</span><a href="#specifying-include-directories" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>Include directories are necessary for resolving header files during compilation. It’s important to specify both build-time and install-time include directories.</p>
 
@@ -1364,7 +1395,7 @@ target_include_directories(my_library
   <li><strong><code class="language-plaintext highlighter-rouge">PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/internal</code></strong>: This directory is used for internal headers that should not be exposed to users of the library. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that these include directories are only used when compiling this target.</li>
 </ul>
 
-<h3 id="linking-external-libraries">5.4. <span class="me-2">Linking External Libraries</span><a href="#linking-external-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="linking-external-libraries">5.5. <span class="me-2">Linking External Libraries</span><a href="#linking-external-libraries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>To use external libraries like <code class="language-plaintext highlighter-rouge">libmicrohttpd</code>, you need to find and link them to your project. CMake offers several ways to find libraries, including <code class="language-plaintext highlighter-rouge">find_library</code>.</p>
 
@@ -1380,7 +1411,7 @@ target_link_libraries(my_library PRIVATE ${MICROHTTPD_LIB})
   <li><strong><code class="language-plaintext highlighter-rouge">target_link_libraries(my_library PRIVATE ${MICROHTTPD_LIB})</code>:</strong> This command links the <code class="language-plaintext highlighter-rouge">libmicrohttpd</code> library to the <code class="language-plaintext highlighter-rouge">my_library</code> target. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword ensures that this linkage is only relevant for the <code class="language-plaintext highlighter-rouge">my_library</code> target and is not inherited by other targets that depend on it.</li>
 </ul>
 
-<h3 id="configuring-visibility-for-internal-functions">5.5. <span class="me-2">Configuring Visibility for Internal Functions</span><a href="#configuring-visibility-for-internal-functions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="configuring-visibility-for-internal-functions">5.6. <span class="me-2">Configuring Visibility for Internal Functions</span><a href="#configuring-visibility-for-internal-functions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>To reduce the binary size and improve load times, it’s important to hide internal symbols that do not need to be exposed outside the library.</p>
 
@@ -1395,7 +1426,7 @@ set_target_properties(my_library PROPERTIES VISIBILITY_INLINES_HIDDEN YES)
   <li><strong><code class="language-plaintext highlighter-rouge">set_target_properties(... PROPERTIES VISIBILITY_INLINES_HIDDEN YES)</code></strong>: This command hides inline function symbols, further reducing the number of exported symbols and improving binary efficiency.</li>
 </ul>
 
-<h3 id="defining-installation-rules-for-the-library">5.6. <span class="me-2"><strong>Defining Installation Rules for the Library</strong></span><a href="#defining-installation-rules-for-the-library" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="defining-installation-rules-for-the-library">5.7. <span class="me-2"><strong>Defining Installation Rules for the Library</strong></span><a href="#defining-installation-rules-for-the-library" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>Installing your library correctly ensures that it can be easily found and used by other projects. The installation rules specify where the library files will be placed on the target system.</p>
 
@@ -1415,18 +1446,18 @@ install(TARGETS my_library
   <li><strong><code class="language-plaintext highlighter-rouge">EXPORT my_libraryTargets</code></strong>: This option exports the target, which allows it to be included in the package configuration files, making the library discoverable by other projects using <code class="language-plaintext highlighter-rouge">find_package</code>.</li>
 </ul>
 
-<h3 id="installing-public-headers">5.7. <span class="me-2"><strong>Installing Public Headers</strong></span><a href="#installing-public-headers" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="installing-public-headers">5.8. <span class="me-2"><strong>Installing Public Headers</strong></span><a href="#installing-public-headers" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
-<pre><code class="language-php">install(DIRECTORY include/ DESTINATION include)
+<pre><code class="language-php">install(DIRECTORY ../include/ DESTINATION include)
 </code></pre>
 
 <p>Alongside the compiled library, you must install the public headers so that they can be included by other projects.</p>
 
 <ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">install(DIRECTORY include/ DESTINATION include)</code>:</strong> This command installs the contents of the <code class="language-plaintext highlighter-rouge">include/</code> directory to the <code class="language-plaintext highlighter-rouge">include</code> directory on the target system. This is essential for making the public API available to other projects that depend on your library.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(DIRECTORY ../include/ DESTINATION include)</code>:</strong> This command installs the contents of the public <code class="language-plaintext highlighter-rouge">include/</code> directory to the <code class="language-plaintext highlighter-rouge">include</code> directory on the target system. This is essential for making the public API available to other projects that depend on your library.</li>
 </ul>
 
-<h3 id="installing-package-configuration-files">5.8. <span class="me-2"><strong>Installing Package Configuration Files</strong></span><a href="#installing-package-configuration-files" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="installing-package-configuration-files">5.9. <span class="me-2"><strong>Installing Package Configuration Files</strong></span><a href="#installing-package-configuration-files" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <pre><code class="language-php"># Install the package configuration files
 install(EXPORT my_libraryTargets
@@ -1466,7 +1497,7 @@ install(FILES
   <li><strong><code class="language-plaintext highlighter-rouge">install(FILES ...)</code>:</strong> Installs the generated configuration files to the appropriate directory.</li>
 </ul>
 
-<h3 id="configuring-package-information-for-distribution">5.9. <span class="me-2"><strong>Configuring Package Information for Distribution</strong></span><a href="#configuring-package-information-for-distribution" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="configuring-package-information-for-distribution">5.10. <span class="me-2"><strong>Configuring Package Information for Distribution</strong></span><a href="#configuring-package-information-for-distribution" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>Finally, to make the library distributable, package information such as the package name, version, and contact details is configured using <code class="language-plaintext highlighter-rouge">CPack</code>.</p>
 
@@ -1546,7 +1577,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
 #endif
 </code></pre>
 
-<p><strong>Combined Platform-Independent Definition:</strong></p>
+<h4 id="combined-platform-independent-definition">7.2.3. <span class="me-2">Combined Platform-Independent Definition</span><a href="#combined-platform-independent-definition" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <p>To maintain cross-platform compatibility, we combine these definitions into a single header file, <code class="language-plaintext highlighter-rouge">my_project_export.h</code>. This header ensures that the correct visibility attributes are applied based on the target platform:</p>
 
@@ -1567,7 +1598,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
 #endif
 </code></pre>
 
-<h4 id="public-api-declaration">7.2.3. <span class="me-2">Public API Declaration</span><a href="#public-api-declaration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<ul>
+  <li>The flag <code class="language-plaintext highlighter-rouge">BUILDING_MY_LIBRARY</code> is defined in the building process in the <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> of the library, see <a href="#setting-build-flags-for-the-library">here</a>. It is only defined in the build process of the library but must not be defined in the build process of the user.</li>
+</ul>
+
+<h3 id="public-api-declaration">7.3. <span class="me-2">Public API Declaration</span><a href="#public-api-declaration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>In the public API header, <code class="language-plaintext highlighter-rouge">my_library.h</code>, we use the <code class="language-plaintext highlighter-rouge">MY_LIBRARY_API</code> macro to declare the visibility of the <code class="language-plaintext highlighter-rouge">getVersion()</code> function:</p>
 
@@ -1581,7 +1616,7 @@ MY_LIBRARY_API std::string getVersion();
 
 <p>This ensures that <code class="language-plaintext highlighter-rouge">getVersion()</code> is visible to any project that links against the library, while other internal functions remain hidden.</p>
 
-<h4 id="internal-function-declaration">7.2.4. <span class="me-2">Internal Function Declaration</span><a href="#internal-function-declaration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h3 id="internal-function-declaration">7.4. <span class="me-2">Internal Function Declaration</span><a href="#internal-function-declaration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>In contrast, the internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is declared in an internal header, <code class="language-plaintext highlighter-rouge">internal_helpers.h</code>, without any visibility attributes, meaning it will remain hidden:</p>
 
@@ -1594,7 +1629,7 @@ std::string internalGetVersion();
 
 <p>Since this header is marked as <code class="language-plaintext highlighter-rouge">PRIVATE</code> in the CMake configuration (as discussed in the <a href="#specifying-include-directories">section on specifying include directories</a>), it is not exposed to the users of the library when the library is installed.</p>
 
-<h4 id="implementing-the-functions">7.2.5. <span class="me-2">Implementing the Functions</span><a href="#implementing-the-functions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h3 id="implementing-the-functions">7.5. <span class="me-2">Implementing the Functions</span><a href="#implementing-the-functions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>The internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is implemented in the <code class="language-plaintext highlighter-rouge">source/internal_helpers.cpp</code> file. This function retrieves the version information, which we previously passed to the source code using a preprocessor definition in our CMake configuration:</p>
 
@@ -1602,16 +1637,16 @@ std::string internalGetVersion();
 
 
 std::string internalGetVersion() {
-    return HTTP_SERVER_VERSION;
+    return MY_LIBRARY_VERSION;
 }
 </code></pre>
 
-<p>The <code class="language-plaintext highlighter-rouge">HTTP_SERVER_VERSION</code> macro was defined earlier in the CMake configuration (as detailed in the <a href="#passing-version-information-to-the-source-code">section on passing version information to the source code</a>).</p>
+<p>The <code class="language-plaintext highlighter-rouge">MY_LIBRARY_VERSION</code> macro was defined earlier in the CMake configuration (as detailed in the <a href="#passing-version-information-to-the-source-code">section on passing version information to the source code</a>).</p>
 
 <p>The <code class="language-plaintext highlighter-rouge">getVersion()</code> API function, which calls the internal function, is implemented in <code class="language-plaintext highlighter-rouge">source/my_library.cpp</code>:</p>
 
-<pre><code class="language-cpp">#include "musta_http_server/musta_http_server.h"
-#include "internal_server.h"
+<pre><code class="language-cpp">#include "my_library/my_library.h"
+#include "my_library_internal.h"
 
 std::string getVersion() {
     return internalGetVersion();
@@ -1620,7 +1655,7 @@ std::string getVersion() {
 
 <p>This structure ensures that while <code class="language-plaintext highlighter-rouge">getVersion()</code> is accessible to external projects, <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> remains encapsulated within the library, hidden from external access.</p>
 
-<h4 id="verifying-visibility-and-symbol-export">7.2.6. <span class="me-2">Verifying Visibility and Symbol Export</span><a href="#verifying-visibility-and-symbol-export" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h3 id="verifying-visibility-and-symbol-export">7.6. <span class="me-2">Verifying Visibility and Symbol Export</span><a href="#verifying-visibility-and-symbol-export" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>To verify that only the intended symbols are exposed, you can inspect the exported symbols of the compiled shared library. On Linux, this can be done using the <code class="language-plaintext highlighter-rouge">nm</code> command:</p>
 
@@ -1814,8 +1849,15 @@ cmake --install . --prefix .
 
 
   <section id="access-lastmod">
-    <h2 class="panel-heading">9. Recently Updated</h2>
+    <h2 class="panel-heading">Recently Updated</h2>
     <ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/">Efficient Exception Handling in Resource-Constrained Embedded Systems</a>
+        </li>
       
         
         
@@ -1843,13 +1885,6 @@ cmake --install . --prefix .
         
         <li class="text-truncate lh-lg">
           <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
         </li>
       
     </ul>
@@ -2017,60 +2052,6 @@ cmake --install . --prefix .
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2120,6 +2101,140 @@ cmake --install . --prefix .
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2136,53 +2251,45 @@ cmake --install . --prefix .
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
-    
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
@@ -2210,7 +2317,50 @@ cmake --install . --prefix .
     
     
     
-      
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
     
   
     
@@ -2219,6 +2369,84 @@ cmake --install . --prefix .
     
       
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
   
     
     
@@ -2240,27 +2468,6 @@ cmake --install . --prefix .
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -2297,7 +2504,7 @@ cmake --install . --prefix .
 
 
   <section>
-    <h2 class="panel-heading">10. Trending Tags</h2>
+    <h2 class="panel-heading">Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
@@ -2313,7 +2520,13 @@ cmake --install . --prefix .
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">ARM</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">Embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
@@ -2323,12 +2536,6 @@ cmake --install . --prefix .
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -2343,7 +2550,7 @@ cmake --install . --prefix .
 
 
   <section id="toc-wrapper" class="d-none ps-0 pe-4">
-    <h2 class="panel-heading ps-3 mb-2">11. Contents</h2>
+    <h2 class="panel-heading ps-3 mb-2">Contents</h2>
     <nav id="toc"></nav>
   </section>
 
@@ -2432,7 +2639,7 @@ cmake --install . --prefix .
 
 
   <aside id="related-posts" aria-labelledby="related-label">
-    <h3 class="mb-4" id="related-label">11.1. Further Reading</h3>
+    <h3 class="mb-4" id="related-label">Further Reading</h3>
     <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
       
         <article class="col">
@@ -2455,7 +2662,7 @@ cmake --install . --prefix .
   Nov 15, 2023
 </time>
 
-              <h4 class="pt-0 my-2">11.1.1. CMake - Adding Libraries</h4>
+              <h4 class="pt-0 my-2">CMake - Adding Libraries</h4>
               <div class="text-muted">
                 <p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, ...</p>
               </div>
@@ -2483,7 +2690,7 @@ cmake --install . --prefix .
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">11.1.2. CMake - Installation On Windows</h4>
+              <h4 class="pt-0 my-2">CMake - Installation On Windows</h4>
               <div class="text-muted">
                 <p>Here is a quick way to get started into development with CMake on Windows x64.
 
@@ -2519,7 +2726,7 @@ Downloads
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">11.1.3. CMake - Brief Reference</h4>
+              <h4 class="pt-0 my-2">CMake - Brief Reference</h4>
               <div class="text-muted">
                 <p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief refer...</p>
               </div>
@@ -2551,9 +2758,13 @@ Downloads
   
 
   
-    <div class="btn btn-outline-primary disabled" aria-label="Newer">
-      <p>-</p>
-    </div>
+    <a
+      href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/"
+      class="btn btn-outline-primary"
+      aria-label="Newer"
+    >
+      <p>Efficient Exception Handling in Resource-Constrained Embedded Systems</p>
+    </a>
   
 </nav>
 
@@ -2768,60 +2979,6 @@ Downloads
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2871,6 +3028,140 @@ Downloads
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2887,53 +3178,45 @@ Downloads
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
-    
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
@@ -2961,7 +3244,50 @@ Downloads
     
     
     
-      
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
     
   
     
@@ -2970,6 +3296,84 @@ Downloads
     
       
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
   
     
     
@@ -2991,27 +3395,6 @@ Downloads
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -3048,7 +3431,7 @@ Downloads
 
 
   <section>
-    <h2 class="panel-heading">12. Trending Tags</h2>
+    <h2 class="panel-heading">Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
@@ -3064,7 +3447,13 @@ Downloads
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">ARM</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">Embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
@@ -3074,12 +3463,6 @@ Downloads
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -3263,7 +3646,7 @@ Downloads
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('search-results'),
     json: '/assets/js/data/search.json',
-    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>13. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
+    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>9. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
     noResultsText: '<p class="mt-5">Oops! No results found.</p>',
     templateMiddleware: function(prop, value, template) {
       if (prop === 'categories') {

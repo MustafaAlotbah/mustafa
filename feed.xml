@@ -1,4 +1,623 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-12T21:33:28+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">CMake - Publish Your Own Library</title><link href="http://localhost:4000/posts/CMake-Production/" rel="alternate" type="text/html" title="CMake - Publish Your Own Library" /><published>2023-11-18T13:00:00+01:00</published><updated>2023-11-18T13:00:00+01:00</updated><id>http://localhost:4000/posts/CMake-Production</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Production/"><![CDATA[<h2 id="introduction-to-publishing-cmake-projects">Introduction to Publishing CMake Projects</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-25T11:20:43+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">Efficient Exception Handling in Resource-Constrained Embedded Systems</title><link href="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/" rel="alternate" type="text/html" title="Efficient Exception Handling in Resource-Constrained Embedded Systems" /><published>2023-12-22T12:41:00+01:00</published><updated>2023-12-22T12:41:00+01:00</updated><id>http://localhost:4000/posts/Exploring%20Exception%20Handling%20Mechanisms%20in%20Embedded%20Environments</id><content type="html" xml:base="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>This article presents an in-depth examination of exception handling mechanisms tailored for embedded systems, where resource constraints and performance optimization are critical. Traditional C++ exceptions are often impractical in these environments due to the significant overhead they introduce. As a result, developers frequently disable exceptions using compiler flags like <code class="language-plaintext highlighter-rouge">-fno-exceptions</code>. However, the need for robust error management persists, particularly in scenarios where the system must maintain stability despite encountering errors.</p>
+
+<p>To address these challenges, the article explores alternative error-handling strategies that are more suitable for embedded systems. We begin by discussing low-level constructs such as <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, which offer a direct and efficient method for managing errors. The discussion then progresses to more advanced techniques involving <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, which provide a means to simulate exception handling with minimal resource usage. Through detailed examples, we demonstrate how these methods can be implemented effectively in resource-constrained environments, ensuring that errors are managed gracefully without compromising system performance.</p>
+
+<p>Furthermore, the article addresses the complexities introduced by these methods, particularly in terms of resource management and cleanup, offering practical solutions to prevent issues like memory leaks. By the end of this article, readers will gain a comprehensive understanding of how to implement robust, efficient error-handling mechanisms in embedded systems, enhancing both the reliability and sustainability of mission-critical applications.</p>
+
+<h2 id="understanding-setjmp-and-longjmp">Understanding setjmp and longjmp</h2>
+
+<h3 id="low-level-error-handling-a-pragmatic-approach">Low-Level Error Handling: A Pragmatic Approach</h3>
+
+<p>Before exploring advanced error-handling constructs like <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, it is instructive to examine a fundamental, low-level approach to error management using function pointers and the <code class="language-plaintext highlighter-rouge">goto</code> statement. This method operates closer to the hardware, offering a highly efficient solution in embedded contexts where minimizing computational overhead is essential.</p>
+
+<p>Consider the following code snippet, which demonstrates this approach:</p>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+// environment
+void* try_block = nullptr;
+volatile int errorCode = 0;
+
+void riskyFunction() {
+
+    // Simulate the effect of longjmp
+    std::cout &lt;&lt; "Starting a risky function.\n";
+    
+	// Mimic throwing an exception (error code: 1)
+    if (try_block) {
+        errorCode = 1;        // Simulate setting an error code
+        goto *try_block;      // Jump back to the try block
+    }
+
+    std::cout &lt;&lt; "No errors detected.\n";
+}
+
+int main() {
+
+    // Save the address of the try block
+    try_block = &amp;&amp;try_block_label;
+
+try_block_label:
+    if (errorCode == 0) {
+        riskyFunction();
+    } else {
+        std::cout &lt;&lt; "An error occurred!\n";
+    }
+
+    return 0;
+}
+</code></pre>
+
+<p>The output:</p>
+
+<pre><code class="language-txt">&gt;&gt;&gt;
+Starting a risky function.
+An error occurred!
+</code></pre>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">void* try_block</code>:</p>
+
+    <p>This pointer stores the address of a specific code location, effectively serving as a jump target.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">volatile int errorCode</code>:</p>
+
+    <p>This global variable indicates whether an error has occurred. The <code class="language-plaintext highlighter-rouge">volatile</code> qualifier ensures that the variable’s value is always read directly from memory, which is crucial in environments where memory consistency is a concern.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">riskyFunction</code>:</p>
+
+    <p>This function simulates a risky operation. If an error is detected, the function jumps back to the location pointed to by <code class="language-plaintext highlighter-rouge">try_block</code>, updating the <code class="language-plaintext highlighter-rouge">errorCode</code> to signal the error.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">goto</code>:</p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">goto</code> statement allows the program to jump back to the <code class="language-plaintext highlighter-rouge">try_block_label</code> if an error is detected, thereby simulating a rudimentary exception handling mechanism.</p>
+  </li>
+</ul>
+
+<p>While this approach is relatively straightforward, it can be effective in highly constrained environments where even the overhead of <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> might be undesirable. However, it is less flexible and more prone to errors compared to higher-level constructs.</p>
+
+<h3 id="advanced-error-handling-leveraging-setjmp-and-longjmp">Advanced Error Handling: Leveraging <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></h3>
+
+<p>For scenarios that demand a higher level of abstraction and control, <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> offer a powerful mechanism to save and restore the program’s execution context. The <code class="language-plaintext highlighter-rouge">setjmp</code> function captures the current environment—including the stack context and registers—into a buffer (typically of type <code class="language-plaintext highlighter-rouge">jmp_buf</code>), while <code class="language-plaintext highlighter-rouge">longjmp</code> restores this environment, effectively reverting the program’s state to the point where <code class="language-plaintext highlighter-rouge">setjmp</code> was initially invoked.</p>
+
+<p>Consider the following implementation:</p>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;csetjmp&gt;
+
+jmp_buf environment;
+
+void riskyFunction() {
+    if (/* some error condition */) {
+        // Simulates throw Error(code=1)
+        longjmp(environment, 1);
+    }
+    std::cout &lt;&lt; "No errors detected.\n";
+}
+
+int main() {
+    int errorCode = setjmp(environment);
+    if (errorCode == 0) {
+        // Simulates Try block
+        riskyFunction();
+    } else {
+        // Simulates Catch block
+        std::cout &lt;&lt; "An error occurred!\n";
+    }
+    return 0;
+}
+</code></pre>
+
+<p>This example illustrates the practical utility of <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> in managing control flow amidst errors—a particularly valuable capability in embedded systems where traditional exception handling is not feasible.</p>
+
+<h3 id="handling-typed-exceptions-with-setjmp-and-longjmp">Handling Typed Exceptions with <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></h3>
+
+<p>The conceptual framework provided by <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> can be extended to handle multiple error types, each requiring a distinct response. This approach allows developers to implement typed exceptions, even in environments where conventional C++ exceptions are unavailable.</p>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;csetjmp&gt;
+
+jmp_buf environment;
+
+int constexpr ValueException  = 1;
+int constexpr SyntaxException = 2;
+
+void riskyFunction() {
+
+    if (/* some error condition for value correctness*/) {
+        // Simulates throw ValueException;
+        longjmp(environment, ValueException);
+    }
+    
+    if (/* some error condition for syntax correctness*/) {
+        // Simulates throw SyntaxException;
+        longjmp(environment, SyntaxException);
+    }
+
+    std::cout &lt;&lt; "No errors detected.\n";
+}
+
+int main() {
+    int errorCode = setjmp(environment);
+    if (errorCode == 0) {
+    
+        // Simulates Try block
+        riskyFunction();
+        
+    } else if (errorCode == ValueException) {
+    
+        // Handle Value Error
+        std::cout &lt;&lt; "ValueException ocurred\n";
+        
+    } else if (errorCode == SyntaxException) {
+    
+        // Handle Value Error
+        std::cout &lt;&lt; "SyntaxException ocurred\n";
+        
+    }
+    return 0;
+}
+
+</code></pre>
+
+<p>This code demonstrates how <code class="language-plaintext highlighter-rouge">longjmp</code> can be employed to simulate typed exception handling, a practice commonly seen in state-based error handling within C. This approach not only enhances the robustness of error management but also introduces a level of granularity that aligns with the nuanced requirements of embedded systems.</p>
+
+<h3 id="exception-propagation-implementing-exception-cascades">Exception Propagation: Implementing Exception Cascades</h3>
+
+<p>In more complex embedded applications, it is often necessary to propagate exceptions through multiple layers of function calls. The following example illustrates how <code class="language-plaintext highlighter-rouge">longjmp</code> can be utilized to create exception cascades, allowing errors to be propagated and handled at different levels of the program.</p>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;csetjmp&gt;
+
+jmp_buf environment;
+
+void riskyFunction() {
+    longjmp(environment, 1);
+}
+
+void secondFunction() {
+    longjmp(environment, 2);
+}
+
+int main() {
+    int errorCode = setjmp(environment);
+    if (errorCode == 0) {
+    
+        // Calling a risky function
+        riskyFunction();
+        
+    } else if (errorCode == 1) {
+    
+        // Handling an error (which can also be handling)
+        std::cout &lt;&lt; "firstFunction called longjmp\n";
+        secondFunction();
+        
+    } else if (errorCode == 2) {
+    
+        // Exception was thrown while handling another exception
+        std::cout &lt;&lt; "secondFunction called longjmp\n";
+        
+    }
+    return 0;
+}
+</code></pre>
+
+<p>This implementation showcases the flexibility of <code class="language-plaintext highlighter-rouge">longjmp</code> in orchestrating complex control flows within an embedded system. By allowing control to be transferred between disparate parts of the program, <code class="language-plaintext highlighter-rouge">longjmp</code> enables a more nuanced and responsive error-handling strategy, essential in high-stakes embedded applications.</p>
+
+<h2 id="simulating-exception-handling-in-embedded-systems-using-setjmp-and-longjmp">Simulating Exception Handling in Embedded Systems Using <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></h2>
+
+<h3 id="designing-a-basic-exception-handling-framework">Designing a Basic Exception Handling Framework</h3>
+
+<p>The utility of <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> extends beyond simple error signaling; these functions can be taken advantage of to construct a rudimentary exception-handling framework that mimics the <code class="language-plaintext highlighter-rouge">try</code>-<code class="language-plaintext highlighter-rouge">catch</code> paradigm of higher-level programming languages. Such a framework is particularly advantageous in embedded systems where traditional C++ exceptions are either impractical or outright disabled.</p>
+
+<h3 id="practical-example-integrating-resource-management-with-exception-handling">Practical Example: Integrating Resource Management with Exception Handling</h3>
+
+<p>In embedded systems, resource management is a critical concern, especially given the limited availability of memory and processing power. The following example demonstrates how to implement a simple yet effective exception-handling mechanism that integrates resource management, ensuring that resources are properly released even in the presence of errors.</p>
+
+<p>Let’s define an <code class="language-plaintext highlighter-rouge">ExceptionHandler</code> class that replicates the behavior of <code class="language-plaintext highlighter-rouge">try</code>-<code class="language-plaintext highlighter-rouge">catch</code> blocks in a controlled embedded environment:</p>
+
+<pre><code class="language-cpp">class ExceptionHandler {
+public:
+
+    // Register Try block
+    ExceptionHandler&amp; Try(std::function&lt;void()&gt; func);
+
+    // Register Catch block
+    ExceptionHandler&amp; Catch(std::function&lt;void(int)&gt; func);
+
+    // Execute try/catch
+    void Execute();
+
+    // Reset the handler
+    void reset();
+
+    // throw an exception
+    void throwException(int error = 1);
+
+private:
+    bool                     isConfigured_ = false;
+    jmp_buf                  environment_;
+    std::function&lt;void()&gt;    tryBlock_;
+    std::function&lt;void(int)&gt; catchBlock_;
+};
+</code></pre>
+
+<p>In this implementation, the <code class="language-plaintext highlighter-rouge">Try</code> and <code class="language-plaintext highlighter-rouge">Catch</code> methods serve as configuration functions that register their respective blocks of code:</p>
+
+<pre><code class="language-cpp">ExceptionHandler&amp; ExceptionHandler::Try(std::function&lt;void()&gt; func) {
+    tryBlock_     = func;
+    isConfigured_ = true;
+    return *this;
+}
+
+ExceptionHandler&amp; ExceptionHandler::Catch(std::function&lt;void(int)&gt; func) {
+    catchBlock_ = func;
+    return *this;
+}
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">throwException</code> method triggers the exception handling by calling <code class="language-plaintext highlighter-rouge">longjmp</code> with the appropriate error code:</p>
+
+<pre><code class="language-cpp">void ExceptionHandler::throwException(int error) {
+    longjmp(env_, error);
+}
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">Execute</code> method coordinates the execution of the <code class="language-plaintext highlighter-rouge">Try</code> and <code class="language-plaintext highlighter-rouge">Catch</code> blocks, managing control flow based on whether an exception has been thrown:</p>
+
+<ul>
+  <li>Setting up the jump environment.</li>
+  <li>Executing the <code class="language-plaintext highlighter-rouge">Try</code> block.</li>
+  <li>If an error occurs, executing the <code class="language-plaintext highlighter-rouge">Catch</code> block and passing the error code.</li>
+  <li>Resetting the handler for the next pair of try-catch blocks.</li>
+</ul>
+
+<pre><code class="language-cpp">void ExceptionHandler::Execute() {
+
+    // Ensure the Try and Catch blocks are properly configured
+    if (!isConfigured_)  return;
+    
+    // Set up the environment for potential exceptions
+    int result = setjmp(env_);
+    if (result == 0) {
+        tryBlock_();
+    } else {
+        catchBlock_(result);
+    }
+
+    // Reset the handler state for future use
+    reset();
+}
+
+
+void ExceptionHandler::reset() {
+    tryBlock_     = nullptr;
+    catchBlock_   = nullptr;
+    isConfigured_ = false;
+}
+</code></pre>
+
+<p>Here is an example of how this class might be used:</p>
+
+<pre><code class="language-cpp">int main() {
+    ExceptionHandler handler;
+
+    handler.Try([&amp;] {
+        // Try block
+
+        std::cout &lt;&lt; "Try block: an error is about to occur.\n";
+
+        // Trigger an exception
+        handler.throwException(2);
+
+        std::cout &lt;&lt; "This will not be printed.\n";
+
+    }).Catch([](int error) {
+    
+        // Handle the exception in the Catch block
+        std::cout &lt;&lt; "Catch block: caught error code " &lt;&lt; error &lt;&lt; "!\n";
+
+    }).Execute();
+
+    std::cout &lt;&lt; "Program continues after try/catch.\n";
+
+    return 0;
+}
+</code></pre>
+
+<p>The output of this program would be:</p>
+
+<pre><code class="language-txt">&gt;&gt;&gt;
+Try block: an error is about to occur.
+Catch block: An exception was caught with error code (2)!
+Program continues after try/catch.
+</code></pre>
+
+<h2 id="c-resources">C++ Resources</h2>
+
+<p>One of the strengths of C++ is its ability to automatically invoke the destructor of a class when it goes out of scope, whether the scope ends normally (by <code class="language-plaintext highlighter-rouge">}</code>) or through an exception. This ensures that resources are freed properly, even when they are allocated within nested functions. This feature, known as <em>stack unwinding</em>, is absent when using the <code class="language-plaintext highlighter-rouge">goto</code> keyword. A critical question arises: do we retain this feature when using <code class="language-plaintext highlighter-rouge">longjmp</code>?</p>
+
+<h3 id="cleaning-up-with-longjump">Cleaning Up with Longjump</h3>
+
+<p>The answer is compiler-dependent. For instance, with the <strong>MSVC</strong> compiler, stack unwinding is supported with <code class="language-plaintext highlighter-rouge">longjmp</code>, as evidenced by the following statement: (see <a href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/longjmp">here</a>)</p>
+
+<blockquote>
+  <p>In Microsoft C++ code on Windows, <strong><code class="language-plaintext highlighter-rouge">longjmp</code></strong> uses the same stack-unwinding semantics as exception-handling code. It’s safe to use in the same places that C++ exceptions can be raised.</p>
+</blockquote>
+
+<p>However, this would be assuming exception semantics are allowed, which is not the case in embedded environments.</p>
+
+<p>In GCC and ARM compilers, exception semantics are excluded from <code class="language-plaintext highlighter-rouge">longjmp</code>. To demonstrate this, consider a <code class="language-plaintext highlighter-rouge">Resource</code> class that tracks resource allocation and deallocation:</p>
+
+<pre><code class="language-cpp">class Resource {
+public:
+    Resource(const std::string&amp; name) : name_(name) {
+        std::cout &lt;&lt; name_ &lt;&lt; " constructed!\n";
+    }
+
+    ~Resource() {
+        std::cout &lt;&lt; name_ &lt;&lt; " destructed!\n";
+    }
+
+private:
+    std::string name_;
+};
+</code></pre>
+
+<p>Now, let’s use this class as follows:</p>
+
+<pre><code class="language-cpp">// Global Exception Handler
+ExceptionHandler handler;
+
+int main() {
+
+    handler.Try([&amp;] {
+        // Try block
+
+        // This will not be destructed with throwException/longjump
+        Resource res("MyResource"); 
+
+        std::cout &lt;&lt; "Try block: an error is about to occur.\n";
+
+        // Throw Exception
+        handler.throwException(2);
+
+        std::cout &lt;&lt; "This will not be printed.\n";
+
+    }).Catch([](int error) {
+
+        // Catch an error
+        std::cout &lt;&lt; "Catch block: caught error code (" &lt;&lt; error &lt;&lt; ")!\n";
+
+    }).Execute();
+
+    std::cout &lt;&lt; "Program continues after try/catch.\n";
+
+    return 0;
+}
+</code></pre>
+
+<p>The output would be:</p>
+
+<pre><code class="language-txt">&gt;&gt;&gt;
+MyResource constructed!
+Try block: an error is about to occur.
+Catch block: An exception was caught with error code (2)!
+Program continues after try/catch.
+</code></pre>
+
+<p>As observed, the destructor for <code class="language-plaintext highlighter-rouge">MyResource</code> is not invoked, potentially leading to memory leaks—a serious concern in embedded systems.</p>
+
+<h3 id="manual-stack-unwinding">Manual Stack Unwinding</h3>
+
+<p>To address the previous issue, we can manually manage resource cleanup by extending the <code class="language-plaintext highlighter-rouge">ExceptionHandler</code> class:</p>
+
+<pre><code class="language-cpp">template &lt;typename T&gt;
+void registerCleanup(T&amp; resource)
+{
+    cleanupStack_.emplace_back([&amp;resource](){
+      resource.~T();
+    });
+}
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">cleanupStack_</code> is a vector of destructor functions that are invoked when an exception is thrown:</p>
+
+<pre><code class="language-cpp">std::vector&lt;std::function&lt;void()&gt;&gt; cleanupStack_;
+</code></pre>
+
+<p>When an exception is thrown, all registered variables are destructed:</p>
+
+<pre><code class="language-cpp">void ExceptionHandler::throwException(int error)
+{
+    // Execute destructors first
+    for (auto it = cleanupStack_.rbegin(); it != cleanupStack_.rend(); ++it) (*it)();
+    cleanupStack_.clear();
+
+    // Then perform long jump
+    longjmp(env_, error);
+}
+</code></pre>
+
+<p>This solution requires developers to manually register each local resource, as demonstrated below:</p>
+
+<pre><code class="language-cpp">// Global Exception Handler
+ExceptionHandler handler;
+
+void riskyFunction()
+{
+    // Resource
+    Resource localRes("ResourceInFunction");
+
+    // Register the source before any exception might be thrown
+    handler.registerCleanup(localRes);
+
+    // Throw an exception
+    handler.throwException(4);
+
+    std::cout &lt;&lt; "functionWithLocalResource: This line won't be executed if an exception is thrown.\n";
+}
+
+int main() {
+
+    handler.Try([&amp;] {
+        // Try block
+
+        // This will not be destructed with throwException/longjump
+        Resource res("MyResource"); 
+
+        // Register the source before any exception might be thrown
+        handler.registerCleanup(res);
+
+        std::cout &lt;&lt; "Try block: an error is about to occur.\n";
+
+        // Call a risky function
+        riskyFunction(handler);
+
+        std::cout &lt;&lt; "This will not be printed.\n";
+
+    }).Catch([](int error) {
+
+        // Catch an error
+        std::cout &lt;&lt; "Catch block: caught error code (" &lt;&lt; error &lt;&lt; ")!\n";
+
+    }).Execute();
+
+    std::cout &lt;&lt; "Program continues after try/catch.\n";
+
+    return 0;
+}
+</code></pre>
+
+<p>The output now reflects proper resource cleanup:</p>
+
+<pre><code class="language-txt">&gt;&gt;&gt;
+MyResource constructed!
+ResourceInFunction constructed!
+ResourceInFunction destructed!
+MyResource destructed!
+Catch block: An exception was caught with error code (2)!
+Program continues after try/catch.
+</code></pre>
+
+<p>Now, the destructors are invoked as expected. However, it is easy to overlook registering a local variable, which could lead to subtle bugs.</p>
+
+<h3 id="considerations-for-embedded-systems-balancing-complexity-and-efficiency">Considerations for Embedded Systems: Balancing Complexity and Efficiency</h3>
+
+<p>While <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code> offer a powerful means of simulating exception handling in embedded systems, they also introduce significant complexity, particularly in terms of managing the cleanup stack. This complexity is exacerbated in resource-constrained environments, where developers must meticulously balance performance, memory usage, and error handling. The manual cleanup required by GCC and ARM compilers adds another layer of difficulty, emphasizing the importance of thorough testing and validation to ensure system reliability.</p>
+
+<h2 id="alternative-approaches-simplifying-with-goto">Alternative Approaches: Simplifying with <code class="language-plaintext highlighter-rouge">goto</code></h2>
+
+<p>In some embedded systems, simplicity and efficiency may outweigh the benefits of structured exception handling. In such cases, using the <code class="language-plaintext highlighter-rouge">goto</code> statement can provide a straightforward and pragmatic error-handling mechanism, albeit at the cost of abstraction and safety.</p>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+
+int riskyFunction() {
+    Resource localRes("ResourceInFunction");
+
+    // Assume an error happened
+    int errorCode = doSomething(); // returns errorCode 4
+
+    // Check for an error
+    if (errorCode != 0) {
+        goto cleanup;
+    }
+
+    std::cout &lt;&lt; "riskyFunction: This line won't be executed if an error occurs.\n";
+
+cleanup:
+    // Clean up resources if necessary
+    localRes.release();
+
+    // Return the error code
+    return errorCode;
+}
+
+
+int main() {
+    int errorCode = 0;
+    Resource res("MyResource");
+
+    std::cout &lt;&lt; "Try block: an error is about to occur.\n";
+
+    // Call the risky function and handle errors
+    errorCode = riskyFunction();
+    if (errorCode != 0) {
+        goto cleanup;
+    }
+
+    std::cout &lt;&lt; "This will not be printed if an error occurs.\n";
+
+cleanup:
+    // Clean up resources
+    res.release();
+
+    if (errorCode != 0) {
+        std::cout &lt;&lt; "Catch block: caught error code (" &lt;&lt; errorCode &lt;&lt; ")!\n";
+    }
+
+    std::cout &lt;&lt; "Program continues after try/catch.\n";
+
+    return errorCode;
+}
+</code></pre>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In the highly specialized field of embedded systems development, where resources are tightly constrained, the use of traditional C++ exceptions is often impractical. By adopting alternative techniques such as low-level <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, or more sophisticated methods like <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, developers can implement effective error-handling mechanisms with minimal overhead. Each approach has its advantages and trade-offs, which must be carefully evaluated based on the specific constraints and requirements of the application at hand.</p>
+
+<p>For a quick recap, here is a comparison between discussed methods:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Method</strong></th>
+      <th><strong>Advantages</strong></th>
+      <th><strong>Disadvantages</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">goto</code> and Function Pointers</strong></td>
+      <td>- Very low overhead, close to the hardware level  <br />- Simple to implement in small, constrained environments</td>
+      <td>- Prone to errors and difficult to maintain  <br />- Lacks flexibility and scalability  <br />- No automatic cleanup</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
+      <td>- Allows saving and restoring execution context  <br />- Provides structured error handling similar to <code class="language-plaintext highlighter-rouge">try/catch</code></td>
+      <td>- Requires manual resource management (no stack unwinding)  <br />- Can be complex to implement correctly</td>
+    </tr>
+    <tr>
+      <td><strong>Typed Exceptions with <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
+      <td>- Allows handling different types of errors distinctly  <br />- More granular error management</td>
+      <td>- Complexity in implementation  <br />- Manual resource management required</td>
+    </tr>
+    <tr>
+      <td><strong>Exception Cascades with <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
+      <td>- Enables complex control flow and exception propagation  <br />- Flexible error-handling strategy</td>
+      <td>- Even higher complexity  <br />- Difficult to debug and maintain  <br />- Requires thorough testing and validation</td>
+    </tr>
+    <tr>
+      <td><strong>Custom Exception Handler</strong></td>
+      <td>- Mimics higher-level <code class="language-plaintext highlighter-rouge">try/catch</code> semantics in embedded C/C++  <br />- More structured and organized error handling</td>
+      <td>- Increased complexity  <br />- Requires manual resource registration and cleanup  <br />- Potential for missed cleanup</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">goto</code> for Cleanup</strong></td>
+      <td>- Simple and straightforward for resource cleanup  <br />- Reduces code duplication in cleanup tasks</td>
+      <td>- Lacks abstraction and safety  <br />- Can lead to unstructured code  <br />- Limited to simple error handling scenarios</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Through a deep understanding of these techniques and their implications, developers can design and implement robust, efficient error-handling strategies tailored to the unique challenges of embedded systems. This not only enhances system reliability but also contributes to the overall sustainability of embedded applications in mission-critical environments.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="Software-Designs" /><category term="Error" /><category term="Handling" /><category term="Embedded" /><category term="STM32" /><category term="Error-Handling" /><category term="Exception-Handling" /><category term="Resource Optimization" /><category term="setjmp" /><category term="jump" /><category term="goto" /><category term="longjump" /><category term="Low-Level Programming" /><category term="ARM" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">CMake - Publish Your Own Library</title><link href="http://localhost:4000/posts/CMake-Production/" rel="alternate" type="text/html" title="CMake - Publish Your Own Library" /><published>2023-11-18T13:00:00+01:00</published><updated>2023-11-18T13:00:00+01:00</updated><id>http://localhost:4000/posts/CMake-Production</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Production/"><![CDATA[<h2 id="introduction-to-publishing-cmake-projects">Introduction to Publishing CMake Projects</h2>
 
 <p>When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project effectively and use a build system that facilitates this process. CMake is a powerful and widely-used build system that helps manage the build process in a platform-independent manner. This tutorial will guide you through the process of structuring and publishing your own CMake project, ensuring that your library is not only well-organized but also easy to build, test, and distribute.</p>
 
@@ -122,7 +741,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 <p>Compiler flags are instrumental in controlling the behavior of the compiler, particularly when distinguishing between Debug and Release builds. This section configures these flags to optimize for either debugging or performance, depending on the build type.</p>
 
-<pre><code class="language-cpp">if(CMAKE_BUILD_TYPE MATCHES Debug)
+<pre><code class="language-cpp">if(CMAKE_BUILD_TYPE STREQUAL Debug)
     message(STATUS "Configuring for a Debug build")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g3 -Og")
     add_definitions(-DDEBUG_MODE)
@@ -241,7 +860,7 @@ add_subdirectory(tests)
 <pre><code class="language-bash"># Define the my_library library target
 add_library(my_library SHARED)
 
-# Add sources to the http_server library target
+# Add sources to the my_library library target
 target_sources(my_library PRIVATE
         source/my_library.cpp
         source/internal_helpers.cpp
@@ -267,7 +886,16 @@ target_sources(my_library PRIVATE
 
 <p><strong><code class="language-plaintext highlighter-rouge">target_compile_definitions(my_library PRIVATE MY_LIBRARY_VERSION="${PROJECT_VERSION}")</code>:</strong> This command defines a preprocessor macro (<code class="language-plaintext highlighter-rouge">MY_LIBRARY_VERSION</code>) with the value of the project’s version (<code class="language-plaintext highlighter-rouge">${PROJECT_VERSION}</code>), making this version accessible in the source code. The <code class="language-plaintext highlighter-rouge">PRIVATE</code> keyword indicates that this definition is only available within the <code class="language-plaintext highlighter-rouge">my_library</code> target and not propagated to targets that link against this library.</p>
 
-<h3 id="specifying-include-directories"><strong>Specifying Include Directories</strong></h3>
+<h3 id="setting-build-flags-for-the-library">Setting Build Flags for the Library</h3>
+
+<p>Defining specific macros during the build process is essential for controlling how the library is compiled and differentiating between internal and external usage of the library. (see <a href="#combined-platform-independent-definition">the section about declaring visiblity</a>)</p>
+
+<pre><code class="language-cpp">target_compile_definitions(my_library PRIVATE BUILDING_MY_LIBRARY="1")
+</code></pre>
+
+<p><strong><code class="language-plaintext highlighter-rouge">target_compile_definitions(my_library PRIVATE BUILDING_MY_LIBRARY="1")</code>:</strong> This command establishes the BUILDING_MY_LIBRARY macro with a value of “1”, signaling that the current build is for the library itself. This distinction is crucial for correctly applying the visibility attributes defined earlier, ensuring that internal components are exported properly while maintaining clean separation from the end-user’s environment.</p>
+
+<h3 id="specifying-include-directories">Specifying Include Directories</h3>
 
 <p>Include directories are necessary for resolving header files during compilation. It’s important to specify both build-time and install-time include directories.</p>
 
@@ -343,13 +971,13 @@ install(TARGETS my_library
 
 <h3 id="installing-public-headers"><strong>Installing Public Headers</strong></h3>
 
-<pre><code class="language-php">install(DIRECTORY include/ DESTINATION include)
+<pre><code class="language-php">install(DIRECTORY ../include/ DESTINATION include)
 </code></pre>
 
 <p>Alongside the compiled library, you must install the public headers so that they can be included by other projects.</p>
 
 <ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">install(DIRECTORY include/ DESTINATION include)</code>:</strong> This command installs the contents of the <code class="language-plaintext highlighter-rouge">include/</code> directory to the <code class="language-plaintext highlighter-rouge">include</code> directory on the target system. This is essential for making the public API available to other projects that depend on your library.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">install(DIRECTORY ../include/ DESTINATION include)</code>:</strong> This command installs the contents of the public <code class="language-plaintext highlighter-rouge">include/</code> directory to the <code class="language-plaintext highlighter-rouge">include</code> directory on the target system. This is essential for making the public API available to other projects that depend on your library.</li>
 </ul>
 
 <h3 id="installing-package-configuration-files"><strong>Installing Package Configuration Files</strong></h3>
@@ -472,7 +1100,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
 #endif
 </code></pre>
 
-<p><strong>Combined Platform-Independent Definition:</strong></p>
+<h4 id="combined-platform-independent-definition">Combined Platform-Independent Definition</h4>
 
 <p>To maintain cross-platform compatibility, we combine these definitions into a single header file, <code class="language-plaintext highlighter-rouge">my_project_export.h</code>. This header ensures that the correct visibility attributes are applied based on the target platform:</p>
 
@@ -493,7 +1121,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
 #endif
 </code></pre>
 
-<h4 id="public-api-declaration">Public API Declaration</h4>
+<ul>
+  <li>The flag <code class="language-plaintext highlighter-rouge">BUILDING_MY_LIBRARY</code> is defined in the building process in the <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> of the library, see <a href="#setting-build-flags-for-the-library">here</a>. It is only defined in the build process of the library but must not be defined in the build process of the user.</li>
+</ul>
+
+<h3 id="public-api-declaration">Public API Declaration</h3>
 
 <p>In the public API header, <code class="language-plaintext highlighter-rouge">my_library.h</code>, we use the <code class="language-plaintext highlighter-rouge">MY_LIBRARY_API</code> macro to declare the visibility of the <code class="language-plaintext highlighter-rouge">getVersion()</code> function:</p>
 
@@ -507,7 +1139,7 @@ MY_LIBRARY_API std::string getVersion();
 
 <p>This ensures that <code class="language-plaintext highlighter-rouge">getVersion()</code> is visible to any project that links against the library, while other internal functions remain hidden.</p>
 
-<h4 id="internal-function-declaration">Internal Function Declaration</h4>
+<h3 id="internal-function-declaration">Internal Function Declaration</h3>
 
 <p>In contrast, the internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is declared in an internal header, <code class="language-plaintext highlighter-rouge">internal_helpers.h</code>, without any visibility attributes, meaning it will remain hidden:</p>
 
@@ -520,7 +1152,7 @@ std::string internalGetVersion();
 
 <p>Since this header is marked as <code class="language-plaintext highlighter-rouge">PRIVATE</code> in the CMake configuration (as discussed in the <a href="#specifying-include-directories">section on specifying include directories</a>), it is not exposed to the users of the library when the library is installed.</p>
 
-<h4 id="implementing-the-functions">Implementing the Functions</h4>
+<h3 id="implementing-the-functions">Implementing the Functions</h3>
 
 <p>The internal function <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> is implemented in the <code class="language-plaintext highlighter-rouge">source/internal_helpers.cpp</code> file. This function retrieves the version information, which we previously passed to the source code using a preprocessor definition in our CMake configuration:</p>
 
@@ -528,16 +1160,16 @@ std::string internalGetVersion();
 
 
 std::string internalGetVersion() {
-    return HTTP_SERVER_VERSION;
+    return MY_LIBRARY_VERSION;
 }
 </code></pre>
 
-<p>The <code class="language-plaintext highlighter-rouge">HTTP_SERVER_VERSION</code> macro was defined earlier in the CMake configuration (as detailed in the <a href="#passing-version-information-to-the-source-code">section on passing version information to the source code</a>).</p>
+<p>The <code class="language-plaintext highlighter-rouge">MY_LIBRARY_VERSION</code> macro was defined earlier in the CMake configuration (as detailed in the <a href="#passing-version-information-to-the-source-code">section on passing version information to the source code</a>).</p>
 
 <p>The <code class="language-plaintext highlighter-rouge">getVersion()</code> API function, which calls the internal function, is implemented in <code class="language-plaintext highlighter-rouge">source/my_library.cpp</code>:</p>
 
-<pre><code class="language-cpp">#include "musta_http_server/musta_http_server.h"
-#include "internal_server.h"
+<pre><code class="language-cpp">#include "my_library/my_library.h"
+#include "my_library_internal.h"
 
 std::string getVersion() {
     return internalGetVersion();
@@ -546,7 +1178,7 @@ std::string getVersion() {
 
 <p>This structure ensures that while <code class="language-plaintext highlighter-rouge">getVersion()</code> is accessible to external projects, <code class="language-plaintext highlighter-rouge">internalGetVersion()</code> remains encapsulated within the library, hidden from external access.</p>
 
-<h4 id="verifying-visibility-and-symbol-export">Verifying Visibility and Symbol Export</h4>
+<h3 id="verifying-visibility-and-symbol-export">Verifying Visibility and Symbol Export</h3>
 
 <p>To verify that only the intended symbols are exposed, you can inspect the exported symbols of the compiled shared library. On Linux, this can be done using the <code class="language-plaintext highlighter-rouge">nm</code> command:</p>
 
@@ -770,8 +1402,9 @@ git checkout v2.13.9
 <p>Build and install the library:</p>
 
 <pre><code class="language-bash">mkdir build &amp;&amp; cd build
-cmake .. -G "MinGW Makefiles"
-cmake --build . --target install  # This adds the package to CMake
+cmake .. -G "MinGW Makefiles"     # or "Visual Studio 17 2022" 
+cmake --build . --config Release  # or Debug
+cmake --install . --prefix /path  # Path to installation
 </code></pre>
 
 <p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.]]></summary></entry><entry><title type="html">CMake - Installation On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake - Installation On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
@@ -1689,7 +2322,7 @@ f_\text{PWM} =\frac{f_\text{APB Timer Clock}}{(ARR+1) \cdot (PSC+1)}
 \]</p>
 
 <ul>
-  <li><strong><code class="language-plaintext highlighter-rouge">ARR</code> (Auto-reload Register)</strong>: Defines the maximum count value before the timer resets.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">ARR</code> (Auto-Reload Register)</strong>: Defines the maximum count value before the timer resets.</li>
   <li><strong><code class="language-plaintext highlighter-rouge">PSC</code> (Prescaler)</strong>: Divides the timer clock frequency to adjust the PWM period.</li>
 </ul>
 
@@ -2202,7 +2835,7 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
 <pre><code class="language-cpp">temp = ((V_temp * 33000) / 4095 - 7600 + 25000) / 25;
 </code></pre>
 
-<p>This calculation yields the temperature in degrees Celsius, adjusting for the reference voltage and typical sensor characteristics.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="STM32" /><category term="STM32F411CEU6" /><category term="Embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="Arm" /><category term="Cortex-m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="math">Math</h2>
+<p>This calculation yields the temperature in degrees Celsius, adjusting for the reference voltage and typical sensor characteristics.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="STM32" /><category term="STM32F411CEU6" /><category term="Embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="ARM" /><category term="Cortex-m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="math">Math</h2>
 
 <p>Inline math with \(\sin(x)\): \(\sin(x)\)</p>
 
@@ -2303,8 +2936,7 @@ HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 </div>
 
 <div class="alert alert-warning" role="alert">
-  This is a warning alert—attention needed! 
-   d
+  This is a warning alert—attention needed!
 </div>
 
 <div class="alert alert-info" role="alert">

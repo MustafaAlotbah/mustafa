@@ -788,7 +788,7 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="550 words"
+  title="561 words"
 >
   <em>3 min</em> read</span>
 
@@ -978,8 +978,9 @@ git checkout v2.13.9
 <p>Build and install the library:</p>
 
 <pre><code class="language-bash">mkdir build &amp;&amp; cd build
-cmake .. -G "MinGW Makefiles"
-cmake --build . --target install  # This adds the package to CMake
+cmake .. -G "MinGW Makefiles"     # or "Visual Studio 17 2022" 
+cmake --build . --config Release  # or Debug
+cmake --install . --prefix /path  # Path to installation
 </code></pre>
 
 <p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>
@@ -1097,8 +1098,15 @@ cmake --build . --target install  # This adds the package to CMake
 
 
   <section id="access-lastmod">
-    <h2 class="panel-heading">7. Recently Updated</h2>
+    <h2 class="panel-heading">Recently Updated</h2>
     <ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/">Efficient Exception Handling in Resource-Constrained Embedded Systems</a>
+        </li>
       
         
         
@@ -1126,13 +1134,6 @@ cmake --build . --target install  # This adds the package to CMake
         
         <li class="text-truncate lh-lg">
           <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/BlackPill-STM32F411CEU6/">The Black Pill (STM32F411CEU6)</a>
         </li>
       
     </ul>
@@ -1300,60 +1301,6 @@ cmake --build . --target install  # This adds the package to CMake
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1403,6 +1350,140 @@ cmake --build . --target install  # This adds the package to CMake
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -1419,53 +1500,45 @@ cmake --build . --target install  # This adds the package to CMake
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
-    
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
@@ -1493,7 +1566,50 @@ cmake --build . --target install  # This adds the package to CMake
     
     
     
-      
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
     
   
     
@@ -1502,6 +1618,84 @@ cmake --build . --target install  # This adds the package to CMake
     
       
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
   
     
     
@@ -1523,27 +1717,6 @@ cmake --build . --target install  # This adds the package to CMake
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -1580,7 +1753,7 @@ cmake --build . --target install  # This adds the package to CMake
 
 
   <section>
-    <h2 class="panel-heading">8. Trending Tags</h2>
+    <h2 class="panel-heading">Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
@@ -1596,7 +1769,13 @@ cmake --build . --target install  # This adds the package to CMake
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">ARM</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">Embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
@@ -1606,12 +1785,6 @@ cmake --build . --target install  # This adds the package to CMake
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -1626,7 +1799,7 @@ cmake --build . --target install  # This adds the package to CMake
 
 
   <section id="toc-wrapper" class="d-none ps-0 pe-4">
-    <h2 class="panel-heading ps-3 mb-2">9. Contents</h2>
+    <h2 class="panel-heading ps-3 mb-2">Contents</h2>
     <nav id="toc"></nav>
   </section>
 
@@ -1715,7 +1888,7 @@ cmake --build . --target install  # This adds the package to CMake
 
 
   <aside id="related-posts" aria-labelledby="related-label">
-    <h3 class="mb-4" id="related-label">9.1. Further Reading</h3>
+    <h3 class="mb-4" id="related-label">Further Reading</h3>
     <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
       
         <article class="col">
@@ -1738,7 +1911,7 @@ cmake --build . --target install  # This adds the package to CMake
   Nov 18, 2023
 </time>
 
-              <h4 class="pt-0 my-2">9.1.1. CMake - Publish Your Own Library</h4>
+              <h4 class="pt-0 my-2">6.1.1. CMake - Publish Your Own Library</h4>
               <div class="text-muted">
                 <p>Introduction to Publishing CMake Projects
 
@@ -1768,7 +1941,7 @@ When developing a C++ library, especially one meant to be reused across multiple
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">9.1.2. CMake - Installation On Windows</h4>
+              <h4 class="pt-0 my-2">6.1.2. CMake - Installation On Windows</h4>
               <div class="text-muted">
                 <p>Here is a quick way to get started into development with CMake on Windows x64.
 
@@ -1804,7 +1977,7 @@ Downloads
   Sep 19, 2023
 </time>
 
-              <h4 class="pt-0 my-2">9.1.3. CMake - Brief Reference</h4>
+              <h4 class="pt-0 my-2">6.1.3. CMake - Brief Reference</h4>
               <div class="text-muted">
                 <p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief refer...</p>
               </div>
@@ -2057,60 +2230,6 @@ Downloads
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2160,6 +2279,140 @@ Downloads
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2176,53 +2429,45 @@ Downloads
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
     
     
     
-      
-        
-        
-
   
     
     
     
-    
-      
     
   
     
     
     
     
-      
-    
   
     
     
     
     
-      
+  
+    
+    
+    
     
   
     
@@ -2250,7 +2495,50 @@ Downloads
     
     
     
-      
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
     
   
     
@@ -2259,6 +2547,84 @@ Downloads
     
       
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
   
     
     
@@ -2280,27 +2646,6 @@ Downloads
         
         
 
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
   
     
     
@@ -2337,7 +2682,7 @@ Downloads
 
 
   <section>
-    <h2 class="panel-heading">10. Trending Tags</h2>
+    <h2 class="panel-heading">Trending Tags</h2>
     <div class="d-flex flex-wrap mt-3 mb-1 me-3">
       
         
@@ -2353,7 +2698,13 @@ Downloads
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">Arm</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/arm/">ARM</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/embedded/">Embedded</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/stm32/">STM32</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/blackpill/">blackpill</a>
@@ -2363,12 +2714,6 @@ Downloads
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/ci/">CI</a>
-      
-        
-        <a class="post-tag btn btn-outline-primary" href="/tags/continuous-integration/">Continuous-Integration</a>
       
     </div>
   </section>
@@ -2552,7 +2897,7 @@ Downloads
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('search-results'),
     json: '/assets/js/data/search.json',
-    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>11. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
+    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>7. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
     noResultsText: '<p class="mt-5">Oops! No results found.</p>',
     templateMiddleware: function(prop, value, template) {
       if (prop === 'categories') {
