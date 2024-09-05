@@ -1,10 +1,561 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-08-25T11:20:43+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">Efficient Exception Handling in Resource-Constrained Embedded Systems</title><link href="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/" rel="alternate" type="text/html" title="Efficient Exception Handling in Resource-Constrained Embedded Systems" /><published>2023-12-22T12:41:00+01:00</published><updated>2023-12-22T12:41:00+01:00</updated><id>http://localhost:4000/posts/Exploring%20Exception%20Handling%20Mechanisms%20in%20Embedded%20Environments</id><content type="html" xml:base="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-09-05T18:31:08+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mustafa Alotbah’s Blog</title><subtitle>Welcome to a space dedicated to exploring computer science and data science.  Here, you&apos;ll find insights on machine learning, simulation projects, and embedded systems.  Whether you&apos;re a student, professional, or tech enthusiast, this blog offers ideas and projects to inspire and inform as we navigate the evolving world of technology together.</subtitle><entry><title type="html">C++20 - Coroutines</title><link href="http://localhost:4000/posts/CPP-Coroutines/" rel="alternate" type="text/html" title="C++20 - Coroutines" /><published>2024-01-22T21:34:00+01:00</published><updated>2024-01-22T21:34:00+01:00</updated><id>http://localhost:4000/posts/CPP-Coroutines</id><content type="html" xml:base="http://localhost:4000/posts/CPP-Coroutines/"><![CDATA[<p>Coroutines, introduced in C++20, bring a powerful mechanism for handling asynchronous operations, generators and cooperative multitasking.
+Unlike conventional functions, which execute sequentially from start to return, coroutines are functions that can suspend and resume execution at specific points, effectively allowing you to pause execution, yield results, and return control to the caller without fully exiting the function.</p>
 
-<p>This article presents an in-depth examination of exception handling mechanisms tailored for embedded systems, where resource constraints and performance optimization are critical. Traditional C++ exceptions are often impractical in these environments due to the significant overhead they introduce. As a result, developers frequently disable exceptions using compiler flags like <code class="language-plaintext highlighter-rouge">-fno-exceptions</code>. However, the need for robust error management persists, particularly in scenarios where the system must maintain stability despite encountering errors.</p>
+<h2 id="introduction">Introduction</h2>
 
-<p>To address these challenges, the article explores alternative error-handling strategies that are more suitable for embedded systems. We begin by discussing low-level constructs such as <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, which offer a direct and efficient method for managing errors. The discussion then progresses to more advanced techniques involving <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, which provide a means to simulate exception handling with minimal resource usage. Through detailed examples, we demonstrate how these methods can be implemented effectively in resource-constrained environments, ensuring that errors are managed gracefully without compromising system performance.</p>
+<p>At their core, coroutines empower <em>cooperative multitasking</em> by enabling a function to be <em>suspended</em> and later <em>resumed</em> without losing its state.
+This is in contrast to <em>preemptive multitasking</em>—such as that implemented with threads—where the operating system arbitrarily decides when to suspend a task and switch context.
+Coroutines, by contrast, give the programmer explicit control over when and where to suspend or resume execution, making them a lighter and more efficient alternative for certain asynchronous programming patterns.</p>
 
-<p>Furthermore, the article addresses the complexities introduced by these methods, particularly in terms of resource management and cleanup, offering practical solutions to prevent issues like memory leaks. By the end of this article, readers will gain a comprehensive understanding of how to implement robust, efficient error-handling mechanisms in embedded systems, enhancing both the reliability and sustainability of mission-critical applications.</p>
+<p>When a coroutine is called, it doesn’t run to completion immediately. Instead, it returns a special object, typically referred to as a <em>coroutine handle</em>, which the caller can use to resume or finalize the coroutine’s execution. This behavior introduces a level of flexibility and control that traditional functions simply do not possess.</p>
+
+<p>Coroutines can be applied across a wide range of use cases, including:</p>
+
+<ul>
+  <li>
+    <p><strong>Asynchronous I/O</strong>:</p>
+
+    <p>Efficiently suspending operations until data becomes available from a network or file system, avoiding costly thread blocking.</p>
+  </li>
+  <li>
+    <p><strong>Event-driven systems</strong>:</p>
+
+    <p>Enabling highly responsive applications by reacting to incoming events without halting the system, while simultaneously maintaining clarity in control flow.</p>
+  </li>
+  <li>
+    <p><strong>Lazy data generation</strong>:</p>
+
+    <p>Producing data incrementally, without needing to allocate or compute the entire sequence at once, thus optimizing memory and computation resources.</p>
+  </li>
+</ul>
+
+<h2 id="objective">Objective</h2>
+
+<p>In this article, we will implement a simple generator-like coroutine that produces a sequence of integers, yielding values incrementally as they are requested. Consider the following example:</p>
+
+<pre><code class="language-cpp">int main() {
+
+    // Create the coroutine to count from 1 to 5
+    Generator counter = simple_counter(1, 5);  
+
+    // Iterate through the yielded values
+    while (counter.next()) {
+
+        // Output each yielded value
+        std::cout &lt;&lt; counter.get() &lt;&lt; " ";  
+    }
+
+    std::cout &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+
+<p>The expected output for this program would be:</p>
+
+<pre><code class="language-txt">1 2 3 4 5
+</code></pre>
+
+<p>The primary coroutine function we aim to implement is a generator that yields consecutive integers between a given start and end value:</p>
+
+<pre><code class="language-cpp">// Coroutine function that yields consecutive numbers
+Generator simple_counter(int start, int end) {
+    for (int i = start; i &lt;= end; ++i) {
+        // yield the current value
+        co_yield i;
+    }
+}
+</code></pre>
+
+<p>In the code above, <code class="language-plaintext highlighter-rouge">co_yield</code> is the key operator introduced by C++20 coroutines. When encountered, it pauses the execution of the coroutine and returns a value to the caller. The coroutine can then be resumed from this point, maintaining the state of local variables.</p>
+
+<p>Let’s break down the essential components involved in making this coroutine functional and efficient in C++20.</p>
+
+<h2 id="formal-definition">Formal Definition</h2>
+
+<p>In C++20, coroutines are implemented under the hood as a <strong>finite state machine (FSM)</strong>—a widely-recognized computational model where the system resides in one of a finite number of states at any given time and transitions between states occur based on events. For coroutines, these transitions involve saving the current state of execution and potentially performing actions such as yielding a value or suspending execution. This FSM model is particularly well-suited for coroutines, as they are designed to pause, yield results, and resume at precise points during their execution.</p>
+
+<p>A coroutine’s state persists across suspension points, enabling the function to resume from exactly where it was last paused upon the next invocation. Control over these state transitions in C++20 coroutines is achieved through three key operations:</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">co_yield</code></strong>:</p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">co_yield</code> operator suspends the coroutine while yielding a value back to the caller. It also allows a coroutine to generate a sequence of values over multiple suspensions, maintaining its state between yields. This makes it highly suitable for generator-style coroutines, where values are produced incrementally.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">co_return</code></strong>:</p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">co_return</code> statement signals the completion of the coroutine, returning a final value. Once a coroutine encounters <code class="language-plaintext highlighter-rouge">co_return</code>, it cannot be resumed, and the coroutine’s lifetime ends.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">co_await</code></strong>:</p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">co_await</code> operator suspends the coroutine, handing control back to the caller, until a specific condition—typically represented as an asynchronous event—is met. When the awaited condition is fulfilled, the coroutine resumes execution at the point where it was suspended. The type of object that is awaited must conform to the <strong>Awaitable</strong> concept, which means it must provide the following methods:</p>
+
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">await_ready()</code>: Determines if the operation is ready to proceed or if it needs to suspend.</li>
+      <li><code class="language-plaintext highlighter-rouge">await_suspend()</code>: Suspends the coroutine and potentially schedules it to be resumed later.</li>
+    </ol>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">await_resume()</code>: Returns the result of the awaited operation when the coroutine is resumed.</p>
+  </li>
+</ul>
+
+<h3 id="state-transitions-in-coroutines">State Transitions in Coroutines</h3>
+
+<p>The execution of a coroutine is driven by state transitions, which are managed by the <code class="language-plaintext highlighter-rouge">co_await</code>, <code class="language-plaintext highlighter-rouge">co_yield</code>, and <code class="language-plaintext highlighter-rouge">co_return</code> operations. These transitions occur between the following states:</p>
+
+<ol>
+  <li>
+    <p><strong>Initial State</strong>:
+ When a coroutine is first called, it enters the initial state. At this point, the function <code class="language-plaintext highlighter-rouge">promise_type::initial_suspend()</code> decides whether the coroutine should immediately suspend or continue execution. This gives the developer control over whether the coroutine begins running immediately or waits to be explicitly resumed.</p>
+  </li>
+  <li>
+    <p><strong>Running State</strong>:<br />
+ Once execution begins, the coroutine proceeds normally until it encounters a suspension point, such as a <code class="language-plaintext highlighter-rouge">co_await</code> or <code class="language-plaintext highlighter-rouge">co_yield</code>. Upon reaching these points, it returns control to the caller and moves into the suspended state.</p>
+  </li>
+  <li>
+    <p><strong>Suspended State</strong>:<br />
+ While suspended, the coroutine’s execution context—including its local variables and call stack—is preserved. At any point, the coroutine can be resumed, at which point it continues execution from the last suspension point, progressing toward its next suspension or completion.</p>
+  </li>
+  <li>
+    <p><strong>Final State</strong>:<br />
+ After the coroutine encounters a <code class="language-plaintext highlighter-rouge">co_return</code>, it enters the final state, indicating the completion of its execution. The function <code class="language-plaintext highlighter-rouge">promise_type::final_suspend()</code> ensures that no further actions can be taken on the coroutine once it has reached this point, allowing for proper cleanup and termination.</p>
+  </li>
+</ol>
+
+<p>These operations and state transitions make it easier to manage asynchronous workflows, allowing for clear and efficient state management while maintaining a straightforward control flow. By combining these with custom <code class="language-plaintext highlighter-rouge">promise_type</code> objects and <code class="language-plaintext highlighter-rouge">awaitable</code> objects, C++20 coroutines offer a powerful abstraction for managing both synchronous and asynchronous tasks.</p>
+
+<h3 id="lifecycle-of-a-coroutine">Lifecycle of a Coroutine</h3>
+
+<p>The lifecycle of a coroutine is intricately managed by these state transitions. The following diagram captures the transitions and operations:</p>
+
+<pre><code class="language-mermaid">stateDiagram-v2
+    %% Starting point
+    [*] --&gt; InitialState
+    InitialState: Initial State
+
+    %% Transition to Running or Suspended State based on initial_suspend()
+    InitialState --&gt; RunningState: coroutine called
+    InitialState --&gt; SuspendedState: initial_suspend()
+
+    %% Running State
+    RunningState: Running State
+    RunningState --&gt; SuspendedState: co_await / co_yield
+    RunningState --&gt; FinalState: co_return
+
+    %% Suspended State
+    SuspendedState: Suspended State
+    SuspendedState --&gt; RunningState: resume()
+    SuspendedState --&gt; FinalState: co_return / Scope End
+
+    %% Final State
+    FinalState: Final State
+    FinalState: final_suspend()
+</code></pre>
+
+<p>By explicitly controlling state transitions, C++20 coroutines provide a structured, efficient mechanism for managing asynchronous workflows. Unlike traditional multithreading, where the operating system handles preemptive task switching, coroutines give the programmer direct control over suspensions and resumptions, leading to a more predictable and performant system. Moreover, the use of <code class="language-plaintext highlighter-rouge">promise_type</code> and <code class="language-plaintext highlighter-rouge">awaitable</code> objects allows developers to customize the behavior of coroutines, providing fine-grained control over both synchronous and asynchronous tasks.</p>
+
+<h2 id="implementing-the-coroutine">Implementing the Coroutine</h2>
+
+<p>In order to employ the <code class="language-plaintext highlighter-rouge">co_yield</code> operator within a function, the return type must conform to the <strong>coroutine</strong> <strong>concept</strong> as defined by the C++20 standard. When the compiler detects the presence of keywords like <code class="language-plaintext highlighter-rouge">co_yield</code>, <code class="language-plaintext highlighter-rouge">co_await</code>, or <code class="language-plaintext highlighter-rouge">co_return</code>, it automatically flags the function as a coroutine, which fundamentally changes its behavior.</p>
+
+<p>Instead of following the conventional function model of entering, executing, and exiting, coroutines return an intermediate object (e.g. <code class="language-plaintext highlighter-rouge">Generator</code>) that encapsulates their state and enables suspension and resumption of execution. This returned object serves as the interface through which the coroutine interacts with the calling environment.</p>
+
+<p>In our example, the coroutine will return an object of type <code class="language-plaintext highlighter-rouge">Generator</code>, which will function as a generator of integers. To fulfill the coroutine’s requirements and the compiler’s expectations, we need to define a corresponding generator class, <code class="language-plaintext highlighter-rouge">Generator</code>, that adheres to the coroutine concept. At the core of this concept lies the <code class="language-plaintext highlighter-rouge">promise_type</code>, a structure that mediates between the caller and the coroutine, orchestrating the coroutine’s lifecycle, including suspension, resumption, and finalization.</p>
+
+<p>Below is the skeletal structure of our generator <code class="language-plaintext highlighter-rouge">Generator</code>, which we will expand to implement the necessary coroutine mechanisms:</p>
+
+<pre><code class="language-cpp">class Generator {
+    // Required by the compiler to control the coroutine
+    struct promise_type;  
+
+    // constructor
+    Generator(std::coroutine_handle&lt;promise_type&gt; handle);   
+
+private: 
+    // Handle to control coroutine execution
+    std::coroutine_handle&lt;promise_type&gt; coroutine_handle_; 
+}
+</code></pre>
+
+<h3 id="the-heart-of-coroutines-promise_type">The Heart of Coroutines: promise_type</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">promise_type</code> structure is the core component in C++20 coroutines, responsible for managing the coroutine’s internal state and interacting with the calling code. Whenever a coroutine is invoked, the compiler generates an instance of the <code class="language-plaintext highlighter-rouge">promise_type</code>. The <code class="language-plaintext highlighter-rouge">promise_type</code> interface defines how the coroutine behaves at each phase of its execution, including initial suspension, resumption, final suspension, and error handling.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">promise_type</code> must provide the following methods to manage coroutine state transitions:</p>
+
+<pre><code class="language-cpp">struct promise_type {
+    // Returns the object that the coroutine will hand back to the caller
+    Generator get_return_object();
+
+    // Suspend execution immediately after starting
+    std::suspend_always initial_suspend();
+
+    // Suspend execution after the coroutine is done
+    std::suspend_always final_suspend() noexcept;
+
+    // Handle any exceptions that occur within the coroutine
+    void unhandled_exception();
+};
+</code></pre>
+
+<p>Key methods that must be implemented in <code class="language-plaintext highlighter-rouge">promise_type</code> include:</p>
+
+<ul>
+  <li>
+    <ol>
+      <li><strong><code class="language-plaintext highlighter-rouge">Generator get_return_object()</code></strong>:<br />
+  This method returns the object that will represent the coroutine’s execution state to the caller. It is called as soon as the coroutine is instantiated. In the case of a generator, it returns a handle to the coroutine itself, allowing the caller to resume or query the coroutine’s state.</li>
+    </ol>
+
+    <p>The typical implementation for this method is as follows:</p>
+
+    <pre><code class="language-cpp">  Generator Generator::promise_type::get_return_object()  
+  {
+      // The coroutine_handle manages the lifetime and resumption of the coroutine
+      return Generator{std::coroutine_handle&lt;promise_type&gt;::from_promise(*this)};  
+  }
+</code></pre>
+
+    <p>Here, the <code class="language-plaintext highlighter-rouge">from_promise()</code> function creates a coroutine handle that ties the <code class="language-plaintext highlighter-rouge">promise_type</code> to the coroutine object, providing the caller with full control over the coroutine’s lifecycle.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">std::suspend_always initial_suspend()</code></strong>:<br />
+  This method determines whether the coroutine should suspend execution immediately upon creation. The return type must satisfy the <strong>awaitable</strong> concept, which determines how the coroutine behaves at suspension points. Returning <code class="language-plaintext highlighter-rouge">std::suspend_always</code> ensures that the coroutine will suspend after being invoked, giving the caller control over when to resume execution.</p>
+
+    <p>Example implementation:</p>
+
+    <pre><code class="language-cpp">  std::suspend_always Generator::promise_type::initial_suspend()  
+  {  
+      // The coroutine starts in a suspended state and must be resumed explicitly
+      return {};  
+  }
+</code></pre>
+
+    <p>In this case, we return <code class="language-plaintext highlighter-rouge">std::suspend_always</code>, indicating that the coroutine suspends right after its invocation, awaiting an explicit resume action.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">std::suspend_always final_suspend()</code></strong>:<br />
+  This method is called when the coroutine reaches its end, either through a <code class="language-plaintext highlighter-rouge">co_return</code> or because the function runs to completion. It determines whether the coroutine should suspend before final cleanup or exit immediately. The typical pattern is to use <code class="language-plaintext highlighter-rouge">std::suspend_always</code> to ensure that the caller has an opportunity to finalize any resources tied to the coroutine handle.</p>
+
+    <p>Example:</p>
+
+    <pre><code class="language-cpp">  std::suspend_always Generator::promise_type::final_suspend()  
+  {  
+      // After the coroutine is done, it suspends one last time before being destroyed
+      return {};  
+  }
+</code></pre>
+
+    <p>This final suspension is a key point in the coroutine’s lifecycle, giving the caller a chance to perform any necessary cleanup or synchronizing actions.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">void unhandled_exception()</code></p>
+
+    <p>This method defines the coroutine’s behavior when an exception is thrown inside the coroutine body and not explicitly handled. The most common implementation involves terminating the program, but more advanced handlers could log the error or propagate the exception to the caller.</p>
+
+    <p>Example implementation:</p>
+
+    <pre><code class="language-cpp">  void Generator::promise_type::unhandled_exception()  
+  {  
+      // Terminate the program or just log an error and freeze the coroutine
+      std::terminate();  
+  }
+</code></pre>
+
+    <p>In this basic implementation, <code class="language-plaintext highlighter-rouge">std::terminate()</code> is called to halt the program when an unhandled exception occurs within the coroutine. More advanced coroutine systems may instead propagate exceptions back to the caller.</p>
+  </li>
+</ul>
+
+<h3 id="the-awaitable-concept">The Awaitable Concept</h3>
+
+<p>The <strong>awaitable</strong> concept in C++ defines a set of rules for objects that can be used in conjunction with <code class="language-plaintext highlighter-rouge">co_await</code>. These objects determine whether a coroutine should suspend, what happens when it suspends, and how the coroutine resumes. In the context of coroutines, both <code class="language-plaintext highlighter-rouge">std::suspend_always</code> and <code class="language-plaintext highlighter-rouge">std::suspend_never</code> are common awaitables that provide predefined behavior for suspension.</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">std::suspend_always</code></strong>:<br />
+  This is an awaitable that always suspends the coroutine. It is used when the coroutine should explicitly suspend, allowing the caller to determine when to resume it.</p>
+
+    <pre><code class="language-cpp">  struct std::suspend_always {
+      bool await_ready() const noexcept { return false; }
+      void await_suspend(std::coroutine_handle&lt;&gt;) const noexcept {}
+      void await_resume() const noexcept {}
+  };
+</code></pre>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">await_ready()</code>: Returns <code class="language-plaintext highlighter-rouge">false</code>, indicating that the coroutine should suspend.</li>
+      <li><code class="language-plaintext highlighter-rouge">await_suspend()</code>: Performs the actual suspension.</li>
+      <li><code class="language-plaintext highlighter-rouge">await_resume()</code>: Defines what happens when the coroutine resumes.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">std::suspend_never</code></strong>:<br />
+  This awaitable ensures that the coroutine never suspends at a particular suspension point, allowing it to continue execution without interruption.</p>
+
+    <pre><code class="language-cpp">  struct std::suspend_never {
+      bool await_ready() const noexcept { return true; }
+      void await_suspend(std::coroutine_handle&lt;&gt;) const noexcept {}
+      void await_resume() const noexcept {}
+  };
+</code></pre>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">await_ready()</code>: Returns <code class="language-plaintext highlighter-rouge">true</code>, meaning the coroutine does not suspend.</li>
+      <li><code class="language-plaintext highlighter-rouge">await_suspend()</code> and <code class="language-plaintext highlighter-rouge">await_resume()</code> are no-ops, as no suspension occurs.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="coroutine-operators">Coroutine Operators</h3>
+
+<p>In C++20, coroutines utilize specialized operators (<code class="language-plaintext highlighter-rouge">co_await</code>, <code class="language-plaintext highlighter-rouge">co_yield</code>, and <code class="language-plaintext highlighter-rouge">co_return</code>) to manage control flow, yielding values, awaiting asynchronous events, or signaling coroutine completion. For a coroutine to function correctly, it must overload and implement at least one of these operators. The choice of the operator depends on the desired behavior—whether the coroutine should suspend while awaiting, yield intermediate results, or complete execution and return a value.</p>
+
+<h4 id="the-operator-co_yield">The Operator co_yield</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">co_yield</code> operator facilitates the suspension of the coroutine, returning control to the caller while also passing back a value.
+To overload this operator, the <code class="language-plaintext highlighter-rouge">promise_type</code> structure must implement at least one of two forms of <code class="language-plaintext highlighter-rouge">yield_value</code>:  <code class="language-plaintext highlighter-rouge">awaitable yield_value(T)</code> or <code class="language-plaintext highlighter-rouge">awaitable yield_void()</code>.</p>
+
+<pre><code class="language-cpp">struct promise_type {
+    Generator get_return_object();
+    std::suspend_always initial_suspend();
+    std::suspend_always final_suspend() noexcept;
+    void unhandled_exception();
+
+    // Overload for yielding an integer value (e.g., `co_yield 5;`)
+    std::suspend_always yield_value(int val);
+
+    // Overload for yielding a string value (e.g., `co_yield "Hello";`)
+    std::suspend_always yield_value(std::string val);
+
+    // Yielding control without passing a value (e.g., `co_yield;`)
+    std::suspend_always yield_void();
+};
+</code></pre>
+
+<p>In the context of a generator design like <code class="language-plaintext highlighter-rouge">Generator</code>, the <code class="language-plaintext highlighter-rouge">yield_value</code> function is used to store or update the coroutine’s internal state (<code class="language-plaintext highlighter-rouge">current_value</code>), which the user can later retrieve. However, coroutines are much more powerful and can solve more complex control flow problems than simple generators.</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">awaitable yield_value(T)</code></strong>:</p>
+
+    <p>This method is invoked when <code class="language-plaintext highlighter-rouge">co_yield</code> is used in the coroutine. It suspends the coroutine and yields the value <code class="language-plaintext highlighter-rouge">T</code> to the caller. At this suspension point, the state of the coroutine is preserved, allowing it to resume at a later time. The caller can retrieve the yielded value after resumption.</p>
+
+    <p>Example implementation:</p>
+
+    <pre><code class="language-cpp">  std::suspend_always promise_type::yield_value(int value) {
+      value_ = value;  // Store the yielded value in the internal state
+      return {};       // Suspend the coroutine
+  }
+</code></pre>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">awaitable yield_void()</code></strong>:</p>
+
+    <p>This method is called when the coroutine is suspended without yielding a specific value to the caller. It can be used when the coroutine needs to pause execution but doesn’t produce an output. This operator is less common in generator-style coroutines but can be useful in control flow scenarios.</p>
+
+    <p>Example:</p>
+
+    <pre><code class="language-cpp">  std::suspend_always promise_type::yield_void() {
+      // Suspend the coroutine without yielding a value
+      return {};
+  }
+</code></pre>
+  </li>
+</ul>
+
+<p>Hence for our <code class="language-plaintext highlighter-rouge">Generator</code> example, we could define</p>
+
+<pre><code class="language-cpp">class Generator  
+{  
+ public:
+    struct promise_type  
+    { 
+     public:  
+        Generator get_return_object();  
+        std::suspend_always initial_suspend();  
+        std::suspend_always final_suspend() noexcept;   
+        void unhandled_exception();  
+    
+        // Overload co_yield, 
+        std::suspend_always yield_value(int val);
+     public:
+        friend class Generator;
+        int value_{ 0 };  
+    };
+
+    // type alias to reduce code
+    using handle_type = std::coroutine_handle&lt;promise_type&gt;;  
+
+private:
+    handle_type coroutine_handle_;
+}
+</code></pre>
+
+<h4 id="the-operator-co_return">The Operator co_return</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">co_return</code> operator signals the end of a coroutine and allows the coroutine to return a value to the caller. The <code class="language-plaintext highlighter-rouge">promise_type</code> must implement <code class="language-plaintext highlighter-rouge">return_value(T)</code> or <code class="language-plaintext highlighter-rouge">return_void()</code> to overload this operator.</p>
+
+<p>Example:</p>
+
+<pre><code class="language-cpp">struct promise_type {
+    Generator get_return_object();
+    std::suspend_always initial_suspend();
+    std::suspend_always final_suspend() noexcept;
+    void unhandled_exception();
+
+    // Return an integer value upon coroutine completion (e.g., `co_return 42;`)
+    std::suspend_always return_value(int val);
+
+    // Return a string upon coroutine completion (e.g., `co_return "Done";`)
+    std::suspend_always return_value(std::string val);
+
+    // Signal coroutine completion without returning a value (e.g., `co_return;`)
+    std::suspend_always return_void();
+};
+</code></pre>
+
+<p>In the <code class="language-plaintext highlighter-rouge">Generator</code> example, we could overload the <code class="language-plaintext highlighter-rouge">return_value</code> and <code class="language-plaintext highlighter-rouge">return_void</code> operators to handle final results or simply to indicate that the coroutine has completed its execution.</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">awaitable return_value(T)</code></strong>:</p>
+
+    <p>This method is called when <code class="language-plaintext highlighter-rouge">co_return</code> is used in the coroutine, allowing the coroutine to return a final value to the caller. It suspends the coroutine, signals completion, and passes the return value back to the caller.</p>
+
+    <pre><code class="language-cpp">  std::suspend_always Generator::promise_type::return_value(int val) {
+      value_ = val;  // Store the final returned value
+      return {};     // Suspend the coroutine before finalization
+  }
+</code></pre>
+
+    <p>In this example, the <code class="language-plaintext highlighter-rouge">return_value</code> method stores the value passed to <code class="language-plaintext highlighter-rouge">co_return</code> in the <code class="language-plaintext highlighter-rouge">value_</code> field of the <code class="language-plaintext highlighter-rouge">promise_type</code>. The coroutine is then suspended one last time, allowing the caller to retrieve the value before the coroutine is destroyed.</p>
+
+    <p>Usage in a coroutine:</p>
+
+    <pre><code class="language-cpp">  Generator simple_counter(int start, int end) {
+      for (int i = start; i &lt;= end; ++i) {
+          co_yield i;
+      }
+      // Return a final result after the loop completes
+      co_return end + 1;  
+  }
+</code></pre>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">awaitable return_void()</code></strong>:</p>
+
+    <p>This method is invoked when <code class="language-plaintext highlighter-rouge">co_return</code> is used without a value, simply marking the coroutine as complete and suspending it for final cleanup. This is useful when the coroutine’s task is done, and no final value needs to be returned. After calling <code class="language-plaintext highlighter-rouge">return_void()</code>, the coroutine transitions to its final suspended state and is then cleaned up.</p>
+
+    <pre><code class="language-cpp">  std::suspend_always promise_type::yield_void() {
+      // Suspend the coroutine without yielding a value
+      return {};
+  }
+</code></pre>
+
+    <p>In this case, the coroutine finishes without yielding or returning any specific value. The final suspension allows the coroutine’s resources to be cleaned up in an orderly fashion.</p>
+
+    <p>Usage in a coroutine:</p>
+
+    <pre><code class="language-cpp">  Generator simple_counter(int start, int end) {
+      for (int i = start; i &lt;= end; ++i) {
+          co_yield i;
+      }
+      // End the coroutine without returning a value
+      co_return;
+  }
+</code></pre>
+  </li>
+</ul>
+
+<h3 id="managing-the-coroutine-handle">Managing the Coroutine Handle</h3>
+
+<p>In the above implementation, we leverage <code class="language-plaintext highlighter-rouge">std::coroutine_handle</code> to manage the lifecycle of the coroutine. This handle acts as a lightweight wrapper that directly interfaces with the coroutine, allowing control over its execution. The handle is essential for interacting with the coroutine at various stages—suspension, resumption, finalization, and cleanup.</p>
+
+<p>Here is a more detailed explanation of the key functions of <code class="language-plaintext highlighter-rouge">std::coroutine_handle</code> utilized in our <code class="language-plaintext highlighter-rouge">Generator</code> example:</p>
+
+<ol>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">void destroy()</code></strong>:<br />
+ The <code class="language-plaintext highlighter-rouge">destroy()</code> method is used to explicitly destroy the coroutine. It ensures that once the coroutine has completed its execution, its resources are properly cleaned up, preventing memory leaks. In our <code class="language-plaintext highlighter-rouge">Generator</code> class, we call <code class="language-plaintext highlighter-rouge">destroy()</code> within the destructor, ensuring that if the coroutine is still alive, it gets terminated and cleaned up before the <code class="language-plaintext highlighter-rouge">Generator</code> object goes out of scope.</p>
+
+    <p>Example usage in the destructor:</p>
+
+    <pre><code class="language-cpp"> Generator::~Generator() {
+     // Clean up coroutine resources
+     if (coroutine_handle_) coroutine_handle_.destroy();  
+ }
+</code></pre>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">void resume()</code></strong>:<br />
+ The <code class="language-plaintext highlighter-rouge">resume()</code> method allows the coroutine to proceed from its last suspension point. This is used within the <code class="language-plaintext highlighter-rouge">next()</code> function, which resumes the coroutine and attempts to move it to the next <code class="language-plaintext highlighter-rouge">co_yield</code> or <code class="language-plaintext highlighter-rouge">co_return</code>. By invoking <code class="language-plaintext highlighter-rouge">resume()</code>, the coroutine’s execution is continued until it either reaches another suspension point or completes execution.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">bool done()</code></strong>:<br />
+ The <code class="language-plaintext highlighter-rouge">done()</code> method checks whether the coroutine has reached its final state and is no longer resumable. It returns <code class="language-plaintext highlighter-rouge">true</code> if the coroutine has completed execution. This is important for ensuring that the coroutine is not resumed after it has finished. In the <code class="language-plaintext highlighter-rouge">next()</code> function, <code class="language-plaintext highlighter-rouge">done()</code> is checked both before and after calling <code class="language-plaintext highlighter-rouge">resume()</code> to ensure that the coroutine is still active.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">promise_type&amp; promise()</code></strong>:<br />
+ The <code class="language-plaintext highlighter-rouge">promise()</code> method provides access to the <code class="language-plaintext highlighter-rouge">promise_type</code> instance associated with the coroutine. This is crucial because the <code class="language-plaintext highlighter-rouge">promise_type</code> holds the internal state of the coroutine, including the value that was last yielded or returned. The <code class="language-plaintext highlighter-rouge">promise()</code> method is used in the <code class="language-plaintext highlighter-rouge">get()</code> function to retrieve the current value yielded by the coroutine.</p>
+  </li>
+</ol>
+
+<h3 id="retrieving-values-in-the-generator">Retrieving Values in the Generator</h3>
+
+<p>To allow interaction between the <code class="language-plaintext highlighter-rouge">Generator</code> generator and the caller, we need two essential methods:</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">bool next()</code></strong>: This method continues the execution of the coroutine until it suspends again, either due to a <code class="language-plaintext highlighter-rouge">co_yield</code> or <code class="language-plaintext highlighter-rouge">co_return</code>. It checks if the coroutine is done, resumes execution, and returns whether the coroutine has yielded a new value. If the coroutine has completed execution, it returns <code class="language-plaintext highlighter-rouge">false</code>.</p>
+
+    <p>Full implementation:</p>
+
+    <pre><code class="language-cpp">  bool Generator::next() const  
+  {  
+     if (!coroutine_handle_ || coroutine_handle_.done()) return false;  
+
+     // Resume the coroutine  
+     coroutine_handle_.resume();  
+
+     // Check again if it's done after resuming  
+     return !coroutine_handle_.done();
+  }
+</code></pre>
+
+    <p>Before resuming the coroutine, we first ensure that the coroutine handle is properly initialized and that the coroutine has not already completed its execution. This is accomplished by checking if the handle is valid and if the coroutine is not in the <em>done</em> state.</p>
+
+    <p>Once confirmed, we can safely invoke the <code class="language-plaintext highlighter-rouge">resume()</code> method to move the coroutine forward to its next suspension point. The use of <code class="language-plaintext highlighter-rouge">co_yield</code> within the coroutine may return a value and suspend execution at multiple points before the function fully completes. After calling <code class="language-plaintext highlighter-rouge">resume()</code>, it is essential to check again whether the coroutine has reached its final state by invoking <code class="language-plaintext highlighter-rouge">done()</code>.</p>
+
+    <p>If the resumption of the coroutine leads to its termination without yielding any additional values, we return <code class="language-plaintext highlighter-rouge">false</code>, indicating that the coroutine has completed its task. This prevents further attempts to resume a completed coroutine.</p>
+
+    <p>However, if we employ <code class="language-plaintext highlighter-rouge">co_return</code> at the end of the coroutine, and it results in a final value being returned, we would return <code class="language-plaintext highlighter-rouge">true</code>, as this indicates that the coroutine has successfully yielded a value before reaching its conclusion. In this case, the caller can retrieve the final value using the <code class="language-plaintext highlighter-rouge">get()</code> method.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">int get()</code></strong>: This method retrieves the current value yielded by the coroutine. It accesses the <code class="language-plaintext highlighter-rouge">promise_type</code> through the coroutine handle to fetch the stored value. This method should be called after <code class="language-plaintext highlighter-rouge">next()</code> returns <code class="language-plaintext highlighter-rouge">true</code>, indicating that the coroutine has successfully yielded a new value.
+  Full implementation:</p>
+
+    <pre><code class="language-cpp">  int Generator::get() const  
+  {  
+      return coroutine_handle_.promise().value_;  
+  }
+</code></pre>
+
+    <p>Here, the method accesses the <code class="language-plaintext highlighter-rouge">promise_type</code> instance via the <code class="language-plaintext highlighter-rouge">coroutine_handle_</code>, fetching the <code class="language-plaintext highlighter-rouge">value_</code> field, which stores the value yielded during the last <code class="language-plaintext highlighter-rouge">co_yield</code> or <code class="language-plaintext highlighter-rouge">co_return</code>.</p>
+  </li>
+</ul>
+
+<!-- TODO: co_wait, unhandled_exception, Asynchronous Example, Event-based systems -->]]></content><author><name></name></author><category term="Software-Development" /><category term="C++" /><category term="Software" /><category term="C++" /><category term="C++20" /><category term="Software" /><category term="Designs" /><category term="Generator" /><category term="Coroutine" /><summary type="html"><![CDATA[Coroutines, introduced in C++20, bring a powerful mechanism for handling asynchronous operations, generators and cooperative multitasking. Unlike conventional functions, which execute sequentially from start to return, coroutines are functions that can suspend and resume execution at specific points, effectively allowing you to pause execution, yield results, and return control to the caller without fully exiting the function.]]></summary></entry><entry><title type="html">Efficient Exception Handling in Resource-Constrained Embedded Systems</title><link href="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/" rel="alternate" type="text/html" title="Efficient Exception Handling in Resource-Constrained Embedded Systems" /><published>2023-12-22T12:41:00+01:00</published><updated>2023-12-22T12:41:00+01:00</updated><id>http://localhost:4000/posts/Exploring%20Exception%20Handling%20Mechanisms%20in%20Embedded%20Environments</id><content type="html" xml:base="http://localhost:4000/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>This article provides a comprehensive analysis of exception handling mechanisms specifically designed for embedded systems, where resource constraints and performance optimization are paramount. In such environments, traditional C++ exception handling is often deemed impractical due to the substantial overhead it incurs. Consequently, developers frequently resort to disabling exceptions using compiler flags such as <code class="language-plaintext highlighter-rouge">-fno-exceptions</code>. Despite this, the necessity for robust error management remains critical, especially in scenarios where system stability must be preserved in the face of unexpected errors.</p>
+
+<p>To address these challenges, this article explores a range of alternative error-handling strategies that are more suitable for embedded systems. The discussion begins with low-level constructs such as <code class="language-plaintext highlighter-rouge">goto</code> statements and function pointers, which provide direct and efficient methods for error management. It then advances to more sophisticated techniques involving <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, which enable the simulation of exception handling with minimal resource consumption. Through detailed and practical examples, we illustrate how these methods can be effectively implemented in resource-constrained environments, ensuring that errors are managed gracefully without compromising system performance.</p>
+
+<p>In addition to these low-level approaches, the article also examines modern C++ techniques that offer lightweight alternatives to traditional exceptions. Constructs like <code class="language-plaintext highlighter-rouge">std::optional</code> and <code class="language-plaintext highlighter-rouge">std::variant</code> provide structured and efficient methods for error handling, allowing for more granular and type-safe error management with minimal overhead. These modern techniques are particularly advantageous in embedded systems where performance and memory efficiency are critical.</p>
+
+<p>Furthermore, the article addresses the complexities introduced by these alternative methods, particularly concerning resource management and cleanup. Practical solutions are presented to prevent issues such as memory leaks, which are essential for ensuring the long-term reliability of embedded systems. By the conclusion of this article, readers will have gained a thorough understanding of how to implement robust and efficient error-handling mechanisms, leveraging both traditional and modern C++ approaches. This knowledge is vital for enhancing the reliability and sustainability of mission-critical applications in embedded environments.</p>
 
 <h2 id="understanding-setjmp-and-longjmp">Understanding setjmp and longjmp</h2>
 
@@ -25,7 +576,7 @@ void riskyFunction() {
     // Simulate the effect of longjmp
     std::cout &lt;&lt; "Starting a risky function.\n";
     
-	// Mimic throwing an exception (error code: 1)
+    // Mimic throwing an exception (error code: 1)
     if (try_block) {
         errorCode = 1;        // Simulate setting an error code
         goto *try_block;      // Jump back to the try block
@@ -157,7 +708,7 @@ int main() {
         
     } else if (errorCode == SyntaxException) {
     
-        // Handle Value Error
+        // Handle Syntax Error
         std::cout &lt;&lt; "SyntaxException ocurred\n";
         
     }
@@ -195,7 +746,7 @@ int main() {
     } else if (errorCode == 1) {
     
         // Handling an error (which can also be handling)
-        std::cout &lt;&lt; "firstFunction called longjmp\n";
+        std::cout &lt;&lt; "riskyFunction called longjmp\n";
         secondFunction();
         
     } else if (errorCode == 2) {
@@ -343,7 +894,7 @@ Program continues after try/catch.
 
 <p>One of the strengths of C++ is its ability to automatically invoke the destructor of a class when it goes out of scope, whether the scope ends normally (by <code class="language-plaintext highlighter-rouge">}</code>) or through an exception. This ensures that resources are freed properly, even when they are allocated within nested functions. This feature, known as <em>stack unwinding</em>, is absent when using the <code class="language-plaintext highlighter-rouge">goto</code> keyword. A critical question arises: do we retain this feature when using <code class="language-plaintext highlighter-rouge">longjmp</code>?</p>
 
-<h3 id="cleaning-up-with-longjump">Cleaning Up with Longjump</h3>
+<h3 id="cleaning-up-with-longjmp">Cleaning Up with Longjmp</h3>
 
 <p>The answer is compiler-dependent. For instance, with the <strong>MSVC</strong> compiler, stack unwinding is supported with <code class="language-plaintext highlighter-rouge">longjmp</code>, as evidenced by the following statement: (see <a href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/longjmp">here</a>)</p>
 
@@ -380,7 +931,7 @@ int main() {
     handler.Try([&amp;] {
         // Try block
 
-        // This will not be destructed with throwException/longjump
+        // This will not be destructed with throwException/longjmp
         Resource res("MyResource"); 
 
         std::cout &lt;&lt; "Try block: an error is about to occur.\n";
@@ -469,7 +1020,7 @@ int main() {
     handler.Try([&amp;] {
         // Try block
 
-        // This will not be destructed with throwException/longjump
+        // This will not be destructed with throwException/longjmp
         Resource res("MyResource"); 
 
         // Register the source before any exception might be thrown
@@ -569,6 +1120,324 @@ cleanup:
 }
 </code></pre>
 
+<h2 id="alternative-approaches-modern-c">Alternative Approaches: Modern C++</h2>
+
+<p>Beyond the low-level techniques previously discussed, modern C++ introduces several lightweight alternatives to traditional exceptions that are particularly advantageous in resource-constrained embedded systems. These alternatives, including <code class="language-plaintext highlighter-rouge">std::optional</code>, <code class="language-plaintext highlighter-rouge">std::variant</code>, and error codes encapsulated within classes, offer a structured and efficient approach to error handling. Their minimal overhead makes them well-suited for environments where performance and memory efficiency are paramount.</p>
+
+<h3 id="utilizing-stdoptional-for-error-handling">Utilizing <code class="language-plaintext highlighter-rouge">std::optional</code> for Error Handling</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">std::optional</code> type, introduced in C++17, encapsulates an object that may or may not hold a value. This type is especially beneficial for functions that might fail to produce a meaningful result, allowing the function to return an “empty” state rather than throwing an exception or returning an error code.</p>
+
+<h4 id="example">Example</h4>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;  
+#include &lt;optional&gt;  
+  
+std::optional&lt;int&gt; riskyFunction(int value) { 
+  
+    // Return an empty optional to indicate an error  
+    if (value &lt; 0) return std::nullopt;  
+  
+    // Return the result as an optional  
+    return value * 2;  
+}  
+  
+int main() {  
+    auto result = riskyFunction(-5);  
+    
+    // Handle the error
+    if (!result) {  
+       std::cout &lt;&lt; "An error occurred: invalid input.\n";  
+       exit(0);  // Early termination
+    }  
+  
+    // Valid input, retrieve and display the value
+    std::cout &lt;&lt; "Result: " &lt;&lt; result.value() &lt;&lt; "\n";  
+    
+    return 0;  
+}
+</code></pre>
+
+<p>In this example, the function <code class="language-plaintext highlighter-rouge">riskyFunction</code> returns an <code class="language-plaintext highlighter-rouge">std::optional&lt;int&gt;</code>, which either contains a valid result or <code class="language-plaintext highlighter-rouge">std::nullopt</code> if an error occurs. This approach avoids the overhead of exceptions while providing a clear mechanism for error checking.</p>
+
+<h3 id="leveraging-stdvariant-for-typed-errors">Leveraging <code class="language-plaintext highlighter-rouge">std::variant</code> for Typed Errors</h3>
+
+<p><code class="language-plaintext highlighter-rouge">std::variant</code>, also introduced in C++17, is a type-safe union that can store one of several types, making it a versatile tool for returning either a result or an error type from a function. This is analogous to using tagged unions in C but with the added safety and flexibility offered by modern C++.</p>
+
+<h4 id="example-for-variant">Example for variant</h4>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;variant&gt;
+#include &lt;string&gt;
+
+// Value Error Type
+struct ValueError {  
+    std::string message;  
+};  
+  
+// Syntax Error Type
+struct SyntaxError {  
+    std::string message;  
+};  
+
+// Result type can be an integer, a value error, or a syntax error
+using Result = std::variant&lt;int, ValueError, SyntaxError&gt;;  
+  
+Result riskyFunction(int value) {  
+
+    // Return a ValueError if the input is negative
+    if (value &lt; 0)  return ValueError{"Value cannot be negative"}; 
+     
+    // Return a SyntaxError if the input is zero
+    if (value == 0) return SyntaxError{"Value cannot be zero"};  
+
+    // Return the value
+    return value * 2;  
+}  
+  
+int main() {  
+    auto result = riskyFunction(0); 
+     
+    // Check for a ValueError
+    if (std::holds_alternative&lt;ValueError&gt;(result)) {
+       std::cout &lt;&lt; "Value error: " &lt;&lt; std::get&lt;ValueError&gt;(result).message &lt;&lt; "\n";  
+       exit(0);
+    }
+    
+    // Check for a SyntaxError
+    if (std::holds_alternative&lt;SyntaxError&gt;(result)) {
+       std::cout &lt;&lt; "Syntax error: " &lt;&lt; std::get&lt;SyntaxError&gt;(result).message &lt;&lt; "\n";  
+       exit(0);
+    }
+
+    // Otherwise, an integer result is assumed
+    std::cout &lt;&lt; "Result: " &lt;&lt; std::get&lt;int&gt;(result) &lt;&lt; "\n";  
+  
+    return 0;  
+}
+</code></pre>
+
+<p>In this instance, <code class="language-plaintext highlighter-rouge">riskyFunction</code> returns a <code class="language-plaintext highlighter-rouge">std::variant&lt;int, ValueError, SyntaxError&gt;</code>, allowing it to return either a valid result or detailed error information. This approach increases the granularity of error handling while avoiding the performance drawbacks associated with exceptions.</p>
+
+<h3 id="encapsulating-error-codes-within-classes">Encapsulating Error Codes within Classes</h3>
+
+<p>Another modern C++ approach involves encapsulating error codes within a class structure. This method enhances code readability and maintainability by associating specific error codes with meaningful class types, as opposed to relying on plain integers.</p>
+
+<p>We will first define a basic <code class="language-plaintext highlighter-rouge">ErrorCode</code> class to encapsulate error types and messages, then construct a <code class="language-plaintext highlighter-rouge">Result</code> class template that encapsulates either a value or an error. Finally, we will demonstrate how to utilize these classes in a function that performs a potentially risky operation and returns either a result or an error.</p>
+
+<h4 id="defining-the-errorcode-class">Defining the <code class="language-plaintext highlighter-rouge">ErrorCode</code> Class</h4>
+
+<p>The initial step in constructing our error-handling framework involves defining an <code class="language-plaintext highlighter-rouge">ErrorCode</code> class. This class will represent various types of errors that may occur and will provide a mechanism to retrieve an error message associated with each error type.</p>
+
+<p>Here is the basic structure of the <code class="language-plaintext highlighter-rouge">ErrorCode</code> class:</p>
+
+<pre><code class="language-cpp">// ErrorCode class to represent possible errors
+class ErrorCode {
+ public:
+    // Enum to define different types of error codes
+    enum Code { None, ValueError, SyntaxError };
+
+    // Constructor takes an optional error code and an error message
+    explicit ErrorCode(Code code = None, std::string message = "")
+        : code_(code), message_(std::move(message)) {}
+
+    // Getter for the error message
+    std::string message() const { return message_; }
+
+    // Getter for the error code
+    Code code() const { return code_; }
+
+ private:
+    Code code_;                ///&lt; error code / type
+    std::string message_;      ///&lt; error message
+};
+</code></pre>
+
+<p>In this structure:</p>
+
+<ul>
+  <li><strong>Enum <code class="language-plaintext highlighter-rouge">Code</code></strong>: Enumerates different error types (<code class="language-plaintext highlighter-rouge">None</code>, <code class="language-plaintext highlighter-rouge">ValueError</code>, <code class="language-plaintext highlighter-rouge">SyntaxError</code>).</li>
+  <li><strong>Constructor</strong>: Initializes the error code and its associated message.</li>
+  <li><strong>Getters</strong>: Provide access to the error code and message.</li>
+</ul>
+
+<p>This class forms the foundation for representing errors within our application.</p>
+
+<h4 id="creating-the-result-class-template">Creating the <code class="language-plaintext highlighter-rouge">Result</code> Class Template</h4>
+
+<p>Next, we need a way to return either a valid result or an error from a function. To achieve this, we create a <code class="language-plaintext highlighter-rouge">Result</code> class template that can hold either a value of any type <code class="language-plaintext highlighter-rouge">T</code> or an <code class="language-plaintext highlighter-rouge">ErrorCode</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class is defined as a template, allowing it to accommodate any data type as the potential result of an operation. This flexibility is crucial for creating a general-purpose error-handling mechanism.</p>
+
+<pre><code class="language-cpp">template &lt;typename T&gt;
+class Result {
+    // Class members and methods will be defined within this template.
+};
+</code></pre>
+
+<p>By templating the class, we enable <code class="language-plaintext highlighter-rouge">Result</code> to handle various types of results, making it adaptable to different contexts within an application.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class is designed to accommodate two primary scenarios:</p>
+
+<ol>
+  <li>The operation succeeds and returns a value, or</li>
+  <li>The operation fails and returns an error.</li>
+</ol>
+
+<p>To facilitate these scenarios, the class provides two constructors.</p>
+
+<pre><code class="language-cpp">public:
+    // Constructor for a successful result containing a value
+    explicit Result(T value) : result_(std::move(value)) {}
+
+    // Constructor for an error result containing an ErrorCode
+    Result(ErrorCode error) : result_(std::move(error)) {}
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong>Success Constructor</strong>: This constructor initializes the <code class="language-plaintext highlighter-rouge">Result</code> object with a value of type <code class="language-plaintext highlighter-rouge">T</code>. The use of <code class="language-plaintext highlighter-rouge">std::move</code> ensures efficient handling of the value, particularly when dealing with large or complex objects.</p>
+  </li>
+  <li>
+    <p><strong>Error Constructor</strong>: This constructor initializes the <code class="language-plaintext highlighter-rouge">Result</code> object with an <code class="language-plaintext highlighter-rouge">ErrorCode</code>, signifying that the operation encountered an issue.</p>
+  </li>
+</ul>
+
+<p>These constructors are fundamental to ensuring that the <code class="language-plaintext highlighter-rouge">Result</code> object can accurately represent either a successful outcome or an error, providing a clear and structured approach to error handling.</p>
+
+<p>To enable the <code class="language-plaintext highlighter-rouge">Result</code> object to hold either a value or an error, the class employs <code class="language-plaintext highlighter-rouge">std::variant</code>. This C++ standard library feature ensures that the object can store one of these types at a time, but not both simultaneously.</p>
+
+<pre><code class="language-cpp">private:
+    std::variant&lt;T, ErrorCode&gt; result_; ///&lt; Holds either a value of type T or an ErrorCode
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">std::variant</code> type is integral to the design of the <code class="language-plaintext highlighter-rouge">Result</code> class. It enforces type safety by ensuring that the object contains only a value or an error at any given moment, thus preventing ambiguous states.</p>
+
+<p>A common requirement when dealing with the outcome of an operation is the ability to easily determine whether it succeeded or failed. The <code class="language-plaintext highlighter-rouge">Result</code> class provides an overloaded <code class="language-plaintext highlighter-rouge">bool</code> operator to facilitate this check.</p>
+
+<pre><code class="language-cpp">public:
+    // Overloaded bool operator to check if the result contains a value (indicating success)
+    explicit operator bool() const {
+        return std::holds_alternative&lt;T&gt;(result_);
+    }
+</code></pre>
+
+<ul>
+  <li><strong>Boolean Operator</strong>: This operator checks whether the <code class="language-plaintext highlighter-rouge">Result</code> contains a value of type <code class="language-plaintext highlighter-rouge">T</code>. If it does, the operator returns <code class="language-plaintext highlighter-rouge">true</code>, indicating success; otherwise, it returns <code class="language-plaintext highlighter-rouge">false</code>.</li>
+</ul>
+
+<p>This feature enhances the usability of the <code class="language-plaintext highlighter-rouge">Result</code> class by allowing developers to intuitively and efficiently check the success of an operation.</p>
+
+<p>To access the value or error contained within the <code class="language-plaintext highlighter-rouge">Result</code> object, the class provides two methods: <code class="language-plaintext highlighter-rouge">value()</code> and <code class="language-plaintext highlighter-rouge">error()</code>. These methods return <code class="language-plaintext highlighter-rouge">std::optional</code> types, which offer a safe way to handle cases where the requested data might not be present.</p>
+
+<pre><code class="language-cpp">public:
+    // Retrieve the value if no error occurred, returning std::optional to handle the absence of a value
+    std::optional&lt;T&gt; value() const {
+        if (std::holds_alternative&lt;T&gt;(result_)) {
+            return std::get&lt;T&gt;(result_);
+        }
+        return std::nullopt;
+    }
+
+    // Retrieve the error if one occurred, returning std::optional to handle the absence of an error
+    std::optional&lt;ErrorCode&gt; error() const {
+        if (std::holds_alternative&lt;ErrorCode&gt;(result_)) {
+            return std::get&lt;ErrorCode&gt;(result_);
+        }
+        return std::nullopt;
+    }
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">value()</code> Method</strong>: This method attempts to retrieve the stored value. If the <code class="language-plaintext highlighter-rouge">Result</code> contains a value, it is returned; if the <code class="language-plaintext highlighter-rouge">Result</code> contains an error, the method returns <code class="language-plaintext highlighter-rouge">std::nullopt</code>, indicating the absence of a value.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">error()</code> Method</strong>: Similarly, this method retrieves the stored error if one is present. If the <code class="language-plaintext highlighter-rouge">Result</code> contains a value instead, it returns <code class="language-plaintext highlighter-rouge">std::nullopt</code>, signifying the absence of an error.</p>
+  </li>
+</ul>
+
+<p>These methods provide a clear and safe mechanism for extracting the contents of the <code class="language-plaintext highlighter-rouge">Result</code> object, ensuring that error handling is both explicit and reliable.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class template offers a comprehensive and type-safe mechanism for managing the outcomes of operations that may either succeed or fail. By encapsulating both the value and the error within a single object, it presents a clean and efficient alternative to traditional error-handling strategies, making it particularly suitable for environments where reliability and performance are critical.</p>
+
+<h4 id="implementing-the-result-class-in-a-function">Implementing the <code class="language-plaintext highlighter-rouge">Result</code> Class in a Function</h4>
+
+<p>With the <code class="language-plaintext highlighter-rouge">ErrorCode</code> and <code class="language-plaintext highlighter-rouge">Result</code> classes defined, we can now use them in a function that performs a potentially risky operation. The function will return a <code class="language-plaintext highlighter-rouge">Result&lt;int&gt;</code> to indicate either a successful operation (yielding a result) or an error.</p>
+
+<p>Here’s an example of such a function:</p>
+
+<pre><code class="language-cpp">Result&lt;int&gt; riskyFunction(int value) {
+
+    // If the input value is negative, return a ValueError
+    if (value &lt; 0) {
+        return ErrorCode(ErrorCode::ValueError, "Value cannot be negative");
+    }
+
+    // If the input value is zero, return a SyntaxError
+    if (value == 0) {
+        return ErrorCode(ErrorCode::SyntaxError, "Value cannot be zero");
+    }
+
+    // Input is correct
+    return Result&lt;int&gt;(value * 2); // Return the result on success
+}
+</code></pre>
+
+<p>where</p>
+
+<ul>
+  <li><strong>Negative Value</strong>: Returns an <code class="language-plaintext highlighter-rouge">ErrorCode</code> for a <code class="language-plaintext highlighter-rouge">ValueError</code>.</li>
+  <li><strong>Zero Value</strong>: Returns an <code class="language-plaintext highlighter-rouge">ErrorCode</code> for a <code class="language-plaintext highlighter-rouge">SyntaxError</code>.</li>
+  <li><strong>Valid Value</strong>: Returns the computed result (<code class="language-plaintext highlighter-rouge">value * 2</code>).</li>
+</ul>
+
+<p>This function demonstrates how to use the <code class="language-plaintext highlighter-rouge">Result</code> and <code class="language-plaintext highlighter-rouge">ErrorCode</code> classes to handle errors in a structured manner.</p>
+
+<h4 id="managing-the-result-in-the-main-function">Managing the Result in the Main Function</h4>
+
+<p>Finally, we can handle the result of <code class="language-plaintext highlighter-rouge">riskyFunction</code> in the <code class="language-plaintext highlighter-rouge">main</code> function:</p>
+
+<pre><code class="language-cpp">int main() {
+    // Call riskyFunction with an input value of 5
+    auto result = riskyFunction(5);
+
+    // Check if the result contains an error
+    if (!result) {
+        // Retrieve the error from the result
+        auto error = result.error();
+
+        // Check if the error is a ValueError and print the error message
+        if (error &amp;&amp; error-&gt;code() == ErrorCode::ValueError) {
+            std::cout &lt;&lt; "Value Error: " &lt;&lt; error-&gt;message() &lt;&lt; "\n";
+            exit(0); // or return
+        }
+
+        // Check if the error is a SyntaxError and print the error message
+        if (error &amp;&amp; error-&gt;code() == ErrorCode::SyntaxError) {
+            std::cout &lt;&lt; "Syntax Error: " &lt;&lt; error-&gt;message() &lt;&lt; "\n";
+            exit(0); // or return
+        }
+    } 
+
+    // print the successful result value
+    std::cout &lt;&lt; "Result: " &lt;&lt; *result.value() &lt;&lt; "\n";
+
+    return 0;
+}
+</code></pre>
+
+<p>where</p>
+
+<ul>
+  <li><strong>Check for Error</strong>: The <code class="language-plaintext highlighter-rouge">if (!result)</code> block checks if an error occurred.</li>
+  <li><strong>Handle ValueError</strong>: If the error is a <code class="language-plaintext highlighter-rouge">ValueError</code>, print the message and exit.</li>
+  <li><strong>Handle SyntaxError</strong>: If the error is a <code class="language-plaintext highlighter-rouge">SyntaxError</code>, print the message and exit.</li>
+  <li><strong>Print Result</strong>: If no error occurred, print the result.</li>
+</ul>
+
+<p>This approach is particularly advantageous in environments where exceptions are disabled or in performance-critical applications where the overhead of exceptions is undesirable. The combination of <code class="language-plaintext highlighter-rouge">std::variant</code>, <code class="language-plaintext highlighter-rouge">std::optional</code>, and custom error codes provides a robust alternative that enhances both code readability and maintainability.</p>
+
 <h2 id="conclusion">Conclusion</h2>
 
 <p>In the highly specialized field of embedded systems development, where resources are tightly constrained, the use of traditional C++ exceptions is often impractical. By adopting alternative techniques such as low-level <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, or more sophisticated methods like <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, developers can implement effective error-handling mechanisms with minimal overhead. Each approach has its advantages and trade-offs, which must be carefully evaluated based on the specific constraints and requirements of the application at hand.</p>
@@ -586,17 +1455,17 @@ cleanup:
   <tbody>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">goto</code> and Function Pointers</strong></td>
-      <td>- Very low overhead, close to the hardware level  <br />- Simple to implement in small, constrained environments</td>
+      <td>- Extremely low overhead, close to the hardware level  <br />- Simple to implement in small, constrained environments</td>
       <td>- Prone to errors and difficult to maintain  <br />- Lacks flexibility and scalability  <br />- No automatic cleanup</td>
     </tr>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
-      <td>- Allows saving and restoring execution context  <br />- Provides structured error handling similar to <code class="language-plaintext highlighter-rouge">try/catch</code></td>
+      <td>- Provides a mechanism for non-local jumps and structured error handling without exceptions  <br />- Suitable for more complex control flows</td>
       <td>- Requires manual resource management (no stack unwinding)  <br />- Can be complex to implement correctly</td>
     </tr>
     <tr>
       <td><strong>Typed Exceptions with <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
-      <td>- Allows handling different types of errors distinctly  <br />- More granular error management</td>
+      <td>- Allows handling different types of errors distinctly  <br />- Offers more granularity in error management</td>
       <td>- Complexity in implementation  <br />- Manual resource management required</td>
     </tr>
     <tr>
@@ -606,18 +1475,28 @@ cleanup:
     </tr>
     <tr>
       <td><strong>Custom Exception Handler</strong></td>
-      <td>- Mimics higher-level <code class="language-plaintext highlighter-rouge">try/catch</code> semantics in embedded C/C++  <br />- More structured and organized error handling</td>
+      <td>- Mimics higher-level <code class="language-plaintext highlighter-rouge">try/catch</code> behavior in embedded C/C++ without runtime overhead<br />- More structured and organized error handling</td>
       <td>- Increased complexity  <br />- Requires manual resource registration and cleanup  <br />- Potential for missed cleanup</td>
     </tr>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">goto</code> for Cleanup</strong></td>
-      <td>- Simple and straightforward for resource cleanup  <br />- Reduces code duplication in cleanup tasks</td>
-      <td>- Lacks abstraction and safety  <br />- Can lead to unstructured code  <br />- Limited to simple error handling scenarios</td>
+      <td>- Simple and straightforward for resource cleanup  <br />- Simplifies resource cleanup operations in basic scenarios</td>
+      <td>- Lacks abstraction and safety  <br />- Can lead to spaghetti code and is unsuitable for complex error handling<br /></td>
+    </tr>
+    <tr>
+      <td>Raw <code class="language-plaintext highlighter-rouge">std::optional</code> and <code class="language-plaintext highlighter-rouge">std::variant</code></td>
+      <td>- Modern C++ features with low overhead, compatible with resource-constrained environments  <br />- Type-safe and integrates well with existing codebases<br /><br /></td>
+      <td>- Limited expressiveness compared to full exception handling  <br />- Still requires manual checks and error handling</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Result</code> Class Template</td>
+      <td>- Encapsulates error handling in a type-safe manner  <br />- Provides clear and maintainable code structure  <br />- Avoids the runtime overhead of exceptions</td>
+      <td>- Increased code complexity  <br />- May be over-engineered for simple error-handling cases</td>
     </tr>
   </tbody>
 </table>
 
-<p>Through a deep understanding of these techniques and their implications, developers can design and implement robust, efficient error-handling strategies tailored to the unique challenges of embedded systems. This not only enhances system reliability but also contributes to the overall sustainability of embedded applications in mission-critical environments.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="Software-Designs" /><category term="Error" /><category term="Handling" /><category term="Embedded" /><category term="STM32" /><category term="Error-Handling" /><category term="Exception-Handling" /><category term="Resource Optimization" /><category term="setjmp" /><category term="jump" /><category term="goto" /><category term="longjump" /><category term="Low-Level Programming" /><category term="ARM" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">CMake - Publish Your Own Library</title><link href="http://localhost:4000/posts/CMake-Production/" rel="alternate" type="text/html" title="CMake - Publish Your Own Library" /><published>2023-11-18T13:00:00+01:00</published><updated>2023-11-18T13:00:00+01:00</updated><id>http://localhost:4000/posts/CMake-Production</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Production/"><![CDATA[<h2 id="introduction-to-publishing-cmake-projects">Introduction to Publishing CMake Projects</h2>
+<p>In conclusion, there is no one-size-fits-all solution for error handling in embedded systems. The best approach often involves a careful balance between simplicity, efficiency, and flexibility, tailored to the unique challenges of the target environment. By leveraging the techniques discussed in this article, developers can ensure that their embedded systems remain resilient, even in the face of unexpected errors.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="Software-Designs" /><category term="Error" /><category term="Handling" /><category term="Embedded" /><category term="STM32" /><category term="Error-Handling" /><category term="Exception-Handling" /><category term="Resource Optimization" /><category term="setjmp" /><category term="jump" /><category term="goto" /><category term="longjump" /><category term="Low-Level Programming" /><category term="ARM" /><category term="C++" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">CMake - Publish Your Own Library</title><link href="http://localhost:4000/posts/CMake-Production/" rel="alternate" type="text/html" title="CMake - Publish Your Own Library" /><published>2023-11-18T13:00:00+01:00</published><updated>2023-11-18T13:00:00+01:00</updated><id>http://localhost:4000/posts/CMake-Production</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Production/"><![CDATA[<h2 id="introduction-to-publishing-cmake-projects">Introduction to Publishing CMake Projects</h2>
 
 <p>When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project effectively and use a build system that facilitates this process. CMake is a powerful and widely-used build system that helps manage the build process in a platform-independent manner. This tutorial will guide you through the process of structuring and publishing your own CMake project, ensuring that your library is not only well-organized but also easy to build, test, and distribute.</p>
 
@@ -670,22 +1549,23 @@ cleanup:
   <li>
     <p><strong>CMakeLists.txt (Root Level):</strong></p>
 
-    <p>This file serves as the entry point for CMake, defining the project’s configuration and build settings. It sets the required CMake version, specifies the C++ standard, configures platform-specific dependencies, and adjusts compiler flags based on the build type. The file also defines output directories and includes subdirectories for building the main library and associated tests. Additionally, it manages required packages and ensures compatibility across different platforms.</p>
+    <p>This file serves as the entry point for CMake, defining the project’s configuration and build settings. It sets the required CMake version, specifies the C++ standard, configures platform-specific dependencies, and adjusts compiler flags based on the build type. The file also defines output directories and includes subdirectories for building the main library and associated tests. Additionally, it manages required packages and ensures compatibility across different platforms. (<a href="#root-cmakeliststxt">jump to this section</a>)</p>
   </li>
   <li>
     <p><strong>cmake/ Directory:</strong></p>
 
-    <p>Contains custom CMake modules and configuration templates, such as <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code>, which is used for packaging and installing your library. This template allows users to find and link against your library using <code class="language-plaintext highlighter-rouge">find_package</code>.</p>
+    <p>Contains custom CMake modules and configuration templates, such as <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code>, which is used for packaging and installing your library. This template allows users to find and link against your library using <code class="language-plaintext highlighter-rouge">find_package</code>. (<a href="#cmake-template-file">jump to this section</a>)</p>
   </li>
   <li>
     <p><strong>dependencies/ Directory:</strong></p>
 
-    <p>This is where you would store any external dependencies your project relies on, especially if they are platform-specific. Subdirectories can be organized by platform, such as <code class="language-plaintext highlighter-rouge">win_x86_64</code> for Windows and <code class="language-plaintext highlighter-rouge">linux_x86_64</code> for Linux. Including dependencies here makes it easier to manage third-party libraries that are not readily available through package managers.</p>
+    <p>This is where you would store any external dependencies your project relies on, especially if they are platform-specific. Subdirectories can be organized by platform, such as <code class="language-plaintext highlighter-rouge">win_x86_64</code> for Windows and <code class="language-plaintext highlighter-rouge">linux_x86_64</code> for Linux. Including dependencies here makes it easier to manage third-party libraries that are not readily available through package managers. Once your library is exported, you can re-utilize your library in another project, by putting it here.</p>
   </li>
   <li>
     <p><strong>include/ Directory:</strong></p>
 
-    <p>This folder contains the public API headers. These are the files that other projects will include when they use your library. The headers are usually organized in a subdirectory named after your library (e.g., <code class="language-plaintext highlighter-rouge">my_library/</code>). The main API header (<code class="language-plaintext highlighter-rouge">my_library.h</code>) should include the core functions and classes, while the <code class="language-plaintext highlighter-rouge">my_project_export.h</code> file handles macro definitions that control symbol visibility, which is crucial when building shared libraries.</p>
+    <p>This folder contains the public API headers. These are the files that other projects will include when they use your library. The headers are usually organized in a subdirectory named after your library (e.g., <code class="language-plaintext highlighter-rouge">my_library/</code>).
+  The main API header (<code class="language-plaintext highlighter-rouge">my_library.h</code>) should include the core functions and classes, while the <code class="language-plaintext highlighter-rouge">my_project_export.h</code> file handles macro definitions that control symbol visibility, which is crucial when building shared libraries.</p>
   </li>
   <li>
     <p><strong>my_library/ Directory:</strong></p>
@@ -696,6 +1576,84 @@ cleanup:
     <p><strong>tests/ Directory:</strong></p>
 
     <p>Contains unit or integration tests that validate your library’s functionality. These tests are usually written using a testing framework (like Google Test, Catch2, or Boost.Test) and should cover both the public API and critical internal components. The <code class="language-plaintext highlighter-rouge">test_my_library.cpp</code> file is an example test that might include various test cases to ensure your library works as expected. Here we will, however, focus on the project structure rather than on testing.</p>
+  </li>
+</ul>
+
+<h3 id="export-overview">Export Overview</h3>
+
+<p>Once you install your library, the <code class="language-plaintext highlighter-rouge">installation/</code> directory will contain everything required for others to use and integrate your library into their own projects. Let’s break down each component within this directory:</p>
+
+<pre><code class="language-txt">installation/                                  # Project installation root directory
+│
+├── bin/                                       # Contains runtime binaries (e.g., DLLs) if provided
+│   └── libmy_library.dll                      # Compiled dynamic library (Windows)
+|
+├── include/                                   # Public header files that exposed to users
+│   └── my_library/                            # Namespace for your library headers
+│       ├── my_library.h                       # Primary public API header
+│       ├── ...                                # Your public API headers
+│       └── my_project_export.h                # Export macros for cross-platform compatibility
+│
+└── lib/                                       # Library and CMake configuration files
+    ├── cmake/                                 # CMake package configuration directory
+    |   └── my_library/                        # CMake files for library integration
+    |       └── my_libraryConfig.cmake         # Configuration file for `find_package`
+    |       └── my_libraryConfigVersion.cmake  # Version-specific config for compatibility checks
+    |       └── my_libraryTargets.cmake        # Target definitions for linking the library
+    └── libmy_library.dll.a                    # Import library for GCC/MinGW (or .lib for MSVC)
+</code></pre>
+
+<p>Breakdown of the Installation Structure</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">bin/</code> Directory:</strong></p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">bin/</code> directory holds the runtime binaries of the library.
+  It contains the dynamically linked libraries (DLLs) for Windows, which are necessary at runtime when your library is used by external applications.
+  These binaries are dynamically loaded during program execution and contain the compiled functionality of the library.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">libmy_library.dll</code></strong>: This is the main dynamic library file for Windows, containing the compiled code that is loaded at runtime. It provides the core functionality of your library to the consumers.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">include/</code> Directory:</strong></p>
+
+    <p>This directory contains all the public API headers that your users will include in their projects to interface with your library.
+  These headers define the classes, functions, and macros that are exposed to external projects.
+  Organizing them in a subdirectory named after the library ensures clear separation and namespace management.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">my_library.h</code></strong>: The main public header file, this aggregates all the core functions and classes available in your library. It serves as the primary interface for users to access your library’s functionality.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">my_project_export.h</code></strong>: This header defines export macros used for symbol visibility across platforms.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">lib/</code> Directory:</strong></p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">lib/</code> directory contains the static or import libraries and the CMake configuration files necessary for integrating your library with other projects. This directory allows your library to be discovered and linked using CMake’s <code class="language-plaintext highlighter-rouge">find_package</code> command.</p>
+
+    <ul>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">cmake/</code> Directory</strong>:
+    This subdirectory contains the CMake configuration files needed to allow other projects to find and link to your library. The files ensure that CMake knows how to configure, locate, and use your library’s targets.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake</code></strong>:
+    This is the main CMake configuration file used by <code class="language-plaintext highlighter-rouge">find_package</code>. It provides instructions on how to locate the library, including setting the paths for the library binaries and headers, and ensuring that the library is correctly linked.
+        You define this file by using a template in the <code class="language-plaintext highlighter-rouge">cmake</code> folder in your project.  (<a href="#cmake-template-file">jump to this section</a>)</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryConfigVersion.cmake</code></strong>:
+    This file ensures version compatibility between the library and the consuming project. It allows CMake to check whether the version of the library being used meets the version constraints specified in the consuming project.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code></strong>:
+    This file defines the targets associated with your library. It provides CMake with the necessary details for linking the library, including any dependencies or settings required by the consumer project.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">libmy_library.dll.a</code></strong>:
+    This is the import library for GCC/MinGW, which allows projects to link against the <code class="language-plaintext highlighter-rouge">.dll</code> file. For MSVC, this would be a <code class="language-plaintext highlighter-rouge">.lib</code> file. It plays a critical role in the linking phase of the build process, providing the required interface to the shared library.</p>
+      </li>
+    </ul>
   </li>
 </ul>
 
@@ -1056,13 +2014,35 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
     <p><strong><code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> Macro</strong> is a placeholder that is replaced by CMake with the necessary initialization code when the file is processed. The <code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> macro is essential as it sets up the environment for the package configuration. It ensures that any necessary CMake variables are initialized and that the package configuration is compatible with the CMake version used by the consuming project.</p>
   </li>
   <li>
-    <p><strong>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> File:</strong> This line includes the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file, which contains the actual definitions of the targets (such as the <code class="language-plaintext highlighter-rouge">my_library</code> library) that were exported during the installation process. This inclusion is critical for making the targets available to projects that use <code class="language-plaintext highlighter-rouge">find_package</code> to locate your library.</p>
+    <p><strong>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> File:</strong> This line includes the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file, which contains the actual definitions of the targets (such as the <code class="language-plaintext highlighter-rouge">my_library</code> library) that will be exported during the installation process.
+This inclusion is critical for making the targets available to projects that use <code class="language-plaintext highlighter-rouge">find_package</code> to locate your library.</p>
 
     <blockquote>
       <p>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file is what allows other projects to link against your library. It ensures that all necessary targets, build settings, and dependencies are correctly set up in the consuming project. Without this inclusion, the library would not be properly registered with CMake, making it unavailable for use.</p>
     </blockquote>
   </li>
 </ul>
+
+<h3 id="defining-imported_implib-for-windows-platforms">Defining <code class="language-plaintext highlighter-rouge">IMPORTED_IMPLIB</code> for Windows Platforms</h3>
+
+<p>When distributing libraries on <strong>Windows</strong>, there are often differences in how dynamic libraries (<code class="language-plaintext highlighter-rouge">.dll</code>) are linked, depending on the compiler. For this, we use the <code class="language-plaintext highlighter-rouge">IMPORTED_IMPLIB</code> property in CMake to define the appropriate import library (<code class="language-plaintext highlighter-rouge">.lib</code> or <code class="language-plaintext highlighter-rouge">.dll.a</code>) for Windows toolchains.</p>
+
+<p>We can check if we are on Windows platform <code class="language-plaintext highlighter-rouge">if (WIN32)</code> and in this case we should distinguish between <em>MinGW/GCC</em> where <code class="language-plaintext highlighter-rouge">.dll.a</code> is used, whereas <code class="language-plaintext highlighter-rouge">.lib</code> is used by <em>MSVC</em> compilers.</p>
+
+<pre><code class="language-cpp">if (WIN32)
+    # Check for GNU / Mingw Compilers
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|MinGW")
+        # Configure `IMPORTED_IMPLIB` to point to the .dll.a library that will be created
+        set_target_properties(Logify::Logify PROPERTIES
+            IMPORTED_IMPLIB "${CMAKE_CURRENT_LIST_DIR}/../../libmy_library.dll.a")
+    # Otherwise assume it is MSVC
+    else()
+        # Configure `IMPORTED_IMPLIB` to point to the .lib library that will be created
+        set_target_properties(Logify::Logify PROPERTIES
+            IMPORTED_IMPLIB "${CMAKE_CURRENT_LIST_DIR}/../../libmy_library.lib")
+    endif()
+endif()
+</code></pre>
 
 <h2 id="source-code">Source Code</h2>
 
@@ -1222,13 +2202,38 @@ cmake --install . --prefix .
 <pre><code class="language-sh">cpack
 </code></pre>
 
-<p>CPack generates a package (e.g., a ZIP or TGZ file) containing the installed files, making it easy to distribute the library.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="Cmake" /><category term="Windows" /><category term="C++" /><category term="Library" /><category term="Cross-Platform" /><category term="Build-Systems" /><category term="Dependency-Management" /><category term="Continuous-Integration" /><category term="CI" /><category term="CD/CI" /><summary type="html"><![CDATA[Introduction to Publishing CMake Projects]]></summary></entry><entry><title type="html">CMake - Adding Libraries</title><link href="http://localhost:4000/posts/CMake-Adding-Libraries/" rel="alternate" type="text/html" title="CMake - Adding Libraries" /><published>2023-11-15T17:08:00+01:00</published><updated>2023-11-15T17:08:00+01:00</updated><id>http://localhost:4000/posts/CMake-Adding-Libraries</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Adding-Libraries/"><![CDATA[<p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.</p>
+<p>CPack generates a package (e.g., a ZIP or TGZ file) containing the installed files, making it easy to distribute the library.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="Cmake" /><category term="Windows" /><category term="C++" /><category term="Library" /><category term="Cross-Platform" /><category term="Build-Systems" /><category term="Dependency-Management" /><category term="Continuous-Integration" /><category term="CI" /><category term="CD/CI" /><summary type="html"><![CDATA[Introduction to Publishing CMake Projects]]></summary></entry><entry><title type="html">CMake - Integrating C++ Libraries</title><link href="http://localhost:4000/posts/CMake-Integrating-C++-Libraries/" rel="alternate" type="text/html" title="CMake - Integrating C++ Libraries" /><published>2023-11-15T17:08:00+01:00</published><updated>2023-11-15T17:08:00+01:00</updated><id>http://localhost:4000/posts/CMake-Integrating%20C++%20Libraries</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Integrating-C++-Libraries/"><![CDATA[<p>In modern C++ development, CMake is an indispensable tool for managing project dependencies.
+This comprehensive guide empowers you to effortlessly integrate widely used C++ libraries into your projects using the versatile CMake build system.</p>
 
-<h2 id="1-google-test">1. Google Test</h2>
+<p>We’ll delve into strategies for incorporating <strong>Google Test</strong>, <strong>Google Benchmark</strong>, <strong>OpenCV</strong>, <strong>PkgFinder</strong>, <strong>GStreamer</strong>, <strong>Catch2</strong>, and <strong>Qt</strong>, providing clear instructions and code examples tailored to both <strong>Windows</strong> and <strong>Ubuntu</strong> environments.</p>
 
-<h3 id="11-using-fetchcontent">1.1 Using FetchContent</h3>
+<h2 id="streamlining-library-integration-with-cmake"><strong>Streamlining Library Integration with CMake</strong></h2>
 
-<p>Google Test is a popular testing framework for C++. Below is the procedure to integrate Google Test using CMake’s <code class="language-plaintext highlighter-rouge">FetchContent</code> module within your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> file:</p>
+<p>CMake offers a robust mechanism for managing external libraries, simplifying the process of adding them to your C++ projects. Here are the fundamental approaches:</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">FetchContent</code> Module:</strong> This convenient module assists in downloading and integrating libraries directly from source repositories. It’s ideal for libraries under active development or those not readily available through package managers.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">find_package</code> Command:</strong> For libraries distributed with package managers (e.g., PkgConfig, Conan, vcpkg, etc.), CMake’s <code class="language-plaintext highlighter-rouge">find_package</code> command simplifies the discovery and linking process.</p>
+  </li>
+  <li>
+    <p><strong>Manual Configuration:</strong> In some cases, you might need to set environment variables or manually specify library and include directories. This approach is usually employed for libraries not managed by package managers.</p>
+  </li>
+</ul>
+
+<p><strong>Exploring Popular C++ Libraries:</strong></p>
+
+<p>Now, let’s embark on a journey through integrating some of the most popular C++ libraries.</p>
+
+<h2 id="google-test">Google Test</h2>
+
+<p><strong>Purpose</strong>: Google Test is a robust testing framework designed for writing unit tests in C++.</p>
+
+<h3 id="integration-google-test-using-fetchcontent">Integration Google Test using FetchContent</h3>
+
+<p><strong>Windows and Ubuntu Instructions</strong>: The procedure for both systems is identical using CMake’s <code class="language-plaintext highlighter-rouge">FetchContent</code>.</p>
 
 <pre><code class="language-cpp">include(FetchContent)         # to use FetchContent_Declare
 
@@ -1250,7 +2255,7 @@ add_executable(simple_test "simple_test.cpp")
 gtest_discover_tests(simple_test)
 </code></pre>
 
-<p>Below is an example of a simple Google Test implementation in <code class="language-plaintext highlighter-rouge">simple_test.cpp</code>:</p>
+<p><strong>Simple Test Code</strong>: <code class="language-plaintext highlighter-rouge">simple_test.cpp</code></p>
 
 <pre><code class="language-cpp"># include &lt;gtest/gtest.h&gt;
 TEST(HelloTest, BasicAssertions) {
@@ -1261,11 +2266,20 @@ TEST(HelloTest, BasicAssertions) {
 }
 </code></pre>
 
-<h2 id="2-google-benchmark">2. Google Benchmark</h2>
+<h3 id="installing-google-test-on-ubuntu">Installing Google Test on Ubuntu</h3>
 
-<h3 id="21-using-fetchcontent">2.1 Using FetchContent</h3>
+<p>For Ubuntu, you can alternatively install Google Test using <code class="language-plaintext highlighter-rouge">apt</code>:</p>
 
-<p>Google Benchmark is a library designed to support the benchmarking of C++ code. The following CMake configuration demonstrates how to add Google Benchmark to your project:</p>
+<pre><code class="language-sh">sudo apt-get install libgtest-dev
+</code></pre>
+
+<p>Then manually compile the library and link it to your project.</p>
+
+<h2 id="google-benchmark">Google Benchmark</h2>
+
+<p><strong>Purpose</strong>: Google Benchmark simplifies the process of benchmarking C++ code for performance testing.</p>
+
+<h3 id="integration-google-benchmark-using-fetchcontent">Integration Google Benchmark using FetchContent</h3>
 
 <pre><code class="language-cpp">include(FetchContent)   # to use FetchContent_Declare
 
@@ -1282,10 +2296,12 @@ target_link_libraries(${EXE_NAME} benchmark::benchmark)
 # -- END: GOOGLE_BENCHMARK_INCLUDE --
 
 # test files
-add_executable(simple_test "simple_test.cpp")
-gtest_discover_tests(simple_test)
+add_executable(simple_benchmark "simple_benchmark.cpp")
+gtest_discover_tests(simple_benchmark)
 </code></pre>
-<p>Example benchmarking code in <code class="language-plaintext highlighter-rouge">simple_benchmark.cpp</code>:</p>
+
+<p><strong>Example Benchmark Code</strong>: <code class="language-plaintext highlighter-rouge">simple_benchmark.cpp</code></p>
+
 <pre><code class="language-cpp">#include &lt;benchmark/benchmark.h&gt;
 
 static void BM_StringCreation(benchmark::State&amp; state) {
@@ -1304,17 +2320,29 @@ static void BM_StringCopy(benchmark::State&amp; state) {
 BENCHMARK(BM_StringCopy);
 </code></pre>
 
-<h2 id="3-opencv">3. OpenCV</h2>
+<h3 id="installing-google-benchmark-on-ubuntu">Installing Google Benchmark on Ubuntu</h3>
 
-<p>To integrate OpenCV into your C++ project using the MinGW64 compiler, follow these steps:</p>
+<pre><code class="language-sh">sudo apt-get install libbenchmark-dev
+</code></pre>
+
+<p>Update your CMake file:</p>
+
+<pre><code class="language-cpp">find_package(benchmark REQUIRED)
+target_link_libraries(MyBenchmarkTarget benchmark::benchmark)
+</code></pre>
+
+<h2 id="opencv">OpenCV</h2>
+
+<p><strong>Purpose</strong>: OpenCV is a powerful library for real-time computer vision and image processing.</p>
+
+<h3 id="integration-of-opencv-on-windows">Integration of OpenCV on Windows</h3>
 
 <ul>
-  <li>Download and extract the OpenCV-MinGW build from the following repository: <a href="https://github.com/huihut/OpenCV-MinGW-Build">OpenCV-MinGW-Build</a></li>
-  <li>Ensure that Python 3.x is installed on your system.</li>
-  <li>Add the OpenCV binary folder to your system’s <code class="language-plaintext highlighter-rouge">PATH</code> environment variable.</li>
+  <li>Download the pre-built OpenCV binaries for MinGW from the <a href="https://github.com/huihut/OpenCV-MinGW-Build">OpenCV-MinGW-Build</a>.</li>
+  <li>Ensure you add the OpenCV binaries to your <code class="language-plaintext highlighter-rouge">PATH</code> variable.</li>
 </ul>
 
-<p>Update your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> to include and link OpenCV:</p>
+<p><strong>CMakeLists.txt</strong>:</p>
 
 <pre><code class="language-cpp"># Add this
 set(OpenCV_DIR "C:\\OpenCV-MinGW-Build-OpenCV-4.5.5-x64")
@@ -1325,7 +2353,22 @@ target_include_directories(MyApp PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(MyApp PRIVATE ${OpenCV_LIBS} )
 </code></pre>
 
-<p>Sample OpenCV code:</p>
+<p>To avoid hard coded paths in CMake, you could consider adding <code class="language-plaintext highlighter-rouge">OpenCV_DIR</code> to your system’s <code class="language-plaintext highlighter-rouge">PATH</code> variable.</p>
+
+<h3 id="integration-of-opencv-on-ubuntu">Integration of OpenCV on Ubuntu</h3>
+
+<p>To install OpenCV on Ubuntu:</p>
+
+<pre><code class="language-sh">sudo apt-get install libopencv-dev
+</code></pre>
+
+<p>Then update your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</p>
+
+<pre><code class="language-cpp">find_package(OpenCV REQUIRED)
+target_link_libraries(MyApp PRIVATE ${OpenCV_LIBS})
+</code></pre>
+
+<p><strong>Sample OpenCV Code</strong>: <code class="language-plaintext highlighter-rouge">main.cpp</code></p>
 
 <pre><code class="language-cpp">#include &lt;opencv2/opencv.hpp&gt;
 
@@ -1341,17 +2384,56 @@ int main(int argc, char *argv[]) {
 }
 </code></pre>
 
-<h2 id="4-pkgfinder-package-for-cmake">4. PkgFinder Package for CMake</h2>
-
-<p>To integrate libraries using PkgConfig, you’ll need to install the required binaries. Copy the following files into your <strong>MinGW64</strong> <code class="language-plaintext highlighter-rouge">bin</code> directory:</p>
+<h2 id="pkgfinder-package-manager">PkgFinder Package Manager</h2>
 
 <ul>
-  <li><strong>bin/pkg-config.exe</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip">pkg-config_0.26-1_win32.zip</a></li>
-  <li><strong>bin/intl.dll</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/gettext-runtime_0.18.1.1-2_win32.zip">gettext-runtime_0.18.1.1-2_win32.zip</a></li>
-  <li><strong>bin/libglib-2.0-0.dll</strong> from <a href="https://download.gnome.org/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip">glib_2.28.8-1_win32.zip</a></li>
+  <li><strong>Purpose:</strong> A platform-independent package manager for C libraries.</li>
 </ul>
 
-<h2 id="5-gstreamer">5. GStreamer</h2>
+<h3 id="integration-of-pkgfinder-on-windows">Integration of PkgFinder on Windows</h3>
+
+<ul>
+  <li>
+    <p>Download and install the required binaries from the <a href="https://download.gnome.org/binaries/win32/dependencies/">pkg-config website</a>.
+Specifically, you’ll need to install the required binaries. Copy the following files into your MinGW64 bin directory:</p>
+
+    <ul>
+      <li>
+        <p><strong>bin/pkg-config.exe</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/pkg-config_0.26-1_win32.zip">pkg-config_0.26-1_win32.zip</a></p>
+      </li>
+      <li>
+        <p><strong>bin/intl.dll</strong> from <a href="https://download.gnome.org/binaries/win32/dependencies/gettext-runtime_0.18.1.1-2_win32.zip">gettext-runtime_0.18.1.1-2_win32.zip</a></p>
+      </li>
+      <li>
+        <p><strong>bin/libglib-2.0-0.dll</strong> from <a href="https://download.gnome.org/binaries/win32/glib/2.28/glib_2.28.8-1_win32.zip">glib_2.28.8-1_win32.zip</a></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Note that this is not necessary for <strong>CLion</strong>’s bundled CMake or for <strong>MSVC</strong>.</p>
+  </li>
+</ul>
+
+<h3 id="installing-on-ubuntu">Installing on Ubuntu</h3>
+
+<pre><code class="language-sh">sudo apt-get install pkg-config
+</code></pre>
+
+<p>Example usage in <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code></p>
+
+<pre><code class="language-cpp">find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBNAME REQUIRED libname)
+target_include_directories(MyApp PRIVATE ${LIBNAME_INCLUDE_DIRS})
+target_link_libraries(MyApp PRIVATE ${LIBNAME_LIBRARIES})
+</code></pre>
+
+<h2 id="gstreamer">GStreamer</h2>
+
+<ul>
+  <li><strong>Purpose:</strong> GStreamer is a powerful multimedia framework for streaming and video processing.</li>
+</ul>
+
+<h3 id="integration-of-gstreamer-on-windows">Integration of GStreamer on Windows</h3>
 
 <p>Gstream requires PkgFinder packe for CMake</p>
 
@@ -1359,37 +2441,41 @@ int main(int argc, char *argv[]) {
 
 <ol>
   <li>
-    <p>Install the Microsoft Visual C++ Redistributable:
- <a href="https://aka.ms/vs/17/release/vc_redist.x86.exe">vc_redist.x86.exe</a></p>
+    <p>Make sure that Microsoft Visual C++ Redistributable is installed (or install it from the official website <a href="https://aka.ms/vs/17/release/vc_redist.x86.exe">vc_redist.x86.exe</a>)</p>
   </li>
   <li>
-    <p>Download and install the GStreamer runtime and SDK (MSVC-64 version) from <a href="https://gstreamer.freedesktop.org/download/">here</a>.</p>
+    <p>Install the GStreamer runtime and SDK (MSVC-64 version) from <a href="https://gstreamer.freedesktop.org/download/">GStreamer’s website</a>.</p>
   </li>
   <li>
-    <p>Add the GStreamer binary folder to the system <code class="language-plaintext highlighter-rouge">PATH</code> environment variable.</p>
+    <p>Add the GStreamer’s binary folder to the system <code class="language-plaintext highlighter-rouge">PATH</code> variable.</p>
   </li>
   <li>
     <p>Set the <code class="language-plaintext highlighter-rouge">PKG_CONFIG_PATH</code> environment variable to the GStreamer package config path:<br />
- <code class="language-plaintext highlighter-rouge">PKG_CONFIG_PATH = ..\gstreamer\1.0\msvc_x86_64\lib\pkgconfig</code>`</p>
+ <code class="language-plaintext highlighter-rouge">PKG_CONFIG_PATH = path/to/gstreamer/1.0/msvc_x86_64/lib/pkgconfig</code>`</p>
   </li>
 </ol>
 
 <p>Update your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code>:</p>
 
-<pre><code class="language-cpp"># ...
-find_package(PkgConfig REQUIRED)
+<pre><code class="language-cpp">find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
 pkg_search_module(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0&gt;=1.4)
 
-target_include_directories(${PROJECT_NAME} PRIVATE  ${GST_INCLUDE_DIRS})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::GSTREAMER)
+target_include_directories(MyApp PRIVATE  ${GST_INCLUDE_DIRS})
+target_link_libraries(MyApp PRIVATE PkgConfig::GSTREAMER)
 </code></pre>
 
-<h2 id="6-catch2">6. Catch2</h2>
+<h3 id="integration-of-gstreamer-on-ubuntu">Integration of GStreamer on Ubuntu</h3>
 
-<h3 id="61-downloading-and-installing-catch2">6.1 Downloading and Installing Catch2</h3>
+<p>To install GStreamer:</p>
+
+<pre><code class="language-sh">sudo apt-get install gstreamer1.0-dev
+</code></pre>
+
+<h2 id="catch2">Catch2</h2>
+
+<h3 id="downloading-and-installing-catch2">Downloading and Installing Catch2</h3>
 
 <p>Catch2 is another popular testing framework. To add Catch2 to your project, clone the repository and build it:</p>
 
@@ -1407,7 +2493,126 @@ cmake --build . --config Release  # or Debug
 cmake --install . --prefix /path  # Path to installation
 </code></pre>
 
-<p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, PkgFinder, GStreamer, and Catch2.]]></summary></entry><entry><title type="html">CMake - Installation On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake - Installation On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
+<p>By following these instructions, you should be able to seamlessly integrate these libraries into your C++ projects using CMake.</p>
+
+<h2 id="qt6">Qt6</h2>
+
+<p><strong>Purpose</strong>: Qt6 is a modern, cross-platform GUI framework for building high-performance, visually rich applications. Qt6 also includes non-GUI components, making it a comprehensive tool for application development.</p>
+
+<h3 id="integration-of-qt6-on-windows">Integration of Qt6 on Windows</h3>
+
+<ul>
+  <li>Firstly, install Qt from <a href="https://www.qt.io/offline-installers">Qt’s official website</a></li>
+  <li>Integrating <strong>Qt6</strong> in a self-sufficient manner with CMake involves properly setting up the environment and linking the necessary components.</li>
+</ul>
+
+<h3 id="setting-up-cmake">Setting Up CMake</h3>
+
+<ol>
+  <li>
+    <p>At the <strong>project level</strong>, define the <code class="language-plaintext highlighter-rouge">CMAKE_PREFIX_PATH</code> to locate the Qt libraries:</p>
+
+    <pre><code class="language-python"> # Paths to depedencies
+ set(CMAKE_PREFIX_PATH 
+     "${DEPENDENCY_FOLDER}/some_library/" 
+     "path/to/Qt/6.5.3/mingw_64/lib/cmake/Qt6"
+ )
+</code></pre>
+  </li>
+  <li>
+    <p>At the <strong>executable/library level</strong>, include the following configurations:</p>
+
+    <pre><code class="language-python"> find_package(Qt6 REQUIRED COMPONENTS Core Gui)
+    
+ # Enable Qt's meta-object compiler (moc), resource compiler (rcc), and UI compiler (uic)
+ set(CMAKE_AUTOMOC ON)
+ set(CMAKE_AUTORCC ON)
+ set(CMAKE_AUTOUIC ON)
+    
+ # Define Qt version macros
+ add_definitions(-DQT_VERSION_MAJOR=${Qt6_VERSION_MAJOR})
+ add_definitions(-DQT_VERSION_MINOR=${Qt6_VERSION_MINOR})
+ add_definitions(-DQT_VERSION_PATCH=${Qt6_VERSION_PATCH})
+</code></pre>
+  </li>
+  <li>
+    <p>Next, add all what is dependent on MOC, RCC, UIC. and so on</p>
+
+    <pre><code class="language-python"> add_executable(MyApp)
+    
+ # Declare it as a GUI application (disable console)
+ set_target_properties(MyApp PROPERTIES 
+     WIN32_EXECUTABLE TRUE 
+     MACOSX_BUNDLE TRUE
+ )
+    
+ # Link against Qt6 Components
+ target_link_libraries(MyApp PRIVATE Qt6::Core Qt6::Gui)
+</code></pre>
+  </li>
+  <li>
+    <p>Only then, set up the <strong>executable</strong>:</p>
+
+    <pre><code class="language-python"> # Add sources and headers
+ target_sources(experiment_01 PRIVATE 
+     source/main.cpp 
+     include/MyApp.h    # Also headers with QObject
+ )
+    
+ # Specify include directories
+ target_include_directories(experiment_01 PRIVATE include)
+</code></pre>
+  </li>
+</ol>
+
+<h3 id="linking-libraries">Linking Libraries</h3>
+
+<ul>
+  <li>For platform-specific libraries, copy the necessary plugins (e.g., <code class="language-plaintext highlighter-rouge">qwindows.dll</code>) to the <code class="language-plaintext highlighter-rouge">platform</code> directory in your binary.</li>
+</ul>
+
+<pre><code class="language-sh">path/to/Qt/6.5.3/mingw_64/plugins/platforms
+</code></pre>
+
+<p>If you are on Windows, Copy <code class="language-plaintext highlighter-rouge">qwindows.dll</code></p>
+
+<ul>
+  <li>Core Qt components such as <code class="language-plaintext highlighter-rouge">Qt6Core.dll</code>, <code class="language-plaintext highlighter-rouge">Qt6Widgets.dll</code>, and <code class="language-plaintext highlighter-rouge">Qt6Gui.dll</code> can be found in:</li>
+</ul>
+
+<pre><code class="language-sh">path/to/Qt/6.5.3/mingw_64/bin
+</code></pre>
+
+<h3 id="integration-of-qt6-on-ubuntu">Integration of Qt6 on Ubuntu</h3>
+
+<p>To integrate <strong>Qt6</strong> on <strong>Ubuntu</strong>, follow these steps:</p>
+
+<ol>
+  <li>
+    <p><strong>Install Qt6</strong>: On Ubuntu, you can use the system’s package manager to install the necessary development packages for Qt6.</p>
+
+    <pre><code class="language-sh"> sudo apt-get install qt6-base-dev qt6-tools-dev-tools qt6-tools-dev qt6-base-dev-tools
+</code></pre>
+
+    <p>This will install the Qt6 Core, Gui, and other essential components.</p>
+  </li>
+  <li>
+    <p><strong>Set Up CMake for Qt6</strong>: Once Qt6 is installed, configure your <code class="language-plaintext highlighter-rouge">CMakeLists.txt</code> to find and link the necessary Qt6 components.</p>
+  </li>
+</ol>
+
+<h3 id="deploying-qt6-applications-on-ubuntu">Deploying Qt6 Applications on Ubuntu</h3>
+
+<p>To ensure your Qt6 application runs smoothly on Ubuntu, you might need to ensure that the correct <strong>Qt6 libraries</strong> and <strong>plugins</strong> are packaged with your application. For development purposes, the necessary libraries will usually be located automatically through CMake, but for deployment, you may need to package or point to the correct Qt paths manually.</p>
+
+<p>For <strong>Qt6</strong> deployment, use the <code class="language-plaintext highlighter-rouge">qt6-deploy</code> tool, available as part of the Qt6 installation, to gather all the necessary components and bundle them with your application.</p>
+
+<pre><code class="language-sh">qt6-deploy MyApp
+</code></pre>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this guide, we have covered the essential steps to seamlessly integrate some of the most widely-used C++ libraries into your projects using CMake. From <strong>Google Test</strong> for unit testing, <strong>Google Benchmark</strong> for performance measurement, <strong>OpenCV</strong> for computer vision, to <strong>GStreamer</strong> for multimedia handling, and <strong>Qt6</strong> for building cross-platform graphical applications, this guide provides a structured approach to handling dependencies.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[In modern C++ development, CMake is an indispensable tool for managing project dependencies. This comprehensive guide empowers you to effortlessly integrate widely used C++ libraries into your projects using the versatile CMake build system.]]></summary></entry><entry><title type="html">CMake - Installation On Windows</title><link href="http://localhost:4000/posts/CMake-On-Windows/" rel="alternate" type="text/html" title="CMake - Installation On Windows" /><published>2023-09-19T16:18:00+02:00</published><updated>2023-09-19T16:18:00+02:00</updated><id>http://localhost:4000/posts/CMake-On-Windows</id><content type="html" xml:base="http://localhost:4000/posts/CMake-On-Windows/"><![CDATA[<p>Here is a quick way to get started into development with CMake on Windows x64.</p>
 
 <h2 id="getting-started">Getting Started</h2>
 
@@ -1482,9 +2687,10 @@ rmdir /s /q build
 <h2 id="more">More</h2>
 
 <ul>
-  <li>Check out the <a href="https://alotbah.com/cmake-quick-reference/">Quick reference</a> for more.</li>
-  <li>Check out the the <a href="https://alotbah.com/cmakelists-txt-template/">Minimum CMakeLists.txt Template</a>.</li>
-</ul>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[Here is a quick way to get started into development with CMake on Windows x64.]]></summary></entry><entry><title type="html">CMake - Brief Reference</title><link href="http://localhost:4000/posts/CMake-Brief-Reference/" rel="alternate" type="text/html" title="CMake - Brief Reference" /><published>2023-09-19T15:12:00+02:00</published><updated>2023-09-19T15:12:00+02:00</updated><id>http://localhost:4000/posts/CMake%20-%20Brief%20Reference</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Brief-Reference/"><![CDATA[<p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
+  <li>Check out the <a href="/posts/CMake-Brief-Reference/">CMake Brief reference</a> for an overview of the commands.</li>
+  <li>Check out <a href="/posts/CMake-Integrating-C++-Libraries/">how to integrate various C++ libraries</a>.</li>
+  <li>Check out <a href="/posts/CMake-Production/">how to publish your own CMake Library professionally</a>.</li>
+</ul>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Windows" /><summary type="html"><![CDATA[Here is a quick way to get started into development with CMake on Windows x64.]]></summary></entry><entry><title type="html">CMake - Brief Reference</title><link href="http://localhost:4000/posts/CMake-Brief-Reference/" rel="alternate" type="text/html" title="CMake - Brief Reference" /><published>2023-09-19T15:12:00+02:00</published><updated>2023-09-19T15:12:00+02:00</updated><id>http://localhost:4000/posts/CMake-Brief%20Reference</id><content type="html" xml:base="http://localhost:4000/posts/CMake-Brief-Reference/"><![CDATA[<p>CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.</p>
 
 <h2 id="key-commands-and-concepts">Key Commands and Concepts</h2>
 
@@ -1801,14 +3007,16 @@ install(DIRECTORY include/ DESTINATION include)
 
 <p>By understanding and utilizing these commands and best practices, developers can efficiently manage their C++ projects with CMake, ensuring scalability, maintainability, and cross-platform compatibility.</p>]]></content><author><name></name></author><category term="Software-Development" /><category term="Cmake" /><category term="Software" /><category term="C++" /><category term="Cmake" /><category term="Reference" /><summary type="html"><![CDATA[CMake is a powerful and flexible build system generator that supports the creation of makefiles, project files, and build environments across various platforms and compilers. Below is a brief reference guide to some essential commands and patterns commonly used in CMake.]]></summary></entry><entry><title type="html">The Black Pill (STM32F411CEU6)</title><link href="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" rel="alternate" type="text/html" title="The Black Pill (STM32F411CEU6)" /><published>2023-05-17T13:41:00+02:00</published><updated>2023-05-17T13:41:00+02:00</updated><id>http://localhost:4000/posts/BlackPill-STM32F411CEU6</id><content type="html" xml:base="http://localhost:4000/posts/BlackPill-STM32F411CEU6/"><![CDATA[<div style="display: flex; flex-wrap: wrap; align-items: center;">
   <div style="flex: 0 0 auto; min-width: 200px;">
-    <img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" />
+    <p><img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" /></p>
   </div>
   <div style="flex: 1; min-width: 200px;">
+
     <p>In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board <a href="https://stm32-base.org/boards/STM32F411CEU6-WeAct-Black-Pill-V2.0.html">see this</a>.</p>
 
     <p>This chip is based on ARM Cortex-M4 32-Bit Architecture with clock frequency of 100 MHz RAM of 512KB.</p>
 
     <p>This chip is manufactured by the Dutch company STMicroelectronics, which is based in Switzerland. The company provides several tools to develop for their chips. The official IDE is called the <a href="https://www.st.com/en/development-tools/stm32cubeide.html">STM32CUBE IDE</a> which is used for this quick tutorial.</p>
+
   </div>
 </div>
 
@@ -1928,15 +3136,15 @@ FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 64K
 
 <ul>
   <li>
-    <p><strong>_estack</strong>: The <code class="language-plaintext highlighter-rouge">_estack</code> symbol defines the highest address of the stack in RAM. It is calculated as the sum of the starting address of RAM (<code class="language-plaintext highlighter-rouge">ORIGIN(RAM)</code>) and the total length of RAM (<code class="language-plaintext highlighter-rouge">LENGTH(RAM)</code>). 
+    <p><strong>_estack</strong>: The <code class="language-plaintext highlighter-rouge">_estack</code> symbol defines the highest address of the stack in RAM. It is calculated as the sum of the starting address of RAM (<code class="language-plaintext highlighter-rouge">ORIGIN(RAM)</code>) and the total length of RAM (<code class="language-plaintext highlighter-rouge">LENGTH(RAM)</code>).
 This ensures that the stack starts at the end of the available RAM space and grows downwards.</p>
   </li>
   <li>
-    <p><strong>_Min_Heap_Size</strong>: This value specifies the minimum required heap size, which is set to <code class="language-plaintext highlighter-rouge">0x200</code> (512 bytes). 
+    <p><strong>_Min_Heap_Size</strong>: This value specifies the minimum required heap size, which is set to <code class="language-plaintext highlighter-rouge">0x200</code> (512 bytes).
 The heap is used for dynamic memory allocation during runtime.</p>
   </li>
   <li>
-    <p><strong>_Min_Stack_Size</strong>: This value defines the minimum required stack size, set to <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes). 
+    <p><strong>_Min_Stack_Size</strong>: This value defines the minimum required stack size, set to <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes).
 The stack is used for storing local variables and function call information during execution.</p>
   </li>
 </ul>
@@ -1953,7 +3161,7 @@ The stack is used for storing local variables and function call information duri
 
 <p>This function sets up the initial settings for the IO pins of the chip. On the board the blue LED is connected to pin C13. If we set this pin mode to GPIO_Output mode in the <em>myproject.ioc</em> file, as in the illustration below</p>
 
-<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-03_091414183.png?resize=905%2C782&amp;ssl=1" alt="" /></p>
+<p><img src="/assets/images/embedded/stm32_cubemx/GPIO_configuration_stm32f411ceux.webp" alt="GPIO Configuration of STM32F4CEUx series on STM32 CubeMX" /></p>
 
 <p>Figure 2: Configuring the chip’s pins</p>
 
@@ -2147,14 +3355,14 @@ HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 
 <p>To set or reset a GPIO pin, you can use the following methods:</p>
 
-<h5 id="setting-a-pin">Setting a Pin:</h5>
+<h5 id="setting-a-pin">Setting a Pin</h5>
 
 <pre><code class="language-c">GPIOA -&gt; BSSR = GPIO_PIN_0;                         // fast
 GPIOA -&gt; ODR |= GPIO_PIN_0;                         // legacy
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET); // HAL Library
 </code></pre>
 
-<h5 id="resetting-a-pin">Resetting a Pin:</h5>
+<h5 id="resetting-a-pin">Resetting a Pin</h5>
 
 <pre><code class="language-c">GPIOA -&gt; BSSR = (uint32_t)GPIO_PIN_0  &lt;&lt; 16U;         // fast
 GPIOA -&gt; ODR &amp;= ~GPIO_PIN_0;                          // legacy
@@ -2375,23 +3583,23 @@ TIM_HandleTypeDef htim3;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;  
     // Initialize the timer for PWM operation
     if (HAL_TIM_PWM_Init(&amp;htim3) != HAL_OK) Error_Handler(); 
-	
+
     // Configure the master configuration for synchronization
     TIM_MasterConfigTypeDef sMasterConfig = {};  
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;  
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;  
     // Apply the master configuration settings
     if (HAL_TIMEx_MasterConfigSynchronization(&amp;htim3, &amp;sMasterConfig) != HAL_OK) Error_Handler(); 
-	
+
     // Configure the output compare (OC) settings for PWM on channel 1 and 2
     TIM_OC_InitTypeDef sConfigOC = {0};  
     sConfigOC.OCMode = TIM_OCMODE_PWM1;  
     sConfigOC.Pulse = 0;  
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;  
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	// Configure PWM channel 1 with the above settings
+    // Configure PWM channel 1 with the above settings
     if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_1) != HAL_OK) Error_Handler(); 
-	// Configure PWM channel 2 with the above settings
+    // Configure PWM channel 2 with the above settings
     if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_2) != HAL_OK) Error_Handler();  
 
     // Call post-initialization function to configure GPIO and other settings
@@ -2434,18 +3642,17 @@ int main(void)
   <li>
     <p><strong>Set Counter Period and Prescaler</strong>:<br />
  Configure the <strong>Counter Period</strong> (<code class="language-plaintext highlighter-rouge">ARR</code>) and <strong>Prescaler</strong> (<code class="language-plaintext highlighter-rouge">PSC</code>) values to achieve the desired timer frequency:</p>
+
+    <p>\[
+ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
+ \]</p>
+
+    <p>This equation determines the frequency at which the timer overflows and triggers an interrupt or updates its count.</p>
   </li>
-</ol>
-
-<p>\[
-f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
-\]</p>
-
-<p>This equation determines the frequency at which the timer overflows and triggers an interrupt or updates its count.</p>
-
-<ol>
-  <li><strong>Enable Auto-Reload Preload</strong>:<br />
- Enable the <strong>Auto-Reload Preload</strong> to ensure that the counter resets seamlessly upon reaching the <code class="language-plaintext highlighter-rouge">ARR</code> value.</li>
+  <li>
+    <p><strong>Enable Auto-Reload Preload</strong>:<br />
+ Enable the <strong>Auto-Reload Preload</strong> to ensure that the counter resets seamlessly upon reaching the <code class="language-plaintext highlighter-rouge">ARR</code> value.</p>
+  </li>
 </ol>
 
 <h3 id="initialization-and-interrupt-configuration">Initialization and Interrupt Configuration</h3>
@@ -2494,7 +3701,7 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
 
 <p>To ensure the <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code> peripheral operates correctly, it must be supplied with a precise 48 MHz clock, derived from the High-Speed External (<code class="language-plaintext highlighter-rouge">HSE</code>) oscillator. This clock configuration is critical for maintaining the timing requirements stipulated by the USB 2.0 standard.</p>
 
-<h4 id="step-by-step-clock-setup">Step-by-Step Clock Setup:</h4>
+<h4 id="step-by-step-clock-setup">Step-by-Step Clock Setup</h4>
 
 <ol>
   <li>
@@ -2521,14 +3728,15 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
   </li>
 </ol>
 
-<p><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_120919409.png?resize=975%2C480&amp;ssl=1" alt="" /></p>
+<p><img src="/assets/images/embedded/stm32_cubemx/clock_configuration.webp" alt="Clock Configuration Panel on STM32 CubeMX" /></p>
 
 <p><strong>Figure 1: Clock Configuration for <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code></strong></p>
 
 <h3 id="usb-peripheral-configuration-in-stm32cubemx">USB Peripheral Configuration in STM32CubeMX</h3>
 
 <p>After ensuring the clock is properly configured, proceed with setting up the USB OTG FS peripheral to handle USB communication at the hardware level.</p>
-<h4 id="detailed-configuration-steps">Detailed Configuration Steps:</h4>
+
+<h4 id="detailed-configuration-steps">Detailed Configuration Steps</h4>
 
 <ol>
   <li>
@@ -2560,7 +3768,7 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
 
 <p>To ensure the microcontroller can handle USB communication efficiently, particularly when dealing with data buffers, it is necessary to adjust the default heap size.</p>
 
-<h4 id="heap-size-adjustment">Heap Size Adjustment:</h4>
+<h4 id="heap-size-adjustment">Heap Size Adjustment</h4>
 
 <ol>
   <li>
@@ -2606,7 +3814,7 @@ MEMORY
 
 <p>To ensure that the device and the host computer agree on communication parameters such as baud rate, parity, and stop bits, the <code class="language-plaintext highlighter-rouge">usbd_cdc_if.c</code> file must be modified. This file also handles the reception of data from the USB interface.</p>
 
-<h4 id="modifying-line-coding-commands">Modifying Line Coding Commands:</h4>
+<h4 id="modifying-line-coding-commands">Modifying Line Coding Commands</h4>
 
 <ol>
   <li>
@@ -2617,10 +3825,11 @@ MEMORY
     </ul>
 
     <p>In the block for adding private variables (<code class="language-plaintext highlighter-rouge">PV</code>):</p>
-    <pre><code class="language-cpp">/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-USBD_CDC_LineCodingTypeDef LineCoding;
-/* USER CODE END PV */
+
+    <pre><code class="language-cpp"> /* USER CODE BEGIN PV */
+ /* Private variables ---------------------------------------------------------*/
+ USBD_CDC_LineCodingTypeDef LineCoding;
+ /* USER CODE END PV */
 </code></pre>
   </li>
   <li>
@@ -2650,11 +3859,13 @@ USBD_CDC_LineCodingTypeDef LineCoding;
 
     <ul>
       <li>This implementation ensures that both the computer and the device agree on the communication parameters.</li>
-      <li>
-        <h4 id="handling-data-reception">Handling Data Reception:</h4>
-      </li>
     </ul>
   </li>
+</ol>
+
+<h4 id="handling-data-reception">Handling Data Reception</h4>
+
+<ol>
   <li>
     <p><strong>Creating a Hook for Data Reception</strong>:</p>
 
@@ -2809,7 +4020,7 @@ USBD_CDC_LineCodingTypeDef LineCoding;
 
 <p>The internal temperature sensor in STM32 microcontrollers is useful for monitoring the temperature of the microcontroller itself, which can be an indicator of ambient temperature or the device’s thermal performance. However, note that the sensor primarily measures the temperature of the silicon die, which may not reflect rapid ambient temperature changes due to the sensor’s thermal inertia.</p>
 
-<h4 id="calculating-temperature">Calculating Temperature:</h4>
+<h4 id="calculating-temperature">Calculating Temperature</h4>
 
 <p>The temperature can be calculated using the following formula derived from the sensor’s characteristics:</p>
 
@@ -2835,110 +4046,4 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
 <pre><code class="language-cpp">temp = ((V_temp * 33000) / 4095 - 7600 + 25000) / 25;
 </code></pre>
 
-<p>This calculation yields the temperature in degrees Celsius, adjusting for the reference voltage and typical sensor characteristics.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="STM32" /><category term="STM32F411CEU6" /><category term="Embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="ARM" /><category term="Cortex-m4" /><summary type="html"><![CDATA[In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.]]></summary></entry><entry><title type="html">Jekyll Chirpy Tester</title><link href="http://localhost:4000/posts/Tester/" rel="alternate" type="text/html" title="Jekyll Chirpy Tester" /><published>2023-05-16T13:41:00+02:00</published><updated>2023-05-16T13:41:00+02:00</updated><id>http://localhost:4000/posts/Tester</id><content type="html" xml:base="http://localhost:4000/posts/Tester/"><![CDATA[<h2 id="math">Math</h2>
-
-<p>Inline math with \(\sin(x)\): \(\sin(x)\)</p>
-
-<p>Display math with \(\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}\):</p>
-
-<p>\[
-\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
-\]</p>
-
-<p>Inline math with escaped delimiters: \(x^2\)</p>
-
-<h2 id="code">Code</h2>
-
-<pre><code class="language-cpp">    uint8_t PA0;
-    PA0 = GPIOA -&gt; IDR &amp; GPIO_PIN_0;            // directly
-    PA0 = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  // using HAL Library
-
-    #include &lt;iostream&gt;
-
-int main(int argc, char *argv[]) {
-
-  /* An annoying "Hello World" example */
-  for (auto i = 0; i &lt; 0xFFFF; i++)
-    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;
-
-  char c = '\n';
-  unordered_map &lt;string, vector&lt;string&gt; &gt; m;
-  m["key"] = "\\\\"; // this is an error
-
-  return -2e3 + 12l;
-
-  
-GPIO_InitStruct.Pin = GPIO_PIN_13;
-GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-GPIO_InitStruct.Pull = GPIO_NOPULL;
-GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
-}
-</code></pre>
-
-<div class="language-cpp highlighter-rouge">
-<div class="code-header">
-<span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span>
-<button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button>
-</div>
-
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">uint8_t</span> <span class="n">PA0</span><span class="p">;</span>
-<span class="n">PA0</span> <span class="o">=</span> <span class="n">GPIOA</span> <span class="o">-&gt;</span> <span class="n">IDR</span> <span class="o">&amp;</span> <span class="n">GPIO_PIN_0</span><span class="p">;</span>            <span class="c1">// directly</span>
-<span class="n">PA0</span> <span class="o">=</span> <span class="n">HAL_GPIO_ReadPin</span><span class="p">(</span><span class="n">GPIOA</span><span class="p">,</span> <span class="n">GPIO_PIN_0</span><span class="p">);</span>  <span class="c1">// using HAL Library</span>
-
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
-
-  <span class="cm">/* An annoying "Hello World" example */</span>
-  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mh">0xFFFF</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Hello, World!"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-
-  <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">'\n'</span><span class="p">;</span>
-  <span class="n">unordered_map</span> <span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">;</span>
-  <span class="n">m</span><span class="p">[</span><span class="s">"key"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"</span><span class="se">\\\\</span><span class="s">"</span><span class="p">;</span> <span class="c1">// this is an error</span>
-
-  <span class="k">return</span> <span class="o">-</span><span class="mf">2e3</span> <span class="o">+</span> <span class="mi">12l</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
-
-</div>
-
-<h2 id="callouts">Callouts</h2>
-
-<div class="alert alert-primary" role="alert">
-  <p>Here are multiple items</p>
-  <ul>
-    <li>item 1</li>
-    <li>item 2
-      <ul>
-        <li>item 2.1</li>
-      </ul>
-    </li>
-  </ul>
-</div>
-
-<div class="alert alert-success" role="alert">
-  <p>Here are multiple items</p>
-  <ul>
-    <li>item 1</li>
-    <li>item 2
-      <ul>
-        <li>item 2.1</li>
-      </ul>
-    </li>
-  </ul>
-</div>
-
-<div class="alert alert-danger" role="alert">
-  <p>This is a danger alert—be cautious!</p>
-
-  <p><img src="https://via.placeholder.com/150" alt="Example Image" /></p>
-</div>
-
-<div class="alert alert-warning" role="alert">
-  This is a warning alert—attention needed!
-</div>
-
-<div class="alert alert-info" role="alert">
-  This is an informational alert—take note!
-</div>]]></content><author><name></name></author><category term="Web" /><category term="Jekyll" /><summary type="html"><![CDATA[Math]]></summary></entry></feed>
+<p>This calculation yields the temperature in degrees Celsius, adjusting for the reference voltage and typical sensor characteristics.</p>]]></content><author><name></name></author><category term="Embedded-Development" /><category term="STM32" /><category term="STM32F411CEU6" /><category term="Embedded" /><category term="STM32" /><category term="blackpill" /><category term="STM32F411CEU6" /><category term="ARM" /><category term="Cortex-m4" /><summary type="html"><![CDATA[]]></summary></entry></feed>

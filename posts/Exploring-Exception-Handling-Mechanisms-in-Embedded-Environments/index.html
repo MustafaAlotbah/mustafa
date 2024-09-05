@@ -438,7 +438,7 @@
 
       
         <a
-          href="https://www.linkedin.com/in/mustafa-alotbah-41211513b/"
+          href="https://www.linkedin.com/in/alotbah"
           aria-label="linkedin"
           
 
@@ -644,6 +644,17 @@
 
       
     
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
 
     
   
@@ -758,6 +769,39 @@
 
       
     
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
 
     
   
@@ -765,6 +809,82 @@
   
   
 
+  
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+
+    
   
 
   
@@ -854,9 +974,9 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="2764 words"
+  title="4822 words"
 >
-  <em>15 min</em> read</span>
+  <em>26 min</em> read</span>
 
         </div>
       </div>
@@ -866,11 +986,13 @@
   <div class="content">
     <h2 id="introduction">1. <span class="me-2">Introduction</span><a href="#introduction" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
-<p>This article presents an in-depth examination of exception handling mechanisms tailored for embedded systems, where resource constraints and performance optimization are critical. Traditional C++ exceptions are often impractical in these environments due to the significant overhead they introduce. As a result, developers frequently disable exceptions using compiler flags like <code class="language-plaintext highlighter-rouge">-fno-exceptions</code>. However, the need for robust error management persists, particularly in scenarios where the system must maintain stability despite encountering errors.</p>
+<p>This article provides a comprehensive analysis of exception handling mechanisms specifically designed for embedded systems, where resource constraints and performance optimization are paramount. In such environments, traditional C++ exception handling is often deemed impractical due to the substantial overhead it incurs. Consequently, developers frequently resort to disabling exceptions using compiler flags such as <code class="language-plaintext highlighter-rouge">-fno-exceptions</code>. Despite this, the necessity for robust error management remains critical, especially in scenarios where system stability must be preserved in the face of unexpected errors.</p>
 
-<p>To address these challenges, the article explores alternative error-handling strategies that are more suitable for embedded systems. We begin by discussing low-level constructs such as <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, which offer a direct and efficient method for managing errors. The discussion then progresses to more advanced techniques involving <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, which provide a means to simulate exception handling with minimal resource usage. Through detailed examples, we demonstrate how these methods can be implemented effectively in resource-constrained environments, ensuring that errors are managed gracefully without compromising system performance.</p>
+<p>To address these challenges, this article explores a range of alternative error-handling strategies that are more suitable for embedded systems. The discussion begins with low-level constructs such as <code class="language-plaintext highlighter-rouge">goto</code> statements and function pointers, which provide direct and efficient methods for error management. It then advances to more sophisticated techniques involving <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, which enable the simulation of exception handling with minimal resource consumption. Through detailed and practical examples, we illustrate how these methods can be effectively implemented in resource-constrained environments, ensuring that errors are managed gracefully without compromising system performance.</p>
 
-<p>Furthermore, the article addresses the complexities introduced by these methods, particularly in terms of resource management and cleanup, offering practical solutions to prevent issues like memory leaks. By the end of this article, readers will gain a comprehensive understanding of how to implement robust, efficient error-handling mechanisms in embedded systems, enhancing both the reliability and sustainability of mission-critical applications.</p>
+<p>In addition to these low-level approaches, the article also examines modern C++ techniques that offer lightweight alternatives to traditional exceptions. Constructs like <code class="language-plaintext highlighter-rouge">std::optional</code> and <code class="language-plaintext highlighter-rouge">std::variant</code> provide structured and efficient methods for error handling, allowing for more granular and type-safe error management with minimal overhead. These modern techniques are particularly advantageous in embedded systems where performance and memory efficiency are critical.</p>
+
+<p>Furthermore, the article addresses the complexities introduced by these alternative methods, particularly concerning resource management and cleanup. Practical solutions are presented to prevent issues such as memory leaks, which are essential for ensuring the long-term reliability of embedded systems. By the conclusion of this article, readers will have gained a thorough understanding of how to implement robust and efficient error-handling mechanisms, leveraging both traditional and modern C++ approaches. This knowledge is vital for enhancing the reliability and sustainability of mission-critical applications in embedded environments.</p>
 
 <h2 id="understanding-setjmp-and-longjmp">2. <span class="me-2">Understanding setjmp and longjmp</span><a href="#understanding-setjmp-and-longjmp" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
@@ -891,7 +1013,7 @@ void riskyFunction() {
     // Simulate the effect of longjmp
     std::cout &lt;&lt; "Starting a risky function.\n";
     
-	// Mimic throwing an exception (error code: 1)
+    // Mimic throwing an exception (error code: 1)
     if (try_block) {
         errorCode = 1;        // Simulate setting an error code
         goto *try_block;      // Jump back to the try block
@@ -1023,7 +1145,7 @@ int main() {
         
     } else if (errorCode == SyntaxException) {
     
-        // Handle Value Error
+        // Handle Syntax Error
         std::cout &lt;&lt; "SyntaxException ocurred\n";
         
     }
@@ -1061,7 +1183,7 @@ int main() {
     } else if (errorCode == 1) {
     
         // Handling an error (which can also be handling)
-        std::cout &lt;&lt; "firstFunction called longjmp\n";
+        std::cout &lt;&lt; "riskyFunction called longjmp\n";
         secondFunction();
         
     } else if (errorCode == 2) {
@@ -1209,7 +1331,7 @@ Program continues after try/catch.
 
 <p>One of the strengths of C++ is its ability to automatically invoke the destructor of a class when it goes out of scope, whether the scope ends normally (by <code class="language-plaintext highlighter-rouge">}</code>) or through an exception. This ensures that resources are freed properly, even when they are allocated within nested functions. This feature, known as <em>stack unwinding</em>, is absent when using the <code class="language-plaintext highlighter-rouge">goto</code> keyword. A critical question arises: do we retain this feature when using <code class="language-plaintext highlighter-rouge">longjmp</code>?</p>
 
-<h3 id="cleaning-up-with-longjump">4.1. <span class="me-2">Cleaning Up with Longjump</span><a href="#cleaning-up-with-longjump" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<h3 id="cleaning-up-with-longjmp">4.1. <span class="me-2">Cleaning Up with Longjmp</span><a href="#cleaning-up-with-longjmp" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>The answer is compiler-dependent. For instance, with the <strong>MSVC</strong> compiler, stack unwinding is supported with <code class="language-plaintext highlighter-rouge">longjmp</code>, as evidenced by the following statement: (see <a href="https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/longjmp">here</a>)</p>
 
@@ -1246,7 +1368,7 @@ int main() {
     handler.Try([&amp;] {
         // Try block
 
-        // This will not be destructed with throwException/longjump
+        // This will not be destructed with throwException/longjmp
         Resource res("MyResource"); 
 
         std::cout &lt;&lt; "Try block: an error is about to occur.\n";
@@ -1335,7 +1457,7 @@ int main() {
     handler.Try([&amp;] {
         // Try block
 
-        // This will not be destructed with throwException/longjump
+        // This will not be destructed with throwException/longjmp
         Resource res("MyResource"); 
 
         // Register the source before any exception might be thrown
@@ -1435,7 +1557,325 @@ cleanup:
 }
 </code></pre>
 
-<h2 id="conclusion">6. <span class="me-2">Conclusion</span><a href="#conclusion" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="alternative-approaches-modern-c">6. <span class="me-2">Alternative Approaches: Modern C++</span><a href="#alternative-approaches-modern-c" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+
+<p>Beyond the low-level techniques previously discussed, modern C++ introduces several lightweight alternatives to traditional exceptions that are particularly advantageous in resource-constrained embedded systems. These alternatives, including <code class="language-plaintext highlighter-rouge">std::optional</code>, <code class="language-plaintext highlighter-rouge">std::variant</code>, and error codes encapsulated within classes, offer a structured and efficient approach to error handling. Their minimal overhead makes them well-suited for environments where performance and memory efficiency are paramount.</p>
+
+<h3 id="utilizing-stdoptional-for-error-handling">6.1. <span class="me-2">Utilizing <code class="language-plaintext highlighter-rouge">std::optional</code> for Error Handling</span><a href="#utilizing-stdoptional-for-error-handling" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">std::optional</code> type, introduced in C++17, encapsulates an object that may or may not hold a value. This type is especially beneficial for functions that might fail to produce a meaningful result, allowing the function to return an “empty” state rather than throwing an exception or returning an error code.</p>
+
+<h4 id="example">6.1.1. <span class="me-2">Example</span><a href="#example" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;  
+#include &lt;optional&gt;  
+  
+std::optional&lt;int&gt; riskyFunction(int value) { 
+  
+    // Return an empty optional to indicate an error  
+    if (value &lt; 0) return std::nullopt;  
+  
+    // Return the result as an optional  
+    return value * 2;  
+}  
+  
+int main() {  
+    auto result = riskyFunction(-5);  
+    
+    // Handle the error
+    if (!result) {  
+       std::cout &lt;&lt; "An error occurred: invalid input.\n";  
+       exit(0);  // Early termination
+    }  
+  
+    // Valid input, retrieve and display the value
+    std::cout &lt;&lt; "Result: " &lt;&lt; result.value() &lt;&lt; "\n";  
+    
+    return 0;  
+}
+</code></pre>
+
+<p>In this example, the function <code class="language-plaintext highlighter-rouge">riskyFunction</code> returns an <code class="language-plaintext highlighter-rouge">std::optional&lt;int&gt;</code>, which either contains a valid result or <code class="language-plaintext highlighter-rouge">std::nullopt</code> if an error occurs. This approach avoids the overhead of exceptions while providing a clear mechanism for error checking.</p>
+
+<h3 id="leveraging-stdvariant-for-typed-errors">6.2. <span class="me-2">Leveraging <code class="language-plaintext highlighter-rouge">std::variant</code> for Typed Errors</span><a href="#leveraging-stdvariant-for-typed-errors" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p><code class="language-plaintext highlighter-rouge">std::variant</code>, also introduced in C++17, is a type-safe union that can store one of several types, making it a versatile tool for returning either a result or an error type from a function. This is analogous to using tagged unions in C but with the added safety and flexibility offered by modern C++.</p>
+
+<h4 id="example-for-variant">6.2.1. <span class="me-2">Example for variant</span><a href="#example-for-variant" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;variant&gt;
+#include &lt;string&gt;
+
+// Value Error Type
+struct ValueError {  
+    std::string message;  
+};  
+  
+// Syntax Error Type
+struct SyntaxError {  
+    std::string message;  
+};  
+
+// Result type can be an integer, a value error, or a syntax error
+using Result = std::variant&lt;int, ValueError, SyntaxError&gt;;  
+  
+Result riskyFunction(int value) {  
+
+    // Return a ValueError if the input is negative
+    if (value &lt; 0)  return ValueError{"Value cannot be negative"}; 
+     
+    // Return a SyntaxError if the input is zero
+    if (value == 0) return SyntaxError{"Value cannot be zero"};  
+
+    // Return the value
+    return value * 2;  
+}  
+  
+int main() {  
+    auto result = riskyFunction(0); 
+     
+    // Check for a ValueError
+    if (std::holds_alternative&lt;ValueError&gt;(result)) {
+       std::cout &lt;&lt; "Value error: " &lt;&lt; std::get&lt;ValueError&gt;(result).message &lt;&lt; "\n";  
+       exit(0);
+    }
+    
+    // Check for a SyntaxError
+    if (std::holds_alternative&lt;SyntaxError&gt;(result)) {
+       std::cout &lt;&lt; "Syntax error: " &lt;&lt; std::get&lt;SyntaxError&gt;(result).message &lt;&lt; "\n";  
+       exit(0);
+    }
+
+    // Otherwise, an integer result is assumed
+    std::cout &lt;&lt; "Result: " &lt;&lt; std::get&lt;int&gt;(result) &lt;&lt; "\n";  
+  
+    return 0;  
+}
+</code></pre>
+
+<p>In this instance, <code class="language-plaintext highlighter-rouge">riskyFunction</code> returns a <code class="language-plaintext highlighter-rouge">std::variant&lt;int, ValueError, SyntaxError&gt;</code>, allowing it to return either a valid result or detailed error information. This approach increases the granularity of error handling while avoiding the performance drawbacks associated with exceptions.</p>
+
+<h3 id="encapsulating-error-codes-within-classes">6.3. <span class="me-2">Encapsulating Error Codes within Classes</span><a href="#encapsulating-error-codes-within-classes" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>Another modern C++ approach involves encapsulating error codes within a class structure. This method enhances code readability and maintainability by associating specific error codes with meaningful class types, as opposed to relying on plain integers.</p>
+
+<p>We will first define a basic <code class="language-plaintext highlighter-rouge">ErrorCode</code> class to encapsulate error types and messages, then construct a <code class="language-plaintext highlighter-rouge">Result</code> class template that encapsulates either a value or an error. Finally, we will demonstrate how to utilize these classes in a function that performs a potentially risky operation and returns either a result or an error.</p>
+
+<h4 id="defining-the-errorcode-class">6.3.1. <span class="me-2">Defining the <code class="language-plaintext highlighter-rouge">ErrorCode</code> Class</span><a href="#defining-the-errorcode-class" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<p>The initial step in constructing our error-handling framework involves defining an <code class="language-plaintext highlighter-rouge">ErrorCode</code> class. This class will represent various types of errors that may occur and will provide a mechanism to retrieve an error message associated with each error type.</p>
+
+<p>Here is the basic structure of the <code class="language-plaintext highlighter-rouge">ErrorCode</code> class:</p>
+
+<pre><code class="language-cpp">// ErrorCode class to represent possible errors
+class ErrorCode {
+ public:
+    // Enum to define different types of error codes
+    enum Code { None, ValueError, SyntaxError };
+
+    // Constructor takes an optional error code and an error message
+    explicit ErrorCode(Code code = None, std::string message = "")
+        : code_(code), message_(std::move(message)) {}
+
+    // Getter for the error message
+    std::string message() const { return message_; }
+
+    // Getter for the error code
+    Code code() const { return code_; }
+
+ private:
+    Code code_;                ///&lt; error code / type
+    std::string message_;      ///&lt; error message
+};
+</code></pre>
+
+<p>In this structure:</p>
+
+<ul>
+  <li><strong>Enum <code class="language-plaintext highlighter-rouge">Code</code></strong>: Enumerates different error types (<code class="language-plaintext highlighter-rouge">None</code>, <code class="language-plaintext highlighter-rouge">ValueError</code>, <code class="language-plaintext highlighter-rouge">SyntaxError</code>).</li>
+  <li><strong>Constructor</strong>: Initializes the error code and its associated message.</li>
+  <li><strong>Getters</strong>: Provide access to the error code and message.</li>
+</ul>
+
+<p>This class forms the foundation for representing errors within our application.</p>
+
+<h4 id="creating-the-result-class-template">6.3.2. <span class="me-2">Creating the <code class="language-plaintext highlighter-rouge">Result</code> Class Template</span><a href="#creating-the-result-class-template" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<p>Next, we need a way to return either a valid result or an error from a function. To achieve this, we create a <code class="language-plaintext highlighter-rouge">Result</code> class template that can hold either a value of any type <code class="language-plaintext highlighter-rouge">T</code> or an <code class="language-plaintext highlighter-rouge">ErrorCode</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class is defined as a template, allowing it to accommodate any data type as the potential result of an operation. This flexibility is crucial for creating a general-purpose error-handling mechanism.</p>
+
+<pre><code class="language-cpp">template &lt;typename T&gt;
+class Result {
+    // Class members and methods will be defined within this template.
+};
+</code></pre>
+
+<p>By templating the class, we enable <code class="language-plaintext highlighter-rouge">Result</code> to handle various types of results, making it adaptable to different contexts within an application.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class is designed to accommodate two primary scenarios:</p>
+
+<ol>
+  <li>The operation succeeds and returns a value, or</li>
+  <li>The operation fails and returns an error.</li>
+</ol>
+
+<p>To facilitate these scenarios, the class provides two constructors.</p>
+
+<pre><code class="language-cpp">public:
+    // Constructor for a successful result containing a value
+    explicit Result(T value) : result_(std::move(value)) {}
+
+    // Constructor for an error result containing an ErrorCode
+    Result(ErrorCode error) : result_(std::move(error)) {}
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong>Success Constructor</strong>: This constructor initializes the <code class="language-plaintext highlighter-rouge">Result</code> object with a value of type <code class="language-plaintext highlighter-rouge">T</code>. The use of <code class="language-plaintext highlighter-rouge">std::move</code> ensures efficient handling of the value, particularly when dealing with large or complex objects.</p>
+  </li>
+  <li>
+    <p><strong>Error Constructor</strong>: This constructor initializes the <code class="language-plaintext highlighter-rouge">Result</code> object with an <code class="language-plaintext highlighter-rouge">ErrorCode</code>, signifying that the operation encountered an issue.</p>
+  </li>
+</ul>
+
+<p>These constructors are fundamental to ensuring that the <code class="language-plaintext highlighter-rouge">Result</code> object can accurately represent either a successful outcome or an error, providing a clear and structured approach to error handling.</p>
+
+<p>To enable the <code class="language-plaintext highlighter-rouge">Result</code> object to hold either a value or an error, the class employs <code class="language-plaintext highlighter-rouge">std::variant</code>. This C++ standard library feature ensures that the object can store one of these types at a time, but not both simultaneously.</p>
+
+<pre><code class="language-cpp">private:
+    std::variant&lt;T, ErrorCode&gt; result_; ///&lt; Holds either a value of type T or an ErrorCode
+</code></pre>
+
+<p>The <code class="language-plaintext highlighter-rouge">std::variant</code> type is integral to the design of the <code class="language-plaintext highlighter-rouge">Result</code> class. It enforces type safety by ensuring that the object contains only a value or an error at any given moment, thus preventing ambiguous states.</p>
+
+<p>A common requirement when dealing with the outcome of an operation is the ability to easily determine whether it succeeded or failed. The <code class="language-plaintext highlighter-rouge">Result</code> class provides an overloaded <code class="language-plaintext highlighter-rouge">bool</code> operator to facilitate this check.</p>
+
+<pre><code class="language-cpp">public:
+    // Overloaded bool operator to check if the result contains a value (indicating success)
+    explicit operator bool() const {
+        return std::holds_alternative&lt;T&gt;(result_);
+    }
+</code></pre>
+
+<ul>
+  <li><strong>Boolean Operator</strong>: This operator checks whether the <code class="language-plaintext highlighter-rouge">Result</code> contains a value of type <code class="language-plaintext highlighter-rouge">T</code>. If it does, the operator returns <code class="language-plaintext highlighter-rouge">true</code>, indicating success; otherwise, it returns <code class="language-plaintext highlighter-rouge">false</code>.</li>
+</ul>
+
+<p>This feature enhances the usability of the <code class="language-plaintext highlighter-rouge">Result</code> class by allowing developers to intuitively and efficiently check the success of an operation.</p>
+
+<p>To access the value or error contained within the <code class="language-plaintext highlighter-rouge">Result</code> object, the class provides two methods: <code class="language-plaintext highlighter-rouge">value()</code> and <code class="language-plaintext highlighter-rouge">error()</code>. These methods return <code class="language-plaintext highlighter-rouge">std::optional</code> types, which offer a safe way to handle cases where the requested data might not be present.</p>
+
+<pre><code class="language-cpp">public:
+    // Retrieve the value if no error occurred, returning std::optional to handle the absence of a value
+    std::optional&lt;T&gt; value() const {
+        if (std::holds_alternative&lt;T&gt;(result_)) {
+            return std::get&lt;T&gt;(result_);
+        }
+        return std::nullopt;
+    }
+
+    // Retrieve the error if one occurred, returning std::optional to handle the absence of an error
+    std::optional&lt;ErrorCode&gt; error() const {
+        if (std::holds_alternative&lt;ErrorCode&gt;(result_)) {
+            return std::get&lt;ErrorCode&gt;(result_);
+        }
+        return std::nullopt;
+    }
+</code></pre>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">value()</code> Method</strong>: This method attempts to retrieve the stored value. If the <code class="language-plaintext highlighter-rouge">Result</code> contains a value, it is returned; if the <code class="language-plaintext highlighter-rouge">Result</code> contains an error, the method returns <code class="language-plaintext highlighter-rouge">std::nullopt</code>, indicating the absence of a value.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">error()</code> Method</strong>: Similarly, this method retrieves the stored error if one is present. If the <code class="language-plaintext highlighter-rouge">Result</code> contains a value instead, it returns <code class="language-plaintext highlighter-rouge">std::nullopt</code>, signifying the absence of an error.</p>
+  </li>
+</ul>
+
+<p>These methods provide a clear and safe mechanism for extracting the contents of the <code class="language-plaintext highlighter-rouge">Result</code> object, ensuring that error handling is both explicit and reliable.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Result</code> class template offers a comprehensive and type-safe mechanism for managing the outcomes of operations that may either succeed or fail. By encapsulating both the value and the error within a single object, it presents a clean and efficient alternative to traditional error-handling strategies, making it particularly suitable for environments where reliability and performance are critical.</p>
+
+<h4 id="implementing-the-result-class-in-a-function">6.3.3. <span class="me-2">Implementing the <code class="language-plaintext highlighter-rouge">Result</code> Class in a Function</span><a href="#implementing-the-result-class-in-a-function" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<p>With the <code class="language-plaintext highlighter-rouge">ErrorCode</code> and <code class="language-plaintext highlighter-rouge">Result</code> classes defined, we can now use them in a function that performs a potentially risky operation. The function will return a <code class="language-plaintext highlighter-rouge">Result&lt;int&gt;</code> to indicate either a successful operation (yielding a result) or an error.</p>
+
+<p>Here’s an example of such a function:</p>
+
+<pre><code class="language-cpp">Result&lt;int&gt; riskyFunction(int value) {
+
+    // If the input value is negative, return a ValueError
+    if (value &lt; 0) {
+        return ErrorCode(ErrorCode::ValueError, "Value cannot be negative");
+    }
+
+    // If the input value is zero, return a SyntaxError
+    if (value == 0) {
+        return ErrorCode(ErrorCode::SyntaxError, "Value cannot be zero");
+    }
+
+    // Input is correct
+    return Result&lt;int&gt;(value * 2); // Return the result on success
+}
+</code></pre>
+
+<p>where</p>
+
+<ul>
+  <li><strong>Negative Value</strong>: Returns an <code class="language-plaintext highlighter-rouge">ErrorCode</code> for a <code class="language-plaintext highlighter-rouge">ValueError</code>.</li>
+  <li><strong>Zero Value</strong>: Returns an <code class="language-plaintext highlighter-rouge">ErrorCode</code> for a <code class="language-plaintext highlighter-rouge">SyntaxError</code>.</li>
+  <li><strong>Valid Value</strong>: Returns the computed result (<code class="language-plaintext highlighter-rouge">value * 2</code>).</li>
+</ul>
+
+<p>This function demonstrates how to use the <code class="language-plaintext highlighter-rouge">Result</code> and <code class="language-plaintext highlighter-rouge">ErrorCode</code> classes to handle errors in a structured manner.</p>
+
+<h4 id="managing-the-result-in-the-main-function">6.3.4. <span class="me-2">Managing the Result in the Main Function</span><a href="#managing-the-result-in-the-main-function" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<p>Finally, we can handle the result of <code class="language-plaintext highlighter-rouge">riskyFunction</code> in the <code class="language-plaintext highlighter-rouge">main</code> function:</p>
+
+<pre><code class="language-cpp">int main() {
+    // Call riskyFunction with an input value of 5
+    auto result = riskyFunction(5);
+
+    // Check if the result contains an error
+    if (!result) {
+        // Retrieve the error from the result
+        auto error = result.error();
+
+        // Check if the error is a ValueError and print the error message
+        if (error &amp;&amp; error-&gt;code() == ErrorCode::ValueError) {
+            std::cout &lt;&lt; "Value Error: " &lt;&lt; error-&gt;message() &lt;&lt; "\n";
+            exit(0); // or return
+        }
+
+        // Check if the error is a SyntaxError and print the error message
+        if (error &amp;&amp; error-&gt;code() == ErrorCode::SyntaxError) {
+            std::cout &lt;&lt; "Syntax Error: " &lt;&lt; error-&gt;message() &lt;&lt; "\n";
+            exit(0); // or return
+        }
+    } 
+
+    // print the successful result value
+    std::cout &lt;&lt; "Result: " &lt;&lt; *result.value() &lt;&lt; "\n";
+
+    return 0;
+}
+</code></pre>
+
+<p>where</p>
+
+<ul>
+  <li><strong>Check for Error</strong>: The <code class="language-plaintext highlighter-rouge">if (!result)</code> block checks if an error occurred.</li>
+  <li><strong>Handle ValueError</strong>: If the error is a <code class="language-plaintext highlighter-rouge">ValueError</code>, print the message and exit.</li>
+  <li><strong>Handle SyntaxError</strong>: If the error is a <code class="language-plaintext highlighter-rouge">SyntaxError</code>, print the message and exit.</li>
+  <li><strong>Print Result</strong>: If no error occurred, print the result.</li>
+</ul>
+
+<p>This approach is particularly advantageous in environments where exceptions are disabled or in performance-critical applications where the overhead of exceptions is undesirable. The combination of <code class="language-plaintext highlighter-rouge">std::variant</code>, <code class="language-plaintext highlighter-rouge">std::optional</code>, and custom error codes provides a robust alternative that enhances both code readability and maintainability.</p>
+
+<h2 id="conclusion">7. <span class="me-2">Conclusion</span><a href="#conclusion" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <p>In the highly specialized field of embedded systems development, where resources are tightly constrained, the use of traditional C++ exceptions is often impractical. By adopting alternative techniques such as low-level <code class="language-plaintext highlighter-rouge">goto</code> and function pointers, or more sophisticated methods like <code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code>, developers can implement effective error-handling mechanisms with minimal overhead. Each approach has its advantages and trade-offs, which must be carefully evaluated based on the specific constraints and requirements of the application at hand.</p>
 
@@ -1452,17 +1892,17 @@ cleanup:
   <tbody>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">goto</code> and Function Pointers</strong></td>
-      <td>- Very low overhead, close to the hardware level  <br />- Simple to implement in small, constrained environments</td>
+      <td>- Extremely low overhead, close to the hardware level  <br />- Simple to implement in small, constrained environments</td>
       <td>- Prone to errors and difficult to maintain  <br />- Lacks flexibility and scalability  <br />- No automatic cleanup</td>
     </tr>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">setjmp</code> and <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
-      <td>- Allows saving and restoring execution context  <br />- Provides structured error handling similar to <code class="language-plaintext highlighter-rouge">try/catch</code></td>
+      <td>- Provides a mechanism for non-local jumps and structured error handling without exceptions  <br />- Suitable for more complex control flows</td>
       <td>- Requires manual resource management (no stack unwinding)  <br />- Can be complex to implement correctly</td>
     </tr>
     <tr>
       <td><strong>Typed Exceptions with <code class="language-plaintext highlighter-rouge">longjmp</code></strong></td>
-      <td>- Allows handling different types of errors distinctly  <br />- More granular error management</td>
+      <td>- Allows handling different types of errors distinctly  <br />- Offers more granularity in error management</td>
       <td>- Complexity in implementation  <br />- Manual resource management required</td>
     </tr>
     <tr>
@@ -1472,18 +1912,28 @@ cleanup:
     </tr>
     <tr>
       <td><strong>Custom Exception Handler</strong></td>
-      <td>- Mimics higher-level <code class="language-plaintext highlighter-rouge">try/catch</code> semantics in embedded C/C++  <br />- More structured and organized error handling</td>
+      <td>- Mimics higher-level <code class="language-plaintext highlighter-rouge">try/catch</code> behavior in embedded C/C++ without runtime overhead<br />- More structured and organized error handling</td>
       <td>- Increased complexity  <br />- Requires manual resource registration and cleanup  <br />- Potential for missed cleanup</td>
     </tr>
     <tr>
       <td><strong><code class="language-plaintext highlighter-rouge">goto</code> for Cleanup</strong></td>
-      <td>- Simple and straightforward for resource cleanup  <br />- Reduces code duplication in cleanup tasks</td>
-      <td>- Lacks abstraction and safety  <br />- Can lead to unstructured code  <br />- Limited to simple error handling scenarios</td>
+      <td>- Simple and straightforward for resource cleanup  <br />- Simplifies resource cleanup operations in basic scenarios</td>
+      <td>- Lacks abstraction and safety  <br />- Can lead to spaghetti code and is unsuitable for complex error handling<br /></td>
+    </tr>
+    <tr>
+      <td>Raw <code class="language-plaintext highlighter-rouge">std::optional</code> and <code class="language-plaintext highlighter-rouge">std::variant</code></td>
+      <td>- Modern C++ features with low overhead, compatible with resource-constrained environments  <br />- Type-safe and integrates well with existing codebases<br /><br /></td>
+      <td>- Limited expressiveness compared to full exception handling  <br />- Still requires manual checks and error handling</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Result</code> Class Template</td>
+      <td>- Encapsulates error handling in a type-safe manner  <br />- Provides clear and maintainable code structure  <br />- Avoids the runtime overhead of exceptions</td>
+      <td>- Increased code complexity  <br />- May be over-engineered for simple error-handling cases</td>
     </tr>
   </tbody>
 </table></div>
 
-<p>Through a deep understanding of these techniques and their implications, developers can design and implement robust, efficient error-handling strategies tailored to the unique challenges of embedded systems. This not only enhances system reliability but also contributes to the overall sustainability of embedded applications in mission-critical environments.</p>
+<p>In conclusion, there is no one-size-fits-all solution for error handling in embedded systems. The best approach often involves a careful balance between simplicity, efficiency, and flexibility, tailored to the unique challenges of the target environment. By leveraging the techniques discussed in this article, developers can ensure that their embedded systems remain resilient, even in the face of unexpected errors.</p>
 
   </div>
 
@@ -1559,6 +2009,11 @@ cleanup:
             href="/tags/arm/"
             class="post-tag no-text-decoration"
           >ARM</a>
+        
+          <a
+            href="/tags/c/"
+            class="post-tag no-text-decoration"
+          >C++</a>
         
       </div>
     
@@ -1642,6 +2097,13 @@ cleanup:
         
         
         <li class="text-truncate lh-lg">
+          <a href="/posts/CPP-Coroutines/">C++20 - Coroutines</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
           <a href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/">Efficient Exception Handling in Resource-Constrained Embedded Systems</a>
         </li>
       
@@ -1656,7 +2118,7 @@ cleanup:
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Adding-Libraries/">CMake - Adding Libraries</a>
+          <a href="/posts/CMake-Integrating-C++-Libraries/">CMake - Integrating C++ Libraries</a>
         </li>
       
         
@@ -1664,13 +2126,6 @@ cleanup:
         
         <li class="text-truncate lh-lg">
           <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
         </li>
       
     </ul>
@@ -1714,42 +2169,6 @@ cleanup:
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1779,128 +2198,12 @@ cleanup:
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -2021,6 +2324,204 @@ cleanup:
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2087,119 +2588,6 @@ cleanup:
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2224,6 +2612,154 @@ cleanup:
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -2272,11 +2808,6 @@ cleanup:
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -2297,10 +2828,10 @@ cleanup:
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -2321,7 +2852,7 @@ cleanup:
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>
@@ -2389,6 +2920,66 @@ cleanup:
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
     
 
 
@@ -2426,9 +3017,66 @@ cleanup:
 
               <h4 class="pt-0 my-2">The Black Pill (STM32F411CEU6)</h4>
               <div class="text-muted">
-                <p>In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.
+                <p>&amp;lt;p&amp;gt;&amp;lt;img src=&quot;https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1&quot; alt=&quot;Description of the image&quot; style=&quot;float: right; margin-rig...</p>
+              </div>
+            </div>
+          </a>
+        </article>
+      
+        <article class="col">
+          <a href="/posts/CPP-Coroutines/" class="post-preview card h-100">
+            <div class="card-body">
+              <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
 
-    This chip is based on ARM Cortex-M4 32-Bit Architecture...</p>
+
+
+
+<time
+  
+  data-ts="1705955640"
+  data-df="ll"
+  
+>
+  Jan 22, 2024
+</time>
+
+              <h4 class="pt-0 my-2">C++20 - Coroutines</h4>
+              <div class="text-muted">
+                <p>Coroutines, introduced in C++20, bring a powerful mechanism for handling asynchronous operations, generators and cooperative multitasking.
+Unlike conventional functions, which execute sequentially ...</p>
+              </div>
+            </div>
+          </a>
+        </article>
+      
+        <article class="col">
+          <a href="/posts/CMake-Production/" class="post-preview card h-100">
+            <div class="card-body">
+              <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1700308800"
+  data-df="ll"
+  
+>
+  Nov 18, 2023
+</time>
+
+              <h4 class="pt-0 my-2">CMake - Publish Your Own Library</h4>
+              <div class="text-muted">
+                <p>Introduction to Publishing CMake Projects
+
+When developing a C++ library, especially one meant to be reused across multiple projects or distributed to others, it’s crucial to structure your project...</p>
               </div>
             </div>
           </a>
@@ -2458,9 +3106,13 @@ cleanup:
   
 
   
-    <div class="btn btn-outline-primary disabled" aria-label="Newer">
-      <p>-</p>
-    </div>
+    <a
+      href="/posts/CPP-Coroutines/"
+      class="btn btn-outline-primary"
+      aria-label="Newer"
+    >
+      <p>C++20 - Coroutines</p>
+    </a>
   
 </nav>
 
@@ -2551,42 +3203,6 @@ cleanup:
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2616,128 +3232,12 @@ cleanup:
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -2858,6 +3358,204 @@ cleanup:
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2924,119 +3622,6 @@ cleanup:
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -3061,6 +3646,154 @@ cleanup:
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -3109,11 +3842,6 @@ cleanup:
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -3134,10 +3862,10 @@ cleanup:
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -3158,7 +3886,7 @@ cleanup:
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>
@@ -3342,7 +4070,7 @@ cleanup:
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('search-results'),
     json: '/assets/js/data/search.json',
-    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>7. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
+    searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2>8. <a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{snippet}</p>  </article>',
     noResultsText: '<p class="mt-5">Oops! No results found.</p>',
     templateMiddleware: function(prop, value, template) {
       if (prop === 'categories') {

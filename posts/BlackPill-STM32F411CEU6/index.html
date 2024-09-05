@@ -32,8 +32,8 @@
 <meta name="generator" content="Jekyll v4.3.3" />
 <meta property="og:title" content="The Black Pill (STM32F411CEU6)" />
 <meta property="og:locale" content="en" />
-<meta name="description" content="In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this." />
-<meta property="og:description" content="In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this." />
+<meta name="description" content="&lt;p&gt;&lt;img src=&quot;https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1&quot; alt=&quot;Description of the image&quot; style=&quot;float: right; margin-right: 15px; width: 250px;&quot; /&gt;&lt;/p&gt;" />
+<meta property="og:description" content="&lt;p&gt;&lt;img src=&quot;https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1&quot; alt=&quot;Description of the image&quot; style=&quot;float: right; margin-right: 15px; width: 250px;&quot; /&gt;&lt;/p&gt;" />
 <link rel="canonical" href="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" />
 <meta property="og:url" content="http://localhost:4000/posts/BlackPill-STM32F411CEU6/" />
 <meta property="og:site_name" content="Mustafa Alotbah’s Blog" />
@@ -43,7 +43,7 @@
 <meta property="twitter:title" content="The Black Pill (STM32F411CEU6)" />
 <meta name="twitter:site" content="@" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-05-17T13:41:00+02:00","datePublished":"2023-05-17T13:41:00+02:00","description":"In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board see this.","headline":"The Black Pill (STM32F411CEU6)","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/posts/BlackPill-STM32F411CEU6/"},"url":"http://localhost:4000/posts/BlackPill-STM32F411CEU6/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-05-17T13:41:00+02:00","datePublished":"2023-05-17T13:41:00+02:00","description":"&lt;p&gt;&lt;img src=&quot;https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1&quot; alt=&quot;Description of the image&quot; style=&quot;float: right; margin-right: 15px; width: 250px;&quot; /&gt;&lt;/p&gt;","headline":"The Black Pill (STM32F411CEU6)","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/posts/BlackPill-STM32F411CEU6/"},"url":"http://localhost:4000/posts/BlackPill-STM32F411CEU6/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -438,7 +438,7 @@
 
       
         <a
-          href="https://www.linkedin.com/in/mustafa-alotbah-41211513b/"
+          href="https://www.linkedin.com/in/alotbah"
           aria-label="linkedin"
           
 
@@ -1552,14 +1552,16 @@
   <div class="content">
     <div style="display: flex; flex-wrap: wrap; align-items: center;">
   <div style="flex: 0 0 auto; min-width: 200px;">
-    <a href="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" class="popup img-link  shimmer"><img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" loading="lazy"></a>
+    <p><a href="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" class="popup img-link  shimmer"><img src="https://i0.wp.com/github.com/WeActStudio/WeActStudio.MiniSTM32F4x1/raw/master/images/STM32F4x1-V30_3D.jpg?ssl=1" alt="Description of the image" style="float: right; margin-right: 15px; width: 250px;" loading="lazy"></a></p>
   </div>
   <div style="flex: 1; min-width: 200px;">
+
     <p>In this article, we will get you started with the STM32F411CE board (aka the black pill). For a complete overview of the board <a href="https://stm32-base.org/boards/STM32F411CEU6-WeAct-Black-Pill-V2.0.html">see this</a>.</p>
 
     <p>This chip is based on ARM Cortex-M4 32-Bit Architecture with clock frequency of 100 MHz RAM of 512KB.</p>
 
     <p>This chip is manufactured by the Dutch company STMicroelectronics, which is based in Switzerland. The company provides several tools to develop for their chips. The official IDE is called the <a href="https://www.st.com/en/development-tools/stm32cubeide.html">STM32CUBE IDE</a> which is used for this quick tutorial.</p>
+
   </div>
 </div>
 
@@ -1679,15 +1681,15 @@ FLASH (rx)     : ORIGIN = 0x08000000, LENGTH = 64K
 
 <ul>
   <li>
-    <p><strong>_estack</strong>: The <code class="language-plaintext highlighter-rouge">_estack</code> symbol defines the highest address of the stack in RAM. It is calculated as the sum of the starting address of RAM (<code class="language-plaintext highlighter-rouge">ORIGIN(RAM)</code>) and the total length of RAM (<code class="language-plaintext highlighter-rouge">LENGTH(RAM)</code>). 
+    <p><strong>_estack</strong>: The <code class="language-plaintext highlighter-rouge">_estack</code> symbol defines the highest address of the stack in RAM. It is calculated as the sum of the starting address of RAM (<code class="language-plaintext highlighter-rouge">ORIGIN(RAM)</code>) and the total length of RAM (<code class="language-plaintext highlighter-rouge">LENGTH(RAM)</code>).
 This ensures that the stack starts at the end of the available RAM space and grows downwards.</p>
   </li>
   <li>
-    <p><strong>_Min_Heap_Size</strong>: This value specifies the minimum required heap size, which is set to <code class="language-plaintext highlighter-rouge">0x200</code> (512 bytes). 
+    <p><strong>_Min_Heap_Size</strong>: This value specifies the minimum required heap size, which is set to <code class="language-plaintext highlighter-rouge">0x200</code> (512 bytes).
 The heap is used for dynamic memory allocation during runtime.</p>
   </li>
   <li>
-    <p><strong>_Min_Stack_Size</strong>: This value defines the minimum required stack size, set to <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes). 
+    <p><strong>_Min_Stack_Size</strong>: This value defines the minimum required stack size, set to <code class="language-plaintext highlighter-rouge">0x400</code> (1024 bytes).
 The stack is used for storing local variables and function call information during execution.</p>
   </li>
 </ul>
@@ -1704,7 +1706,7 @@ The stack is used for storing local variables and function call information duri
 
 <p>This function sets up the initial settings for the IO pins of the chip. On the board the blue LED is connected to pin C13. If we set this pin mode to GPIO_Output mode in the <em>myproject.ioc</em> file, as in the illustration below</p>
 
-<p><a href="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-03_091414183.png?resize=905%2C782&amp;ssl=1" class="popup img-link  shimmer"><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-03_091414183.png?resize=905%2C782&amp;ssl=1" alt="" loading="lazy"></a></p>
+<p><a href="/assets/images/embedded/stm32_cubemx/GPIO_configuration_stm32f411ceux.webp" class="popup img-link  shimmer"><img src="/assets/images/embedded/stm32_cubemx/GPIO_configuration_stm32f411ceux.webp" alt="GPIO Configuration of STM32F4CEUx series on STM32 CubeMX" loading="lazy"></a></p>
 
 <p>Figure 2: Configuring the chip’s pins</p>
 
@@ -1898,14 +1900,14 @@ HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);
 
 <p>To set or reset a GPIO pin, you can use the following methods:</p>
 
-<h5 id="setting-a-pin"><span class="me-2">Setting a Pin:</span><a href="#setting-a-pin" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h5>
+<h5 id="setting-a-pin"><span class="me-2">Setting a Pin</span><a href="#setting-a-pin" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h5>
 
 <pre><code class="language-c">GPIOA -&gt; BSSR = GPIO_PIN_0;                         // fast
 GPIOA -&gt; ODR |= GPIO_PIN_0;                         // legacy
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET); // HAL Library
 </code></pre>
 
-<h5 id="resetting-a-pin"><span class="me-2">Resetting a Pin:</span><a href="#resetting-a-pin" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h5>
+<h5 id="resetting-a-pin"><span class="me-2">Resetting a Pin</span><a href="#resetting-a-pin" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h5>
 
 <pre><code class="language-c">GPIOA -&gt; BSSR = (uint32_t)GPIO_PIN_0  &lt;&lt; 16U;         // fast
 GPIOA -&gt; ODR &amp;= ~GPIO_PIN_0;                          // legacy
@@ -2126,23 +2128,23 @@ TIM_HandleTypeDef htim3;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;  
     // Initialize the timer for PWM operation
     if (HAL_TIM_PWM_Init(&amp;htim3) != HAL_OK) Error_Handler(); 
-	
+
     // Configure the master configuration for synchronization
     TIM_MasterConfigTypeDef sMasterConfig = {};  
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;  
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;  
     // Apply the master configuration settings
     if (HAL_TIMEx_MasterConfigSynchronization(&amp;htim3, &amp;sMasterConfig) != HAL_OK) Error_Handler(); 
-	
+
     // Configure the output compare (OC) settings for PWM on channel 1 and 2
     TIM_OC_InitTypeDef sConfigOC = {0};  
     sConfigOC.OCMode = TIM_OCMODE_PWM1;  
     sConfigOC.Pulse = 0;  
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;  
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	// Configure PWM channel 1 with the above settings
+    // Configure PWM channel 1 with the above settings
     if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_1) != HAL_OK) Error_Handler(); 
-	// Configure PWM channel 2 with the above settings
+    // Configure PWM channel 2 with the above settings
     if (HAL_TIM_PWM_ConfigChannel(&amp;htim3, &amp;sConfigOC, TIM_CHANNEL_2) != HAL_OK) Error_Handler();  
 
     // Call post-initialization function to configure GPIO and other settings
@@ -2185,18 +2187,17 @@ int main(void)
   <li>
     <p><strong>Set Counter Period and Prescaler</strong>:<br />
  Configure the <strong>Counter Period</strong> (<code class="language-plaintext highlighter-rouge">ARR</code>) and <strong>Prescaler</strong> (<code class="language-plaintext highlighter-rouge">PSC</code>) values to achieve the desired timer frequency:</p>
+
+    <p>\[
+ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
+ \]</p>
+
+    <p>This equation determines the frequency at which the timer overflows and triggers an interrupt or updates its count.</p>
   </li>
-</ol>
-
-<p>\[
-f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
-\]</p>
-
-<p>This equation determines the frequency at which the timer overflows and triggers an interrupt or updates its count.</p>
-
-<ol>
-  <li><strong>Enable Auto-Reload Preload</strong>:<br />
- Enable the <strong>Auto-Reload Preload</strong> to ensure that the counter resets seamlessly upon reaching the <code class="language-plaintext highlighter-rouge">ARR</code> value.</li>
+  <li>
+    <p><strong>Enable Auto-Reload Preload</strong>:<br />
+ Enable the <strong>Auto-Reload Preload</strong> to ensure that the counter resets seamlessly upon reaching the <code class="language-plaintext highlighter-rouge">ARR</code> value.</p>
+  </li>
 </ol>
 
 <h3 id="initialization-and-interrupt-configuration">6.2. <span class="me-2">Initialization and Interrupt Configuration</span><a href="#initialization-and-interrupt-configuration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
@@ -2245,7 +2246,7 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
 
 <p>To ensure the <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code> peripheral operates correctly, it must be supplied with a precise 48 MHz clock, derived from the High-Speed External (<code class="language-plaintext highlighter-rouge">HSE</code>) oscillator. This clock configuration is critical for maintaining the timing requirements stipulated by the USB 2.0 standard.</p>
 
-<h4 id="step-by-step-clock-setup">7.1.1. <span class="me-2">Step-by-Step Clock Setup:</span><a href="#step-by-step-clock-setup" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h4 id="step-by-step-clock-setup">7.1.1. <span class="me-2">Step-by-Step Clock Setup</span><a href="#step-by-step-clock-setup" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <ol>
   <li>
@@ -2272,14 +2273,15 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
   </li>
 </ol>
 
-<p><a href="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_120919409.png?resize=975%2C480&amp;ssl=1" class="popup img-link  shimmer"><img src="https://i0.wp.com/alotbah.com/wp-content/uploads/2022/10/image_2022-10-04_120919409.png?resize=975%2C480&amp;ssl=1" alt="" loading="lazy"></a></p>
+<p><a href="/assets/images/embedded/stm32_cubemx/clock_configuration.webp" class="popup img-link  shimmer"><img src="/assets/images/embedded/stm32_cubemx/clock_configuration.webp" alt="Clock Configuration Panel on STM32 CubeMX" loading="lazy"></a></p>
 
 <p><strong>Figure 1: Clock Configuration for <code class="language-plaintext highlighter-rouge">USB_OTG_FS</code></strong></p>
 
 <h3 id="usb-peripheral-configuration-in-stm32cubemx">7.2. <span class="me-2">USB Peripheral Configuration in STM32CubeMX</span><a href="#usb-peripheral-configuration-in-stm32cubemx" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
 <p>After ensuring the clock is properly configured, proceed with setting up the USB OTG FS peripheral to handle USB communication at the hardware level.</p>
-<h4 id="detailed-configuration-steps">7.2.1. <span class="me-2">Detailed Configuration Steps:</span><a href="#detailed-configuration-steps" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<h4 id="detailed-configuration-steps">7.2.1. <span class="me-2">Detailed Configuration Steps</span><a href="#detailed-configuration-steps" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <ol>
   <li>
@@ -2311,7 +2313,7 @@ f_\text{PWM} =\frac{f_\text{Clock Frequency}}{(ARR-1) \cdot (PSC-1)}
 
 <p>To ensure the microcontroller can handle USB communication efficiently, particularly when dealing with data buffers, it is necessary to adjust the default heap size.</p>
 
-<h4 id="heap-size-adjustment">7.3.1. <span class="me-2">Heap Size Adjustment:</span><a href="#heap-size-adjustment" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h4 id="heap-size-adjustment">7.3.1. <span class="me-2">Heap Size Adjustment</span><a href="#heap-size-adjustment" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <ol>
   <li>
@@ -2357,7 +2359,7 @@ MEMORY
 
 <p>To ensure that the device and the host computer agree on communication parameters such as baud rate, parity, and stop bits, the <code class="language-plaintext highlighter-rouge">usbd_cdc_if.c</code> file must be modified. This file also handles the reception of data from the USB interface.</p>
 
-<h4 id="modifying-line-coding-commands">7.4.1. <span class="me-2">Modifying Line Coding Commands:</span><a href="#modifying-line-coding-commands" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h4 id="modifying-line-coding-commands">7.4.1. <span class="me-2">Modifying Line Coding Commands</span><a href="#modifying-line-coding-commands" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <ol>
   <li>
@@ -2368,10 +2370,11 @@ MEMORY
     </ul>
 
     <p>In the block for adding private variables (<code class="language-plaintext highlighter-rouge">PV</code>):</p>
-    <pre><code class="language-cpp">/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-USBD_CDC_LineCodingTypeDef LineCoding;
-/* USER CODE END PV */
+
+    <pre><code class="language-cpp"> /* USER CODE BEGIN PV */
+ /* Private variables ---------------------------------------------------------*/
+ USBD_CDC_LineCodingTypeDef LineCoding;
+ /* USER CODE END PV */
 </code></pre>
   </li>
   <li>
@@ -2401,11 +2404,13 @@ USBD_CDC_LineCodingTypeDef LineCoding;
 
     <ul>
       <li>This implementation ensures that both the computer and the device agree on the communication parameters.</li>
-      <li>
-        <h4 id="handling-data-reception">7.4.2. <span class="me-2">Handling Data Reception:</span><a href="#handling-data-reception" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
-      </li>
     </ul>
   </li>
+</ol>
+
+<h4 id="handling-data-reception">7.4.2. <span class="me-2">Handling Data Reception</span><a href="#handling-data-reception" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+
+<ol>
   <li>
     <p><strong>Creating a Hook for Data Reception</strong>:</p>
 
@@ -2560,7 +2565,7 @@ USBD_CDC_LineCodingTypeDef LineCoding;
 
 <p>The internal temperature sensor in STM32 microcontrollers is useful for monitoring the temperature of the microcontroller itself, which can be an indicator of ambient temperature or the device’s thermal performance. However, note that the sensor primarily measures the temperature of the silicon die, which may not reflect rapid ambient temperature changes due to the sensor’s thermal inertia.</p>
 
-<h4 id="calculating-temperature">10.1.1. <span class="me-2">Calculating Temperature:</span><a href="#calculating-temperature" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
+<h4 id="calculating-temperature">10.1.1. <span class="me-2">Calculating Temperature</span><a href="#calculating-temperature" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4>
 
 <p>The temperature can be calculated using the following formula derived from the sensor’s characteristics:</p>
 
@@ -2719,6 +2724,13 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
         
         
         <li class="text-truncate lh-lg">
+          <a href="/posts/CPP-Coroutines/">C++20 - Coroutines</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
           <a href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/">Efficient Exception Handling in Resource-Constrained Embedded Systems</a>
         </li>
       
@@ -2733,7 +2745,7 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Adding-Libraries/">CMake - Adding Libraries</a>
+          <a href="/posts/CMake-Integrating-C++-Libraries/">CMake - Integrating C++ Libraries</a>
         </li>
       
         
@@ -2741,13 +2753,6 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
         
         <li class="text-truncate lh-lg">
           <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
         </li>
       
     </ul>
@@ -2791,42 +2796,6 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2856,128 +2825,12 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -3098,6 +2951,204 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -3164,119 +3215,6 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -3301,6 +3239,154 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -3349,11 +3435,6 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -3374,10 +3455,10 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -3398,7 +3479,7 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>
@@ -3505,7 +3586,7 @@ T= \frac{V_\text{temp} - V_{25}}{ \text{slope}} + 25
               <div class="text-muted">
                 <p>Introduction
 
-This article presents an in-depth examination of exception handling mechanisms tailored for embedded systems, where resource constraints and performance optimization are critical. Tra...</p>
+This article provides a comprehensive analysis of exception handling mechanisms specifically designed for embedded systems, where resource constraints and performance optimization are...</p>
               </div>
             </div>
           </a>
@@ -3525,13 +3606,9 @@ This article presents an in-depth examination of exception handling mechanisms t
   
 
   
-    <a
-      href="/posts/Tester/"
-      class="btn btn-outline-primary"
-      aria-label="Older"
-    >
-      <p>Jekyll Chirpy Tester</p>
-    </a>
+    <div class="btn btn-outline-primary disabled" aria-label="Older">
+      <p>-</p>
+    </div>
   
 
   
@@ -3632,42 +3709,6 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -3697,128 +3738,12 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -3939,6 +3864,204 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -4005,119 +4128,6 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -4142,6 +4152,154 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -4190,11 +4348,6 @@ This article presents an in-depth examination of exception handling mechanisms t
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -4215,10 +4368,10 @@ This article presents an in-depth examination of exception handling mechanisms t
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -4239,7 +4392,7 @@ This article presents an in-depth examination of exception handling mechanisms t
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>

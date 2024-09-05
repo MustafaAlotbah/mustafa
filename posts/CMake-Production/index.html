@@ -438,7 +438,7 @@
 
       
         <a
-          href="https://www.linkedin.com/in/mustafa-alotbah-41211513b/"
+          href="https://www.linkedin.com/in/alotbah"
           aria-label="linkedin"
           
 
@@ -945,6 +945,28 @@
 
       
     
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
 
     
   
@@ -1084,9 +1106,9 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="4036 words"
+  title="4785 words"
 >
-  <em>22 min</em> read</span>
+  <em>26 min</em> read</span>
 
         </div>
       </div>
@@ -1147,22 +1169,23 @@
   <li>
     <p><strong>CMakeLists.txt (Root Level):</strong></p>
 
-    <p>This file serves as the entry point for CMake, defining the project’s configuration and build settings. It sets the required CMake version, specifies the C++ standard, configures platform-specific dependencies, and adjusts compiler flags based on the build type. The file also defines output directories and includes subdirectories for building the main library and associated tests. Additionally, it manages required packages and ensures compatibility across different platforms.</p>
+    <p>This file serves as the entry point for CMake, defining the project’s configuration and build settings. It sets the required CMake version, specifies the C++ standard, configures platform-specific dependencies, and adjusts compiler flags based on the build type. The file also defines output directories and includes subdirectories for building the main library and associated tests. Additionally, it manages required packages and ensures compatibility across different platforms. (<a href="#root-cmakeliststxt">jump to this section</a>)</p>
   </li>
   <li>
     <p><strong>cmake/ Directory:</strong></p>
 
-    <p>Contains custom CMake modules and configuration templates, such as <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code>, which is used for packaging and installing your library. This template allows users to find and link against your library using <code class="language-plaintext highlighter-rouge">find_package</code>.</p>
+    <p>Contains custom CMake modules and configuration templates, such as <code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake.in</code>, which is used for packaging and installing your library. This template allows users to find and link against your library using <code class="language-plaintext highlighter-rouge">find_package</code>. (<a href="#cmake-template-file">jump to this section</a>)</p>
   </li>
   <li>
     <p><strong>dependencies/ Directory:</strong></p>
 
-    <p>This is where you would store any external dependencies your project relies on, especially if they are platform-specific. Subdirectories can be organized by platform, such as <code class="language-plaintext highlighter-rouge">win_x86_64</code> for Windows and <code class="language-plaintext highlighter-rouge">linux_x86_64</code> for Linux. Including dependencies here makes it easier to manage third-party libraries that are not readily available through package managers.</p>
+    <p>This is where you would store any external dependencies your project relies on, especially if they are platform-specific. Subdirectories can be organized by platform, such as <code class="language-plaintext highlighter-rouge">win_x86_64</code> for Windows and <code class="language-plaintext highlighter-rouge">linux_x86_64</code> for Linux. Including dependencies here makes it easier to manage third-party libraries that are not readily available through package managers. Once your library is exported, you can re-utilize your library in another project, by putting it here.</p>
   </li>
   <li>
     <p><strong>include/ Directory:</strong></p>
 
-    <p>This folder contains the public API headers. These are the files that other projects will include when they use your library. The headers are usually organized in a subdirectory named after your library (e.g., <code class="language-plaintext highlighter-rouge">my_library/</code>). The main API header (<code class="language-plaintext highlighter-rouge">my_library.h</code>) should include the core functions and classes, while the <code class="language-plaintext highlighter-rouge">my_project_export.h</code> file handles macro definitions that control symbol visibility, which is crucial when building shared libraries.</p>
+    <p>This folder contains the public API headers. These are the files that other projects will include when they use your library. The headers are usually organized in a subdirectory named after your library (e.g., <code class="language-plaintext highlighter-rouge">my_library/</code>).
+  The main API header (<code class="language-plaintext highlighter-rouge">my_library.h</code>) should include the core functions and classes, while the <code class="language-plaintext highlighter-rouge">my_project_export.h</code> file handles macro definitions that control symbol visibility, which is crucial when building shared libraries.</p>
   </li>
   <li>
     <p><strong>my_library/ Directory:</strong></p>
@@ -1173,6 +1196,84 @@
     <p><strong>tests/ Directory:</strong></p>
 
     <p>Contains unit or integration tests that validate your library’s functionality. These tests are usually written using a testing framework (like Google Test, Catch2, or Boost.Test) and should cover both the public API and critical internal components. The <code class="language-plaintext highlighter-rouge">test_my_library.cpp</code> file is an example test that might include various test cases to ensure your library works as expected. Here we will, however, focus on the project structure rather than on testing.</p>
+  </li>
+</ul>
+
+<h3 id="export-overview">3.1. <span class="me-2">Export Overview</span><a href="#export-overview" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>Once you install your library, the <code class="language-plaintext highlighter-rouge">installation/</code> directory will contain everything required for others to use and integrate your library into their own projects. Let’s break down each component within this directory:</p>
+
+<pre><code class="language-txt">installation/                                  # Project installation root directory
+│
+├── bin/                                       # Contains runtime binaries (e.g., DLLs) if provided
+│   └── libmy_library.dll                      # Compiled dynamic library (Windows)
+|
+├── include/                                   # Public header files that exposed to users
+│   └── my_library/                            # Namespace for your library headers
+│       ├── my_library.h                       # Primary public API header
+│       ├── ...                                # Your public API headers
+│       └── my_project_export.h                # Export macros for cross-platform compatibility
+│
+└── lib/                                       # Library and CMake configuration files
+    ├── cmake/                                 # CMake package configuration directory
+    |   └── my_library/                        # CMake files for library integration
+    |       └── my_libraryConfig.cmake         # Configuration file for `find_package`
+    |       └── my_libraryConfigVersion.cmake  # Version-specific config for compatibility checks
+    |       └── my_libraryTargets.cmake        # Target definitions for linking the library
+    └── libmy_library.dll.a                    # Import library for GCC/MinGW (or .lib for MSVC)
+</code></pre>
+
+<p>Breakdown of the Installation Structure</p>
+
+<ul>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">bin/</code> Directory:</strong></p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">bin/</code> directory holds the runtime binaries of the library.
+  It contains the dynamically linked libraries (DLLs) for Windows, which are necessary at runtime when your library is used by external applications.
+  These binaries are dynamically loaded during program execution and contain the compiled functionality of the library.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">libmy_library.dll</code></strong>: This is the main dynamic library file for Windows, containing the compiled code that is loaded at runtime. It provides the core functionality of your library to the consumers.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">include/</code> Directory:</strong></p>
+
+    <p>This directory contains all the public API headers that your users will include in their projects to interface with your library.
+  These headers define the classes, functions, and macros that are exposed to external projects.
+  Organizing them in a subdirectory named after the library ensures clear separation and namespace management.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">my_library.h</code></strong>: The main public header file, this aggregates all the core functions and classes available in your library. It serves as the primary interface for users to access your library’s functionality.</p>
+
+    <p><strong><code class="language-plaintext highlighter-rouge">my_project_export.h</code></strong>: This header defines export macros used for symbol visibility across platforms.</p>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">lib/</code> Directory:</strong></p>
+
+    <p>The <code class="language-plaintext highlighter-rouge">lib/</code> directory contains the static or import libraries and the CMake configuration files necessary for integrating your library with other projects. This directory allows your library to be discovered and linked using CMake’s <code class="language-plaintext highlighter-rouge">find_package</code> command.</p>
+
+    <ul>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">cmake/</code> Directory</strong>:
+    This subdirectory contains the CMake configuration files needed to allow other projects to find and link to your library. The files ensure that CMake knows how to configure, locate, and use your library’s targets.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryConfig.cmake</code></strong>:
+    This is the main CMake configuration file used by <code class="language-plaintext highlighter-rouge">find_package</code>. It provides instructions on how to locate the library, including setting the paths for the library binaries and headers, and ensuring that the library is correctly linked.
+        You define this file by using a template in the <code class="language-plaintext highlighter-rouge">cmake</code> folder in your project.  (<a href="#cmake-template-file">jump to this section</a>)</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryConfigVersion.cmake</code></strong>:
+    This file ensures version compatibility between the library and the consuming project. It allows CMake to check whether the version of the library being used meets the version constraints specified in the consuming project.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code></strong>:
+    This file defines the targets associated with your library. It provides CMake with the necessary details for linking the library, including any dependencies or settings required by the consumer project.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">libmy_library.dll.a</code></strong>:
+    This is the import library for GCC/MinGW, which allows projects to link against the <code class="language-plaintext highlighter-rouge">.dll</code> file. For MSVC, this would be a <code class="language-plaintext highlighter-rouge">.lib</code> file. It plays a critical role in the linking phase of the build process, providing the required interface to the shared library.</p>
+      </li>
+    </ul>
   </li>
 </ul>
 
@@ -1533,13 +1634,35 @@ include("${CMAKE_CURRENT_LIST_DIR}/my_libraryTargets.cmake")
     <p><strong><code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> Macro</strong> is a placeholder that is replaced by CMake with the necessary initialization code when the file is processed. The <code class="language-plaintext highlighter-rouge">@PACKAGE_INIT@</code> macro is essential as it sets up the environment for the package configuration. It ensures that any necessary CMake variables are initialized and that the package configuration is compatible with the CMake version used by the consuming project.</p>
   </li>
   <li>
-    <p><strong>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> File:</strong> This line includes the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file, which contains the actual definitions of the targets (such as the <code class="language-plaintext highlighter-rouge">my_library</code> library) that were exported during the installation process. This inclusion is critical for making the targets available to projects that use <code class="language-plaintext highlighter-rouge">find_package</code> to locate your library.</p>
+    <p><strong>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> File:</strong> This line includes the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file, which contains the actual definitions of the targets (such as the <code class="language-plaintext highlighter-rouge">my_library</code> library) that will be exported during the installation process.
+This inclusion is critical for making the targets available to projects that use <code class="language-plaintext highlighter-rouge">find_package</code> to locate your library.</p>
 
     <blockquote>
       <p>Including the <code class="language-plaintext highlighter-rouge">my_libraryTargets.cmake</code> file is what allows other projects to link against your library. It ensures that all necessary targets, build settings, and dependencies are correctly set up in the consuming project. Without this inclusion, the library would not be properly registered with CMake, making it unavailable for use.</p>
     </blockquote>
   </li>
 </ul>
+
+<h3 id="defining-imported_implib-for-windows-platforms">6.1. <span class="me-2">Defining <code class="language-plaintext highlighter-rouge">IMPORTED_IMPLIB</code> for Windows Platforms</span><a href="#defining-imported_implib-for-windows-platforms" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>When distributing libraries on <strong>Windows</strong>, there are often differences in how dynamic libraries (<code class="language-plaintext highlighter-rouge">.dll</code>) are linked, depending on the compiler. For this, we use the <code class="language-plaintext highlighter-rouge">IMPORTED_IMPLIB</code> property in CMake to define the appropriate import library (<code class="language-plaintext highlighter-rouge">.lib</code> or <code class="language-plaintext highlighter-rouge">.dll.a</code>) for Windows toolchains.</p>
+
+<p>We can check if we are on Windows platform <code class="language-plaintext highlighter-rouge">if (WIN32)</code> and in this case we should distinguish between <em>MinGW/GCC</em> where <code class="language-plaintext highlighter-rouge">.dll.a</code> is used, whereas <code class="language-plaintext highlighter-rouge">.lib</code> is used by <em>MSVC</em> compilers.</p>
+
+<pre><code class="language-cpp">if (WIN32)
+    # Check for GNU / Mingw Compilers
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|MinGW")
+        # Configure `IMPORTED_IMPLIB` to point to the .dll.a library that will be created
+        set_target_properties(Logify::Logify PROPERTIES
+            IMPORTED_IMPLIB "${CMAKE_CURRENT_LIST_DIR}/../../libmy_library.dll.a")
+    # Otherwise assume it is MSVC
+    else()
+        # Configure `IMPORTED_IMPLIB` to point to the .lib library that will be created
+        set_target_properties(Logify::Logify PROPERTIES
+            IMPORTED_IMPLIB "${CMAKE_CURRENT_LIST_DIR}/../../libmy_library.lib")
+    endif()
+endif()
+</code></pre>
 
 <h2 id="source-code">7. <span class="me-2">Source Code</span><a href="#source-code" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
@@ -1856,6 +1979,13 @@ cmake --install . --prefix .
         
         
         <li class="text-truncate lh-lg">
+          <a href="/posts/CPP-Coroutines/">C++20 - Coroutines</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
           <a href="/posts/Exploring-Exception-Handling-Mechanisms-in-Embedded-Environments/">Efficient Exception Handling in Resource-Constrained Embedded Systems</a>
         </li>
       
@@ -1870,7 +2000,7 @@ cmake --install . --prefix .
         
         
         <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Adding-Libraries/">CMake - Adding Libraries</a>
+          <a href="/posts/CMake-Integrating-C++-Libraries/">CMake - Integrating C++ Libraries</a>
         </li>
       
         
@@ -1878,13 +2008,6 @@ cmake --install . --prefix .
         
         <li class="text-truncate lh-lg">
           <a href="/posts/CMake-On-Windows/">CMake - Installation On Windows</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/CMake-Brief-Reference/">CMake - Brief Reference</a>
         </li>
       
     </ul>
@@ -1928,42 +2051,6 @@ cmake --install . --prefix .
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -1993,128 +2080,12 @@ cmake --install . --prefix .
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -2235,6 +2206,204 @@ cmake --install . --prefix .
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -2301,119 +2470,6 @@ cmake --install . --prefix .
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2438,6 +2494,154 @@ cmake --install . --prefix .
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -2486,11 +2690,6 @@ cmake --install . --prefix .
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -2511,10 +2710,10 @@ cmake --install . --prefix .
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -2535,7 +2734,7 @@ cmake --install . --prefix .
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>
@@ -2627,7 +2826,31 @@ cmake --install . --prefix .
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
 
 
 
@@ -2643,7 +2866,7 @@ cmake --install . --prefix .
     <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
       
         <article class="col">
-          <a href="/posts/CMake-Adding-Libraries/" class="post-preview card h-100">
+          <a href="/posts/CMake-Integrating-C++-Libraries/" class="post-preview card h-100">
             <div class="card-body">
               <!--
   Date format snippet
@@ -2662,9 +2885,10 @@ cmake --install . --prefix .
   Nov 15, 2023
 </time>
 
-              <h4 class="pt-0 my-2">CMake - Adding Libraries</h4>
+              <h4 class="pt-0 my-2">CMake - Integrating C++ Libraries</h4>
               <div class="text-muted">
-                <p>This post delves into the steps required to integrate several widely-used C++ libraries into your project using CMake. We will explore the setup and usage of Google Test, Google Benchmark, OpenCV, ...</p>
+                <p>In modern C++ development, CMake is an indispensable tool for managing project dependencies.
+This comprehensive guide empowers you to effortlessly integrate widely used C++ libraries into your proj...</p>
               </div>
             </div>
           </a>
@@ -2749,11 +2973,11 @@ Downloads
 
   
     <a
-      href="/posts/CMake-Adding-Libraries/"
+      href="/posts/CMake-Integrating-C++-Libraries/"
       class="btn btn-outline-primary"
       aria-label="Older"
     >
-      <p>CMake - Adding Libraries</p>
+      <p>CMake - Integrating C++ Libraries</p>
     </a>
   
 
@@ -2855,42 +3079,6 @@ Downloads
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -2920,128 +3108,12 @@ Downloads
     
     
     
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
     
     
       
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
   
     
@@ -3162,6 +3234,204 @@ Downloads
     
     
     
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
       
         
         
@@ -3228,119 +3498,6 @@ Downloads
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
   
     
     
@@ -3365,6 +3522,154 @@ Downloads
     
     
     
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
   
     
     
@@ -3413,11 +3718,6 @@ Downloads
     
     
       
-    
-  
-    
-    
-    
     
   
     
@@ -3438,10 +3738,10 @@ Downloads
         <a class="post-tag btn btn-outline-primary" href="/tags/c/">C++</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/software/">Software</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/cmake/">Cmake</a>
       
         
         <a class="post-tag btn btn-outline-primary" href="/tags/windows/">Windows</a>
@@ -3462,7 +3762,7 @@ Downloads
         <a class="post-tag btn btn-outline-primary" href="/tags/build-systems/">Build-Systems</a>
       
         
-        <a class="post-tag btn btn-outline-primary" href="/tags/cd-ci/">CD/CI</a>
+        <a class="post-tag btn btn-outline-primary" href="/tags/c-20/">C++20</a>
       
     </div>
   </section>
